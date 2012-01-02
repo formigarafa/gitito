@@ -14,4 +14,6 @@ group :development, :test do
   gem 'sqlite3'
   gem 'capybara'
   gem "rspec-rails"
+  gem "ZenTest", "~> 4.4.2"
+  gem "autotest-rails", "~> 4.1.0"
 end
