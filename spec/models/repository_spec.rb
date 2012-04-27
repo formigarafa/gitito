@@ -2,7 +2,13 @@ require 'spec_helper'
 
 describe Repository do
 	def valid_repo
-		Repository.new :name => "N4m3_W1th-V4l1d.Ch4r"
+		Repository.new :name => "N4m3_W1th-V4l1d.Ch4r" #, :user => stub_model("User")
+	end
+
+	it "belongs to one user" do
+		pending do
+			subject.should respond_to :user
+		end
 	end
 
 	context "validity" do
@@ -46,4 +52,6 @@ describe Repository do
 	specify "method dictating where I can find all repositories" do
 		Repository.repos_root.should == "#{Rails.root}/db/users_repositories"
 	end
+
+	it "method to get repository path"
 end
