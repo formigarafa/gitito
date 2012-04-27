@@ -9,6 +9,7 @@ set :stages, %w(xaa)
 
 require 'capistrano/ext/multistage'
 
+require "#{File.dirname(__FILE__)}/deploy/capistrano_gitito_yml.rb"
 require "#{File.dirname(__FILE__)}/deploy/capistrano_database_yml.rb"
 
 default_run_options[:pty] = true
