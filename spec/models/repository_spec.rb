@@ -53,5 +53,9 @@ describe Repository do
 		Repository.repos_root.should == "#{Rails.root}/db/users_repositories"
 	end
 
-	it "method to get repository path"
+	it "has method to get repository path on file server" do
+		repo = Repository.new :name => "tilt", :user => stub_model( User,  :username => "formigarafa" )
+		Repository.stub(:repos_root).and_return("/rOOt")
+		repo.server_path.should == "/rOOt/formigarafa/tilt.git"
+	end
 end

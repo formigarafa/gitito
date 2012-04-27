@@ -9,4 +9,8 @@ class Repository < ActiveRecord::Base
 	def self.repos_root
 		"#{Rails.root}/db/users_repositories"
 	end
+
+	def server_path
+		"#{self.class.repos_root}/#{user.username}/#{name}.git"
+	end
 end
