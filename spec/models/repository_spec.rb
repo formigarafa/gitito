@@ -2,13 +2,7 @@ require 'spec_helper'
 
 describe Repository do
 	def valid_repo
-		Repository.new :name => "N4m3_W1th-V4l1d.Ch4r" #, :user => stub_model("User")
-	end
-
-	it "belongs to one user" do
-		pending do
-			subject.should respond_to :user
-		end
+		Repository.new :name => "N4m3_W1th-V4l1d.Ch4r", :user => mock_model(User)
 	end
 
 	context "validity" do
@@ -19,6 +13,12 @@ describe Repository do
 		it "fails with no name" do
 			repo = valid_repo
 			repo.name = nil
+			repo.should_not be_valid
+		end
+
+		it "fails with no owner" do
+			repo = valid_repo
+			repo.user = nil
 			repo.should_not be_valid
 		end
 
