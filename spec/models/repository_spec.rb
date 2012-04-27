@@ -58,4 +58,12 @@ describe Repository do
 		Repository.stub(:repos_root).and_return("/rOOt")
 		repo.server_path.should == "/rOOt/formigarafa/tilt.git"
 	end
+
+	it "has method to get repository access url" do
+		repo = Repository.new :name => "tilt", :user => stub_model( User,  :username => "formigarafa" )
+		repo.stub(:ssh_user).and_return('git')
+		repo.stub(:ssh_host).and_return('gitito.com')
+		
+		repo.url.should == "git@gitito.com:formigarafa/tilt.git"
+	end
 end
