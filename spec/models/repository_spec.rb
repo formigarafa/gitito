@@ -49,7 +49,7 @@ describe Repository do
 		repo.name.should == first_used_name
 	end
 
-	specify "method dictating where I can find all repositories" do
+	it "has method to get where I can find all repositories" do
 		Repository.repos_root.should == "#{Rails.root}/db/users_repositories"
 	end
 
