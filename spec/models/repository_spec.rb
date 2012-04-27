@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 describe Repository do
-	context "validity" do
-		def valid_repo
-			Repository.new :name => "N4m3_W1th-V4l1d.Ch4r"
-		end
+	def valid_repo
+		Repository.new :name => "N4m3_W1th-V4l1d.Ch4r"
+	end
 
+	context "validity" do
 		it "validates with valid attributes" do
 			valid_repo.should be_valid
 		end
@@ -29,5 +29,21 @@ describe Repository do
 		end
 
 	end
-	it {should.respond_to? :name}
+
+	it "forbides repository name changes" do
+		repo = valid_repo
+		repo.save
+		first_used_name = repo.name
+
+		repo.name = "modified_name"
+		repo.save
+
+		repo.reload
+
+		repo.name.should == first_used_name
+	end
+
+	specify "method dictating where I can find all repositories" do
+		Repository.repos_root.should == "#{Rails.root}/db/users_repositories"
+	end
 end
