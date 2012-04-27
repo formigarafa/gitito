@@ -49,21 +49,94 @@ describe Repository do
 		repo.name.should == first_used_name
 	end
 
-	it "has method to get where I can find all repositories" do
-		Repository.repos_root.should == "#{Rails.root}/db/users_repositories"
+	context "path" do
+
+		it "has method to get where I can find all repositories" do
+			Repository.repos_root.should == "#{Rails.root}/db/users_repositories"
+		end
+
+		it "has method to get repository path on file server" do
+			repo = Repository.new :name => "tilt", :user => stub_model( User,  :username => "formigarafa" )
+			Repository.stub(:repos_root).and_return("/rOOt")
+			repo.server_path.should == "/rOOt/formigarafa/tilt.git"
+		end
+
+		it "has method to get repository access url" do
+			repo = Repository.new :name => "tilt", :user => stub_model( User,  :username => "formigarafa" )
+			repo.stub(:ssh_user).and_return('git')
+			repo.stub(:ssh_host).and_return('gitito.com')
+
+			repo.url.should == "git@gitito.com:formigarafa/tilt.git"
+		end
 	end
 
-	it "has method to get repository path on file server" do
-		repo = Repository.new :name => "tilt", :user => stub_model( User,  :username => "formigarafa" )
-		Repository.stub(:repos_root).and_return("/rOOt")
-		repo.server_path.should == "/rOOt/formigarafa/tilt.git"
-	end
+	context "file tree" do
 
-	it "has method to get repository access url" do
-		repo = Repository.new :name => "tilt", :user => stub_model( User,  :username => "formigarafa" )
-		repo.stub(:ssh_user).and_return('git')
-		repo.stub(:ssh_host).and_return('gitito.com')
-		
-		repo.url.should == "git@gitito.com:formigarafa/tilt.git"
+		it "can check if there is a folder on repository place" do
+			repo = Repository.new
+			repo.should_receive(:server_path).and_return("#{Rails.root}/spec/fixtures/not_repo_test")
+
+			repo.folder_exists?.should be_true
+		end
+
+		it "can check if there is NOT a folder on repository place" do
+			repo = Repository.new
+			repo.should_receive(:server_path).and_return("#{Rails.root}/spec/fixtures/somewhere_else")
+
+			repo.folder_exists?.should be_false
+		end
+
+		it "can check if there is a repo placed" do
+			repo = Repository.new
+			repo.should_receive(:server_path).and_return("#{Rails.root}/spec/fixtures/repo_test.git")
+
+			repo.structure_ok?.should be_true
+		end
+
+		it "can check if there is NOT a repo placed" do
+			repo = Repository.new
+			repo.should_receive(:server_path).and_return("#{Rails.root}/spec/fixtures/none_repo_test.git")
+
+			repo.structure_ok?.should be_false
+		end
+
+		it "create repository tree when doesn't exist one" do
+			Dir.mktmpdir do |tmp_dir|
+				repo = Repository.new
+				repo.stub(:server_path).and_return(tmp_dir+"/repo_tmp")
+				
+				repo.folder_exists?.should be_false
+				repo.create_structure
+				repo.folder_exists?.should be_true
+			end
+		end
+
+		it "does not create repository tree when exist something there" do
+			Dir.mktmpdir do |tmp_dir|
+				repo = Repository.new
+
+				repo.stub(:folder_exists?).and_return(true)
+				Rugged::Repository.should_not_receive :init_at
+				
+				repo.create_structure
+			end
+		end
+
+		it "removes structure folder" do
+			Dir.mktmpdir do |tmp_dir|
+				Dir.mkdir "#{tmp_dir}/1"
+				Dir.mkdir "#{tmp_dir}/1/2"
+				Dir.mkdir "#{tmp_dir}/1/2/3"
+
+				repo = Repository.new
+				repo.stub(:server_path).and_return("#{tmp_dir}/1")
+
+				repo.folder_exists?.should be_true
+				repo.remove_structure
+
+				repo.folder_exists?.should be_false
+			end
+			
+		end
 	end
 end

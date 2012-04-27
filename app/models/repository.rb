@@ -25,4 +25,22 @@ class Repository < ActiveRecord::Base
 	def url
 		"#{ssh_user}@#{ssh_host}:#{user.username}/#{name}.git"
 	end
+
+	def folder_exists?
+		File.exists? server_path
+	end
+
+	def structure_ok?
+		Rugged::Repository.new server_path
+	rescue
+		false
+	end
+
+	def create_structure
+    	Rugged::Repository.init_at(server_path, bare=true) unless folder_exists?
+  	end
+
+  	 def remove_structure
+    	FileUtils.remove_dir(server_path) if File.directory? server_path
+  	end
 end
