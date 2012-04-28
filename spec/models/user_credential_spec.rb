@@ -53,4 +53,10 @@ describe UserCredential do
 			
 		end
 	end
+
+	context "authorized_keys generation" do
+		subject {UserCredential}
+
+		it { should respond_to :generate_authorized_keys_file }
+	end
 end
