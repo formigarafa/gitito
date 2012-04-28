@@ -45,10 +45,11 @@ describe UserCredential do
 
 
 			# ref: http://stackoverflow.com/questions/2494450/ssh-rsa-public-key-validation-using-a-regular-expression
-			it "fails with no spaces separating fields"
-			it "fails when first field not in [ssh-rsa, ssh-dsa]"
-			it "fails when second field can't be base64 decoded"
-			it "fails when decoded second field has wrong leading"
+			# latter, dont'botter me, yet.
+			#it "fails with no spaces separating fields"
+			#it "fails when first field not in [ssh-rsa, ssh-dsa]"
+			#it "fails when second field can't be base64 decoded"
+			#it "fails when decoded second field has wrong leading"
 			
 		end
 	end
