@@ -92,5 +92,22 @@ describe UserCredential do
 				File.new(auth_keys_file).stat.size.should == 0
 			end
 		end
+
+		it "generates two lines file with two credentials records" do
+			Dir.mktmpdir do |tmp_dir|
+				auth_keys_file = "#{tmp_dir}/authorized_keys"
+				records_mock = []
+				records_mock << mock_model(UserCredential, :authorized_keys_line => 'line1')
+				records_mock << mock_model(UserCredential, :authorized_keys_line => 'line2')
+
+				subject.stub(:all).and_return(records_mock)
+				subject.stub(:authorized_keys_absolute_path).and_return(auth_keys_file)
+
+				subject.generate_authorized_keys_file
+
+				generated_file_lines = File.open(auth_keys_file).to_io.read.split("\n")
+				generated_file_lines.should include("line1", "line2")
+			end
+		end
 	end
 end
