@@ -43,7 +43,7 @@ set :branch do
   # default_tag = `git tag`.split("\n").last
   default_tag = 'master'
 
-  Capistrano::CLI.ui.ask "Version to deploy (if is a tag make sure to push it first):" {|q| q.default = default_tag}
+  Capistrano::CLI.ui.ask("Version to deploy (if is a tag make sure to push it first):") {|q| q.default = default_tag}
 end
 
 set :git_shallow_clone, 1
@@ -60,7 +60,23 @@ set :backup_path do
   "#{shared_path}/backup/#{release_name}"
 end
 
+set :users_repositories_path do
+  "#{shared_path}/users_repositories"
+end
+
 namespace :data do
+  namespace :repositories do
+    # só com setup
+    task :setup, :roles => :db, :only => { :primary => true } do
+      run "mkdir -p #{users_repositories_path}"
+    end
+
+    task :symlink, :except => { :no_release => true } do
+      run "ln -nfs #{users_repositories_path} #{release_path}/db/users_repositories"
+    end
+
+  end
+
   namespace :backup do 
     task :default do
       database
@@ -86,3 +102,6 @@ namespace :data do
 end
 
 after "deploy:update_code", "data:backup"
+after "deploy:setup",           "data:repositories:setup"
+after "deploy:finalize_update", "data:repositories:symlink"
+
