@@ -68,7 +68,7 @@ describe UserCredential do
 
 		it { should respond_to :generate_authorized_keys_file }
 
-		it "create folders when specified path doed not exists" do
+		it "create folders with 700 mode when specified path doed not exists" do
 			Dir.mktmpdir do |tmp_dir|
 				auth_keys_file = "#{tmp_dir}/s1/s2/.ssh/authorized_keys"
 				auth_keys_folder = File.dirname auth_keys_file
@@ -78,6 +78,7 @@ describe UserCredential do
 				subject.generate_authorized_keys_file
 
 				File.exists?(auth_keys_folder).should be_true
+				File.new(auth_keys_folder).stat.mode.to_s(8)[-3..-1].should == '700'
 			end
 		end
 
@@ -93,7 +94,25 @@ describe UserCredential do
 			end
 		end
 
-		it "generates two lines file with two credentials records" do
+		it "file generated with 644 mode" do
+			previous_umask = File.umask 0
+			begin
+				Dir.mktmpdir do |tmp_dir|
+					auth_keys_file = "#{tmp_dir}/.ssh/authorized_keys"
+					
+					subject.stub(:authorized_keys_absolute_path).and_return(auth_keys_file)
+					File.exists?(auth_keys_file).should be_false
+
+					subject.generate_authorized_keys_file
+					File.new(auth_keys_file).stat.mode.to_s(8)[-3..-1].should == '644'
+				end
+			ensure
+				File.umask previous_umask
+				File.umask.to_s(8).should == '22'
+			end
+		end
+
+		it "generates two lines file using two credentials records" do
 			Dir.mktmpdir do |tmp_dir|
 				auth_keys_file = "#{tmp_dir}/authorized_keys"
 				records_mock = []
