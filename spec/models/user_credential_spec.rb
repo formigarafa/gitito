@@ -11,10 +11,15 @@ describe UserCredential do
 
 	context "validity" do
 		it "validates with valid attributes" do
-			valid_credential.should be_valid
+			credential = valid_credential
+			credential.should be_valid
 		end
 
-		it "fails with no user"
+		it "fails with no user" do
+			credential = valid_credential
+			credential.user = nil
+			credential.should_not be_valid
+		end
 
 		context "keys" do
 			it "fails with no key" do
