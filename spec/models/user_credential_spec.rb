@@ -54,6 +54,15 @@ describe UserCredential do
 		end
 	end
 
+	it "generates authorized_keys line with its key" do
+		key = 'ssh-rsa AAAAB3NzaC1yc2EA' + 'A' * 356
+		subject.key = key
+		subject.stub(:id).and_return('42')
+		expected_line = "command=\"#{Rails.root}/script/ssh-command-proxy.sh 42\" #{key}"
+		
+		subject.authorized_keys_line.should == expected_line
+	end
+
 	context "authorized_keys generation" do
 		subject {UserCredential}
 
