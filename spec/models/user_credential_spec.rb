@@ -72,6 +72,16 @@ describe UserCredential do
 			end
 		end
 
-		it "generates empty file with no user credential records"
+		it "generates empty file with no user credential records" do
+			Dir.mktmpdir do |tmp_dir|
+				auth_keys_file = "#{tmp_dir}/s1/s2/.ssh/authorized_keys"
+				
+				subject.stub(:authorized_keys_absolute_path).and_return(auth_keys_file)
+				File.exists?(auth_keys_file).should be_false
+
+				subject.generate_authorized_keys_file
+				File.new(auth_keys_file).stat.size.should == 0
+			end
+		end
 	end
 end
