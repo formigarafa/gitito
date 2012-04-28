@@ -2,8 +2,8 @@ production:
   adapter: mysql2
   encoding: utf8
   reconnect: false
-  host: <%= Capistrano::CLI.ui.ask("Enter MySQL database host name: ") %>
-  database: <%= Capistrano::CLI.ui.ask("Enter MySQL database name: ") %>
+  host: <%= Capistrano::CLI.ui.ask("Enter MySQL database host name: ") {|q| q.default = 'localhost' } %>
+  database: <%= Capistrano::CLI.ui.ask("Enter MySQL database name: ") {|q| q.default = 'gitito' }  %>
   pool: 5
-  username: <%= Capistrano::CLI.ui.ask("Enter MySQL database username: ") %>
-  password: <%= Capistrano::CLI.ui.ask("Enter MySQL database password: ") %>
+  username: <%= Capistrano::CLI.ui.ask("Enter MySQL database username: ") {|q| q.default = 'root' }  %>
+  password: <%= Capistrano::CLI.ui.ask("Enter MySQL database password: ") {|q| q.echo = '*' }  %>
