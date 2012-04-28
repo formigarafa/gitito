@@ -129,7 +129,7 @@ describe Repository do
 		it "create repository tree when doesn't exist one" do
 			Dir.mktmpdir do |tmp_dir|
 				repo = Repository.new
-				repo.stub(:server_path).and_return(tmp_dir+"/repo_tmp")
+				repo.stub(:server_path).and_return(tmp_dir+"/juca/repo_tmp")
 				
 				repo.folder_exists?.should be_false
 				repo.create_structure
