@@ -78,7 +78,7 @@ describe Repository do
 	context "path" do
 
 		it "has method to get where I can find all repositories" do
-			Repository.repos_root.should == "#{Rails.root}/db/users_repositories"
+			Repository.repos_root.should == "#{Rails.root}/db/users_repositories/#{Rails.env}"
 		end
 
 		it "has method to get repository path on file server" do
