@@ -43,9 +43,7 @@ set :branch do
   # default_tag = `git tag`.split("\n").last
   default_tag = 'master'
 
-  tag = Capistrano::CLI.ui.ask "Version to deploy (if is a tag make sure to push it first): [#{default_tag}] "
-  tag = default_tag if tag.empty?
-  tag
+  Capistrano::CLI.ui.ask "Version to deploy (if is a tag make sure to push it first):" {|q| q.default = default_tag}
 end
 
 set :git_shallow_clone, 1
