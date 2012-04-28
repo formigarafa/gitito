@@ -28,6 +28,7 @@ Capistrano::Configuration.instance.load do
 
         default_template = <<-EOF
         gitito:
+          ssh_authorized_keys_file: ~/.ssh/authorized_keys
           ssh_user: "gitito"
           ssh_host: "fortito.com.br"
           web_host: "gitito.fortito.com.br"
