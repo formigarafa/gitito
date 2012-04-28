@@ -34,6 +34,32 @@ describe Repository do
 			repo.should_not be_valid
 		end
 
+		it "is not allowed to one user have two repositories with the same name" do
+			user = mock_model(User)
+			repo1 = Repository.new
+			repo1.name = "same_name"
+			repo1.user = user
+			repo1.save
+
+			repo2 = Repository.new
+			repo2.user = user
+			repo2.name = "same_name"
+
+			repo2.should_not be_valid
+		end
+
+		it "is allowed for two different user have two repositories with the same name" do
+			repo1 = Repository.new
+			repo1.name = "same_name"
+			repo1.user = mock_model(User)
+			repo1.save
+
+			repo2 = Repository.new
+			repo2.user = mock_model(User)
+			repo2.name = "same_name"
+			repo2.should be_valid
+		end
+
 	end
 
 	it "forbides repository name changes" do
