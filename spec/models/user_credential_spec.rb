@@ -28,6 +28,22 @@ describe UserCredential do
 				credential.should_not be_valid
 			end
 
+			it "fails for duplicated keys" do
+				user = mock_model(User)
+				key = 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC4d8XdRasriu5HA/GrmNv6wM50TioIgjsW/NcuVnHfuF29SGZkb1mjodDkKVP7BboGIfyE1SG4mgAxv8VGtN3FBtSZPWPCD1zOGwg/uFgbugYgWRLg8IVKoSdDSgG7YwdLF7fktjpUCidFAaYCBnkzDkw+tWt9y79IdgokRwK+bmVuf80xXAr6mD9WLNqTxqXdmCHd9cMePzszdIVUtjIk0R/YHaoCZat+T2D+ICLs2oz2lv+4z5A6who82u6d0X5HDV7dIxf5s8rb/8HGbU1hshsK7VE6SXzph/dj7otkl4Mq4bJ3yLx6l7YktZ9hmVsn+S0zKcnlasD+ND2LM30X user@comment.part.com'
+				credential1 = valid_credential
+				credential1.key = key
+				credential1.user = user
+				credential1.save
+
+				credential2 = valid_credential
+				credential2.user = user
+				credential2.key = key
+
+				credential2.should_not be_valid
+			end
+
+
 			# ref: http://stackoverflow.com/questions/2494450/ssh-rsa-public-key-validation-using-a-regular-expression
 			it "fails with no spaces separating fields"
 			it "fails when first field not in [ssh-rsa, ssh-dsa]"
