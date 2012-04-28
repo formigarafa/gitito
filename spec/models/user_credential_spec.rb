@@ -14,11 +14,21 @@ describe UserCredential do
 			valid_credential.should be_valid
 		end
 
-		it "fails with no key" do
-			credential = valid_credential
-			credential.key = ""
-			credential.should_not be_valid
-		end
+		it "fails with no user"
 
+		context "keys" do
+			it "fails with no key" do
+				credential = valid_credential
+				credential.key = ""
+				credential.should_not be_valid
+			end
+
+			# ref: http://stackoverflow.com/questions/2494450/ssh-rsa-public-key-validation-using-a-regular-expression
+			it "fails with no spaces separating fields"
+			it "fails when first field not in [ssh-rsa, ssh-dsa]"
+			it "fails when second field can't be base64 decoded"
+			it "fails when decoded second field has wrong leading"
+			
+		end
 	end
 end
