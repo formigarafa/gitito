@@ -58,5 +58,20 @@ describe UserCredential do
 		subject {UserCredential}
 
 		it { should respond_to :generate_authorized_keys_file }
+
+		it "create folders when specified path doed not exists" do
+			Dir.mktmpdir do |tmp_dir|
+				auth_keys_file = "#{tmp_dir}/s1/s2/.ssh/authorized_keys"
+				auth_keys_folder = File.dirname auth_keys_file
+
+				subject.stub(:authorized_keys_absolute_path).and_return(auth_keys_file)
+				File.exists?(auth_keys_folder).should be_false
+				subject.generate_authorized_keys_file
+
+				File.exists?(auth_keys_folder).should be_true
+			end
+		end
+
+		it "generates empty file with no user credential records"
 	end
 end
