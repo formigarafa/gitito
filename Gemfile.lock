@@ -125,6 +125,7 @@ GEM
       polyglot
       polyglot (>= 0.3.1)
     tzinfo (0.3.31)
+    web-app-theme (0.7.0)
     xpath (0.1.4)
       nokogiri (~> 1.3)
 
@@ -144,3 +145,4 @@ DEPENDENCIES
   rspec-rails
   rugged
   sqlite3
+  web-app-theme (>= 0.6.2)

@@ -12,6 +12,7 @@ group :production do
 end
 
 group :development, :test do
+  gem 'web-app-theme', '>= 0.6.2'
   gem 'sqlite3'
   gem 'capybara'
   gem "rspec-rails"
