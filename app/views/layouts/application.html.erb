@@ -18,7 +18,14 @@
         </ul>
       </div>
       <div id="main-navigation">
-        <ul class="wat-cf"></ul>
+        <ul class="wat-cf">
+          <li class="<%= controller.controller_path == 'repositories' ? 'active' : '' %>">
+            <a href="<%= repositories_path %>">Repositories</a>
+          </li>
+          <li class="<%= controller.controller_path == 'user_credentials' ? 'active' : '' %>">
+            <a href="<%= user_credentials_path %>">User Credentials</a>
+          </li>
+        </ul>
       </div>
     </div>    
     <div id="wrapper" class="wat-cf">
