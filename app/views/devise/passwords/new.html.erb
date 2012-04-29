@@ -1,16 +1,12 @@
+<div class="flash">
+    <div class="message notice">
+        <%= devise_error_messages! %>
+    </div>
+</div>
+
 <div class="block" id="block-login">
   <h2>Forgot your password?</h2>
   <div class="content login">
-    <div class="flash">&nbsp;
-      <% flash.each do |type, message| %>
-        <div class="message <%= type %>">
-          <p><%= message %></p>
-        </div>
-      <% end %>
-    </div>
-	<%= devise_error_messages! %>
-
-
     <%= form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => {:method => :post, :class => "form login"}) do |f| %>
       <div class="group wat-cf">
         <div class="left">
