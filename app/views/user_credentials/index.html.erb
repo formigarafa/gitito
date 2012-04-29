@@ -10,26 +10,20 @@
     <div class="inner">
       <table class="table">
         <tr>             
-          <th class="first">ID</th>
-                    <th>
-            <%= t("activerecord.attributes.user_credential.title", :default => t("activerecord.labels.title", :default => "Title")) %>
+          <th class="first"><%= t("activerecord.attributes.user_credential.title", :default => t("activerecord.labels.title", :default => "Title")) %>
           </th>
-                    <th><%= t("web-app-theme.created_at", :default => "Created at")  %></th>
+                    <th><%= t("web-app-theme.key", :default => "Key")  %></th>
           <th class="last">&nbsp;</th>
         </tr>
         <% @user_credentials.each do |user_credential| -%>
         <tr class="<%= cycle("odd", "even") %>">
           <td>
-            <%= user_credential.id %>
+            <%= user_credential.title %>
           </td>
                     <td>
-            <%= link_to user_credential.title, user_credential_path(user_credential) %>
-          </td>
-                    <td>
-            <%= user_credential.created_at %>
+            <%= user_credential.key.truncate 50 %>
           </td>
           <td class="last">
-            <%= link_to "#{t("web-app-theme.show", :default => "Show")}", user_credential_path(user_credential) %> |
             <%= link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_user_credential_path(user_credential) %> |
             <%= link_to "#{t("web-app-theme.delete", :default => "Delete")}", user_credential_path(user_credential), :method => :delete, :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}" %>
           </td>
