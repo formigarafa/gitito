@@ -4,6 +4,7 @@ gem 'rails', '3.0.11'
 gem 'rack', '1.2.1'
 gem 'rugged'
 gem "devise", "~> 1.5.3"
+gem 'inherited_resources'
 
 gem 'capistrano'
 gem 'capistrano-ext'
