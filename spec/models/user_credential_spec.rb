@@ -31,6 +31,7 @@ describe UserCredential do
 			it "fails for duplicated keys" do
 				user = mock_model(User)
 				key = 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC4d8XdRasriu5HA/GrmNv6wM50TioIgjsW/NcuVnHfuF29SGZkb1mjodDkKVP7BboGIfyE1SG4mgAxv8VGtN3FBtSZPWPCD1zOGwg/uFgbugYgWRLg8IVKoSdDSgG7YwdLF7fktjpUCidFAaYCBnkzDkw+tWt9y79IdgokRwK+bmVuf80xXAr6mD9WLNqTxqXdmCHd9cMePzszdIVUtjIk0R/YHaoCZat+T2D+ICLs2oz2lv+4z5A6who82u6d0X5HDV7dIxf5s8rb/8HGbU1hshsK7VE6SXzph/dj7otkl4Mq4bJ3yLx6l7YktZ9hmVsn+S0zKcnlasD+ND2LM30X user@comment.part.com'
+				UserCredential.stub(:generate_authorized_keys_file)
 				credential1 = valid_credential
 				credential1.key = key
 				credential1.user = user

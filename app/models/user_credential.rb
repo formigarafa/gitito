@@ -8,6 +8,14 @@ class UserCredential < ActiveRecord::Base
 		"command=\"#{Rails.root}/script/ssh-command-proxy.sh #{self.id}\" #{key}"
 	end
 
+	after_save do
+		UserCredential.generate_authorized_keys_file
+	end
+
+	after_destroy do
+		UserCredential.generate_authorized_keys_file
+	end
+
 	class << self
 		def generate_authorized_keys_file
 			destination_folder = File.dirname(authorized_keys_absolute_path)
