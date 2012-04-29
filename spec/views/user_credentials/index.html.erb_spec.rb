@@ -14,10 +14,7 @@ describe "user_credentials/index.html.erb" do
       render
 
       rendered.should =~ /chave um/
-      rendered.should =~ /conteudo-da-chave-um/
-
       rendered.should =~ /chave dois/
-      rendered.should =~ /conteudo-da-chave-dois/
     end
   end
 end
