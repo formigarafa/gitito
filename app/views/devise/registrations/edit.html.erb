@@ -1,0 +1,78 @@
+<div id="box">
+    <div class="block" id="block-signup">
+        <h2>Edit <%= resource_name.to_s.humanize %></h2>
+        &nbsp;
+
+        <div class="content">
+            <%#= devise_error_messages! %>
+            <!-- <div class="flash">&nbsp;
+                <%# flash.each do |type, message| %>
+                    <div class="message <%#= type %>">
+                        <p><%#= message %></p>
+                    </div>
+                <%# end %>
+            </div> -->
+
+            <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :method => :put , :class => 'form login'}) do |f| %>
+
+                <div class="group wat-cf">
+                    <div class="left">
+                        <label class="label">email</label>
+                    </div>
+                    <div class="right">
+                        <%= f.text_field :email, :class => "text_field" %>
+                    </div>
+                </div>
+
+                <div class="group wat-cf">
+                    <div class="left">
+                        <label class="label">password</label>
+                    </div>
+                    <div class="right">
+                        <%= f.password_field :password, :class => "text_field" %>
+                        <span class="description">leave blank if you don't want to change it</span>
+                    </div>
+                </div>
+
+                <div class="group wat-cf">
+                    <div class="left">
+                        <label class="label">password confirmation</label>
+                    </div>
+                    <div class="right">
+                        <%= f.password_field :password_confirmation, :class => "text_field" %>
+                    </div>
+                </div>
+
+                <div class="group wat-cf">
+                    <div class="left">
+                        <label class="label">current password</label>
+                    </div>
+                    <div class="right">
+                        <%= f.password_field :current_password, :class => "text_field" %>
+                        <span class="description">we need your current password to confirm your changes</span>
+                    </div>
+                </div>
+
+                <div class="group navform wat-cf">
+                    <div class="right">
+                        <button class="button" type="submit">
+                            <img src="images/icons/tick.png" alt="Save" /> Update
+                        </button>
+                    </div>
+                </div>
+            <% end %>
+        </div>
+    </div>
+
+
+    <div class="block" id="block-signup">
+        <h2>Cancel my account</h2>
+        &nbsp;
+
+        <div class="content">
+            <p>
+                Unhappy? <%= link_to "Cancel my account", registration_path(resource_name), :confirm => "Are you sure?", :method => :delete %>.
+            </p>
+        </div>
+    </div>
+</div>
