@@ -40,7 +40,15 @@ class Repository < ActiveRecord::Base
     	Rugged::Repository.init_at(server_path, bare=true) unless folder_exists?
   	end
 
-  	 def remove_structure
+  	def remove_structure
     	FileUtils.remove_dir(server_path) if File.directory? server_path
   	end
+
+	after_create do
+		create_structure
+	end
+
+	after_destroy do
+		remove_structure
+	end
 end

@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Repository do
 	def valid_repo
-		Repository.new :name => "N4m3_W1th-V4l1d.Ch4r", :user => mock_model(User)
+		Repository.new :name => "N4m3_W1th-V4l1d.Ch4r", :user => mock_model(User, :username => 'juca')
 	end
 
 	context "validity" do
@@ -35,13 +35,15 @@ describe Repository do
 		end
 
 		it "is not allowed to one user have two repositories with the same name" do
-			user = mock_model(User)
+			user = mock_model(User, :username => 'juca')
 			repo1 = Repository.new
+			repo1.stub(:create_structure)
 			repo1.name = "same_name"
 			repo1.user = user
 			repo1.save
 
 			repo2 = Repository.new
+			repo2.stub(:create_structure)
 			repo2.user = user
 			repo2.name = "same_name"
 
@@ -51,11 +53,13 @@ describe Repository do
 		it "is allowed for two different user have two repositories with the same name" do
 			repo1 = Repository.new
 			repo1.name = "same_name"
-			repo1.user = mock_model(User)
+			repo1.stub(:create_structure)
+			repo1.user = mock_model(User, :username => 'juca')
 			repo1.save
 
 			repo2 = Repository.new
-			repo2.user = mock_model(User)
+			repo2.stub(:create_structure)
+			repo2.user = mock_model(User, :username => 'drica.silva')
 			repo2.name = "same_name"
 			repo2.should be_valid
 		end
@@ -64,6 +68,7 @@ describe Repository do
 
 	it "forbides repository name changes" do
 		repo = valid_repo
+		repo.stub(:create_structure)
 		repo.save
 		first_used_name = repo.name
 
