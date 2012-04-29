@@ -363,7 +363,7 @@ hr {
   border: 1px solid #bb9004;
   background: #f9c006 url("images/messages/warning.png") no-repeat 10px center;
 }
-.flash .notice {
+.flash .notice, .flash .alert {
   color: #28485e;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
   border: 1px solid #8a9daa;
