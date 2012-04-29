@@ -1,4 +1,14 @@
+  <% if @user_credential.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@user_credential.errors.count, "error") %> prohibited this user credential from being saved:</h2>
 
+      <ul>
+      <% @user_credential.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
   <div class="group">
     <%= f.label :title, t("activerecord.attributes.user_credential.title", :default => "Title"), :class => :label %>
     <%= f.text_field :title, :class => 'text_field' %>
