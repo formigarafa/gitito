@@ -16,12 +16,7 @@
 
         <p>
           <b><%= t("activerecord.attributes.user_credential.key", :default => t("activerecord.labels.key", :default => "Key")) %>:</b>
-          <%= @user_credential.key %>
-        </p>
-
-        <p>
-          <b><%= t("activerecord.attributes.user_credential.user_id", :default => t("activerecord.labels.user_id", :default => "User")) %>:</b>
-          <%= @user_credential.user_id %>
+          <%= @user_credential.key.truncate 80 %>
         </p>
       <div class="wat-cf">
         <%= link_to image_tag("web-app-theme/icons/application_edit.png", :alt => "#{t("web-app-theme.edit", :default=> "Edit")}") + " " + t("web-app-theme.edit", :default=> "Edit"), edit_user_credential_path(@user_credential), :class => "button" %> 
