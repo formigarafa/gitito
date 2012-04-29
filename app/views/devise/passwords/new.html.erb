@@ -1,0 +1,37 @@
+<div class="block" id="block-login">
+  <h2>Forgot your password?</h2>
+  <div class="content login">
+    <div class="flash">&nbsp;
+      <% flash.each do |type, message| %>
+        <div class="message <%= type %>">
+          <p><%= message %></p>
+        </div>
+      <% end %>
+    </div>
+	<%= devise_error_messages! %>
+
+
+    <%= form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => {:method => :post, :class => "form login"}) do |f| %>
+      <div class="group wat-cf">
+        <div class="left">
+          <label class="label right">email</label>
+        </div>
+        <div class="right">
+          <%= f.email_field :email, :class => :text_field %>
+        </div>
+      </div>
+      
+      <div class="group navform wat-cf">
+        <div class="right">
+          <button class="button" type="submit">
+            <img src="images/icons/key.png" alt="Save" /> Send me reset password instructions
+          </button>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<%= render :partial => "devise/shared/links" %>
+
+
