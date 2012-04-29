@@ -1,0 +1,54 @@
+<div class="block" id="block-signup">
+    <h2>Sign up</h2>
+    <div class="content">
+	    <div class="flash">&nbsp;
+	      <% flash.each do |type, message| %>
+	        <div class="message <%= type %>">
+	          <p><%= message %></p>
+	        </div>
+	      <% end %>
+	    </div>
+
+	    <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => {:class => "form login"}) do |f| %>
+	        <div class="group wat-cf">
+				<div class="left">
+					<label class="label">username</label>
+				</div>
+				<div class="right">
+					<%= f.text_field :username %>
+				</div>
+				<!-- <span class="description">Ex: web-app-theme</span> -->
+			</div>
+
+	        <div class="group wat-cf">
+				<div class="left">
+					<label class="label">email</label>
+				</div>
+				<div class="right">
+					<%= f.email_field :email %>
+				</div>
+				<!-- <span class="description">Ex: web-app-theme</span> -->
+			</div>
+
+	        <div class="group wat-cf">
+				<div class="left">
+					<label class="label">password</label>
+				</div>
+				<div class="right">
+					<%= f.password_field :password %>
+				</div>
+				<!-- <span class="description">Ex: web-app-theme</span> -->
+			</div>
+
+			<div class="group navform wat-cf">
+				<div class="right">
+					<button class="button" type="submit">
+						<img src="images/icons/tick.png" alt="Save" /> Signup
+					</button>
+				</div>
+			</div>
+    	<% end %>
+    </div>
+</div>
+      
+<%= render :partial => "devise/shared/links" %>
