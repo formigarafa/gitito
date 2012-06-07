@@ -4,11 +4,12 @@ _(eg.: Works with Dreamhost shared servers)_
 
 # Description
 Works similar github and gitorious, you register ssh public keys on it, create repositories
-you can clone, push and pull from these repositories.
+you can clone, push and pull from these repositories. 
+You can also add collaborators who will have access to the repositories.
 
 # Known Issues:
 Other users can access everyone's repositories if they know repos addresses.
-This security check is not been done, yet.
+This security check is not done, yet.
 
 # Requirements:
 
