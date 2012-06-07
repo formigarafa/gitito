@@ -1,1 +1,11 @@
 /* Override here any style defined by web-app-theme */
+
+.collaborators .collaborator { min-height: 45px;}
+.collaborators .collaborator p { padding: 13px 0;}
+
+.collaborators .collaborator .button {
+  margin-top: 9px;
+  margin-right: 50px;
+  display:block;
+  float:right;
+}

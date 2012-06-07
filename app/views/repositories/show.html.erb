@@ -1,0 +1,57 @@
+<div class="block">
+  <div class="secondary-navigation">
+    <ul class="wat-cf">
+      <li class="first"><%= link_to "#{t("web-app-theme.list", :default => "List")}", repositories_path  %></li>
+      <li><%= link_to "#{t("web-app-theme.new", :default => "New")}", new_repository_path %></li>
+      <li class="active"><%= link_to "#{t("web-app-theme.show", :default => "Show")}", repository_path %></li>
+    </ul>
+  </div>          
+  <div class="content">
+    <h2><%= @repository.name %></h2>
+    <div class="inner">
+        <p>
+          <b><%= t("activerecord.attributes.repository.url", :default => t("activerecord.labels.name", :default => "url")) %>:</b>
+         <%= @repository.url %>
+        </p>
+
+      <div class="wat-cf">
+        <%= link_to image_tag("web-app-theme/icons/cross.png", :alt => "#{t("web-app-theme.delete", :default=> "Delete")}") + " " + t("web-app-theme.delete", :default => "Delete"), repository_path(@repository), :method => "delete", :class => "button", :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}" %>
+      </div>      
+    </div>
+    <h2>Collaborators</h2>
+    <div class ="inner collaborators">
+      <ul class="list">
+        <% @repository.collaborators.each do |collaborator| %>
+          <li>
+            <div class="left">
+              <img class="avatar" src="<%= collaborator.user.gravatar_url %>" alt="avatar">
+            </div>
+            <div class="item collaborator">
+              <%= link_to "Remove", repository_collaborator_path(collaborator.repository, collaborator), :confirm => "Are you sure you want to remove this collaborator?", :method => :delete, :class => "button" %>
+              <p>
+                <%= collaborator.username %> 
+              </p>
+            </div>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+    <div class ="inner">
+      <%= form_for [@repository, @repository.collaborators.new], :html => { :class => :form } do |f| -%>
+
+        <div class="group">
+          <%= f.label :username, t("activerecord.attributes.collaborator.username", :default => "collaborator"), :class => :label %>
+          <%= f.text_field :username, :class => 'text_field', :placeholder => "username"  %>
+        </div>
+
+        <div class="group navform wat-cf">
+          <button class="button" type="submit">
+            <%= image_tag("web-app-theme/icons/tick.png", :alt => "#{t("web-app-theme.add", :default => "Add")}") %> <%= t("web-app-theme.add", :default => "Add") %>
+          </button>
+        </div>
+      <% end -%>
+    </div>
+  </div>
+</div>
+
+<% content_for :sidebar, render(:partial => 'sidebar') -%>
