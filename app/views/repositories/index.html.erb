@@ -17,7 +17,7 @@
         <% @repositories.each do |repository| -%>
         <tr class="<%= cycle("odd", "even") %>">
                     <td>
-            <%= repository.url %>
+            <%= link_to repository.url, repository %>
           </td>
           
           <td class="last">
@@ -26,11 +26,24 @@
         </tr>          
         <% end -%>
       </table>
-      <div class="actions-bar wat-cf">
-        <div class="actions">
-        </div>
-        
-      </div>
+    </div>
+
+
+    <h2 class="title"><%= t("web-app-theme.all", :default => "All")  %> Colaborative Repositories</h2>
+    <div class="inner">
+      <table class="table">
+        <tr>
+          <th class="first"><%= t("activerecord.attributes.repository.name", :default => t("activerecord.labels.name", :default => "Name")) %>
+          </th>
+        </tr>
+        <% @collaborative_repositories.each do |repository| -%>
+          <tr class="<%= cycle("odd", "even") %>">
+            <td>
+              <%= repository.url %>
+            </td>
+          </tr>          
+        <% end -%>
+      </table>
     </div>
   </div>
 </div>
