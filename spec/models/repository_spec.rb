@@ -200,4 +200,8 @@ describe Repository do
 			subject.owned_by?(different_user).should be_false
 		end
 	end
+
+	context "being destroyed" do
+		it "destroys its collaborators"
+	end
 end
