@@ -10,7 +10,14 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120429054420) do
+ActiveRecord::Schema.define(:version => 20120607000942) do
+
+  create_table "collaborators", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "repository_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "repositories", :force => true do |t|
     t.string   "name"

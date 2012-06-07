@@ -2,7 +2,9 @@ Gitito::Application.routes.draw do
   devise_for :users
 
   resources :user_credentials
-  resources :repositories
+  resources :repositories do
+    resources :collaborators
+  end
 
   # The priority is based upon order of creation:
   # first created -> highest priority.
