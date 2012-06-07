@@ -7,3 +7,9 @@ Rails.configuration.class_eval do
 		@gitito[:gitito]
 	end
 end
+
+Gitito::Application.config.after_initialize do
+  Gitito::Application.configure do
+    config.action_mailer.default_url_options = { :host => Rails.configuration.gitito[:web_host] }
+  end
+end

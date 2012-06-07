@@ -3,3 +3,5 @@ gitito:
   ssh_user: "<%= Capistrano::CLI.ui.ask("Enter gitito ssh username: ") {|q| q.default = 'git'} %>"
   ssh_host: "<%= Capistrano::CLI.ui.ask("Enter gitito ssh hostname: ") {|q| q.default = 'example.com'} %>"
   web_host: "<%= Capistrano::CLI.ui.ask("Enter gitito web hostname: ") {|q| q.default = 'www.example.com'} %>"
+  mailer_sender: "<%= Capistrano::CLI.ui.ask("Enter gitito mailer sender address: ") {|q| q.default = 'gitito@example.com'} %>"
+  

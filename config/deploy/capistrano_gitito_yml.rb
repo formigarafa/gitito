@@ -32,7 +32,7 @@ Capistrano::Configuration.instance.load do
           ssh_user: "gitito"
           ssh_host: "fortito.com.br"
           web_host: "gitito.fortito.com.br"
-
+          mailer_sender: "gitito@example.com"
         EOF
 
         location = fetch(:template_dir, "config/deploy") + '/gitito.yml.erb'
