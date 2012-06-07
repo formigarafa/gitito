@@ -51,4 +51,8 @@ class Repository < ActiveRecord::Base
   after_destroy do
     remove_structure
   end
+
+  def owned_by? supposed_owner
+    self.user == supposed_owner
+  end
 end

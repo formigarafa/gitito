@@ -170,4 +170,18 @@ describe Repository do
 			
 		end
 	end
+	context "method owned_by?" do
+		it "returns true for users equals to given parameter" do
+			user = mock_model User
+			subject.user = 	user
+			subject.owned_by?(user).should be_true
+		end
+
+		it "returns false for users equals to given parameter" do
+			user = mock_model User
+			different_user = mock_model User
+			subject.user = 	user
+			subject.owned_by?(different_user).should be_false
+		end
+	end
 end
