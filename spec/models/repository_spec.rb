@@ -170,6 +170,22 @@ describe Repository do
 			
 		end
 	end
+
+	context "being shared" do
+		it "has many collaborators" do
+			collaborators = [mock_model(Collaborator),mock_model(Collaborator)]
+			collaborators.each do |collaborator|
+				subject.collaborators << collaborator
+			end
+
+			subject.collaborators.should =~ collaborators
+		end
+
+		it "has no collaborators" do
+			subject.collaborators.should have(0).collaborators
+		end
+	end
+
 	context "method owned_by?" do
 		it "returns true for users equals to given parameter" do
 			user = mock_model User
