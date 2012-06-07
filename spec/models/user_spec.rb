@@ -57,5 +57,12 @@ describe User do
 
 	end
 
-	
+	context "being destroyed" do
+		it "destroys its credentials"
+		it "destroys collaborative presence on third party repositories"
+		it "destroys its repositories" # think about it...
+	end
+
+	it "has relations with collaborative repositories"
+	it "generates gravatar url from user email"
 end

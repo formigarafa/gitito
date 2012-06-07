@@ -10,4 +10,10 @@ class User < ActiveRecord::Base
 
 	has_many :user_credentials
 	has_many :repositories
+  has_many :collaborative_relations, :class_name => "Collaborator"
+
+  def gravatar_url
+    hash = Digest::MD5.hexdigest(email)
+    "http://www.gravatar.com/avatar/#{hash}"
+  end
 end
