@@ -20,4 +20,5 @@ group :development, :test do
   gem "rspec-rails"
   gem "ZenTest", "~> 4.4.2"
   gem "autotest-rails", "~> 4.1.0"
+  gem "metric_fu"
 end
