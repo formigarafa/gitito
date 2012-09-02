@@ -219,6 +219,7 @@ DEPENDENCIES
   mysql2 (< 0.3)
   rack (= 1.2.1)
   rails (= 3.0.11)
+  rcov
   rspec-rails
   rugged
   sqlite3

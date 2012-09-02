@@ -21,4 +21,5 @@ group :development, :test do
   gem "ZenTest", "~> 4.4.2"
   gem "autotest-rails", "~> 4.1.0"
   gem "metric_fu"
+  gem "rcov", :require => false
 end
