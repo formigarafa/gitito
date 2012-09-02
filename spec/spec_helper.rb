@@ -6,7 +6,7 @@ if ENV['coverage'] == 'on'
   SimpleCov.start 'rails' do
     add_filter "vendor/ruby/"
     puts ENV["CC_BUILD_ARTIFACTS"]
-    coverage_dir ENV["CC_BUILD_ARTIFACTS"] if ENV["CC_BUILD_ARTIFACTS"]
+    coverage_dir "../#{File.basename(ENV["CC_BUILD_ARTIFACTS"])}/coverage" if ENV["CC_BUILD_ARTIFACTS"]
   end
 end
 
