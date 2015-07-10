@@ -6,7 +6,7 @@ class CollaboratorsController < InheritedResources::Base
     user = User.where(:username => params[:collaborator][:username]).find(:first)
     @collaborator = Repository.find(params[:repository_id]).collaborators.new :user => user
     create! do |success, failure|
-      success.html do
+       success.html do
         redirect_to repository_url(@collaborator.repository)
       end
       failure.html do
