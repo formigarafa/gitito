@@ -1,2 +1,1 @@
-set :domain, 'xaa.xlii.com.br'
-
+set :domain, "xaa.xlii.com.br"

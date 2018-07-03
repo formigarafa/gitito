@@ -1,6 +1,6 @@
-require File.expand_path('../boot', __FILE__)
+require File.expand_path("../boot", __FILE__)
 
-require 'rails/all'
+require "rails/all"
 
 # If you have a Gemfile, require the gems listed there, including any gems
 # you've limited to :test, :development, or :production.
@@ -43,10 +43,10 @@ module Gitito
       Devise::SessionsController.layout "devise"
       Devise::RegistrationsController.layout proc{ |controller| user_signed_in? ? "application" : "devise" }
       Devise::ConfirmationsController.layout "devise"
-      Devise::UnlocksController.layout "devise"            
-      Devise::PasswordsController.layout "devise"        
+      Devise::UnlocksController.layout "devise"
+      Devise::PasswordsController.layout "devise"
       Gitito::Application.configure do
-        config.action_mailer.default_url_options = { :host => Rails.configuration.gitito[:web_host] }
+        config.action_mailer.default_url_options = { host: Rails.configuration.gitito[:web_host] }
       end
     end
   end

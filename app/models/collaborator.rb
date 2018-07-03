@@ -4,10 +4,10 @@ class Collaborator < ActiveRecord::Base
   belongs_to :user
   belongs_to :repository
 
-  validates :user, :presence => {:message => "User not found"}
+  validates :user, presence: {message: "User not found"}
   validate :that_user_is_not_owner
-  validates_uniqueness_of :user_id, :scope => :repository_id, :message => "Collaborator is already on the list"
-  validates :repository, :presence => {:message => "Repository not found"}
+  validates_uniqueness_of :user_id, scope: :repository_id, message: "Collaborator is already on the list"
+  validates :repository, presence: {message: "Repository not found"}
 
   def username
     user and user.username
