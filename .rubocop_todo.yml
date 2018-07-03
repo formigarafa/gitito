@@ -441,13 +441,6 @@ Style/RescueStandardError:
   Exclude:
     - 'app/models/repository.rb'
 
-# Offense count: 267
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, ConsistentQuotesInMultiline.
-# SupportedStyles: single_quotes, double_quotes
-Style/StringLiterals:
-  Enabled: false
-
 # Offense count: 1
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle.

@@ -1,10 +1,10 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe UserCredential do
 	def valid_credential
 		UserCredential.new(
 			:title => "test key", 
-			:key => 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC4d8XdRasriu5HA/GrmNv6wM50TioIgjsW/NcuVnHfuF29SGZkb1mjodDkKVP7BboGIfyE1SG4mgAxv8VGtN3FBtSZPWPCD1zOGwg/uFgbugYgWRLg8IVKoSdDSgG7YwdLF7fktjpUCidFAaYCBnkzDkw+tWt9y79IdgokRwK+bmVuf80xXAr6mD9WLNqTxqXdmCHd9cMePzszdIVUtjIk0R/YHaoCZat+T2D+ICLs2oz2lv+4z5A6who82u6d0X5HDV7dIxf5s8rb/8HGbU1hshsK7VE6SXzph/dj7otkl4Mq4bJ3yLx6l7YktZ9hmVsn+S0zKcnlasD+ND2LM30X user@comment.part.com',
+			:key => "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC4d8XdRasriu5HA/GrmNv6wM50TioIgjsW/NcuVnHfuF29SGZkb1mjodDkKVP7BboGIfyE1SG4mgAxv8VGtN3FBtSZPWPCD1zOGwg/uFgbugYgWRLg8IVKoSdDSgG7YwdLF7fktjpUCidFAaYCBnkzDkw+tWt9y79IdgokRwK+bmVuf80xXAr6mD9WLNqTxqXdmCHd9cMePzszdIVUtjIk0R/YHaoCZat+T2D+ICLs2oz2lv+4z5A6who82u6d0X5HDV7dIxf5s8rb/8HGbU1hshsK7VE6SXzph/dj7otkl4Mq4bJ3yLx6l7YktZ9hmVsn+S0zKcnlasD+ND2LM30X user@comment.part.com",
 			:user => mock_model(User)
 		)
 	end
@@ -30,7 +30,7 @@ describe UserCredential do
 
 			it "fails for duplicated keys" do
 				user = mock_model(User)
-				key = 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC4d8XdRasriu5HA/GrmNv6wM50TioIgjsW/NcuVnHfuF29SGZkb1mjodDkKVP7BboGIfyE1SG4mgAxv8VGtN3FBtSZPWPCD1zOGwg/uFgbugYgWRLg8IVKoSdDSgG7YwdLF7fktjpUCidFAaYCBnkzDkw+tWt9y79IdgokRwK+bmVuf80xXAr6mD9WLNqTxqXdmCHd9cMePzszdIVUtjIk0R/YHaoCZat+T2D+ICLs2oz2lv+4z5A6who82u6d0X5HDV7dIxf5s8rb/8HGbU1hshsK7VE6SXzph/dj7otkl4Mq4bJ3yLx6l7YktZ9hmVsn+S0zKcnlasD+ND2LM30X user@comment.part.com'
+				key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC4d8XdRasriu5HA/GrmNv6wM50TioIgjsW/NcuVnHfuF29SGZkb1mjodDkKVP7BboGIfyE1SG4mgAxv8VGtN3FBtSZPWPCD1zOGwg/uFgbugYgWRLg8IVKoSdDSgG7YwdLF7fktjpUCidFAaYCBnkzDkw+tWt9y79IdgokRwK+bmVuf80xXAr6mD9WLNqTxqXdmCHd9cMePzszdIVUtjIk0R/YHaoCZat+T2D+ICLs2oz2lv+4z5A6who82u6d0X5HDV7dIxf5s8rb/8HGbU1hshsK7VE6SXzph/dj7otkl4Mq4bJ3yLx6l7YktZ9hmVsn+S0zKcnlasD+ND2LM30X user@comment.part.com"
 				UserCredential.stub(:generate_authorized_keys_file)
 				credential1 = valid_credential
 				credential1.key = key
@@ -56,9 +56,9 @@ describe UserCredential do
 	end
 
 	it "generates authorized_keys line with its key" do
-		key = 'ssh-rsa AAAAB3NzaC1yc2EA' + 'A' * 356
+		key = "ssh-rsa AAAAB3NzaC1yc2EA" + "A" * 356
 		subject.key = key
-		subject.stub(:id).and_return('42')
+		subject.stub(:id).and_return("42")
 		expected_line = "command=\"#{Rails.root}/script/ssh-command-proxy.sh 42\" #{key}"
 		
 		subject.authorized_keys_line.should == expected_line
@@ -79,7 +79,7 @@ describe UserCredential do
 				subject.generate_authorized_keys_file
 
 				File.exists?(auth_keys_folder).should be_truthy
-				File.new(auth_keys_folder).stat.mode.to_s(8)[-3..-1].should == '700'
+				File.new(auth_keys_folder).stat.mode.to_s(8)[-3..-1].should == "700"
 			end
 		end
 
@@ -105,11 +105,11 @@ describe UserCredential do
 					File.exists?(auth_keys_file).should be_falsey
 
 					subject.generate_authorized_keys_file
-					File.new(auth_keys_file).stat.mode.to_s(8)[-3..-1].should == '644'
+					File.new(auth_keys_file).stat.mode.to_s(8)[-3..-1].should == "644"
 				end
 			ensure
 				File.umask previous_umask
-				File.umask.to_s(8).should == '22'
+				File.umask.to_s(8).should == "22"
 			end
 		end
 
@@ -117,8 +117,8 @@ describe UserCredential do
 			Dir.mktmpdir do |tmp_dir|
 				auth_keys_file = "#{tmp_dir}/authorized_keys"
 				records_mock = []
-				records_mock << mock_model(UserCredential, :authorized_keys_line => 'line1')
-				records_mock << mock_model(UserCredential, :authorized_keys_line => 'line2')
+				records_mock << mock_model(UserCredential, :authorized_keys_line => "line1")
+				records_mock << mock_model(UserCredential, :authorized_keys_line => "line2")
 
 				subject.stub(:all).and_return(records_mock)
 				subject.stub(:authorized_keys_absolute_path).and_return(auth_keys_file)

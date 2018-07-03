@@ -2,12 +2,12 @@ set :bundle_cmd do
   "/home/#{user}/.gems/bin/bundle"
 end
 
-require 'bundler/capistrano'
+require "bundler/capistrano"
 
 set :default_stage, "xaa"
 set :stages, %w(xaa)
 
-require 'capistrano/ext/multistage'
+require "capistrano/ext/multistage"
 
 require "#{File.dirname(__FILE__)}/deploy/capistrano_gitito_yml.rb"
 require "#{File.dirname(__FILE__)}/deploy/capistrano_database_yml.rb"
@@ -15,8 +15,8 @@ require "#{File.dirname(__FILE__)}/deploy/capistrano_database_yml.rb"
 default_run_options[:pty] = true
 
 # be sure to change these
-set :user, 'xaa'
-set :application, 'gitito'
+set :user, "xaa"
+set :application, "gitito"
 set :deploy_to do 
   "/home/#{user}/#{domain}"
 end
@@ -37,11 +37,11 @@ role :db, :primary => true do
 end
 
 set :deploy_via, :remote_cache
-set :scm, 'git'
+set :scm, "git"
 
 set :branch do
   # default_tag = `git tag`.split("\n").last
-  default_tag = 'master'
+  default_tag = "master"
 
   Capistrano::CLI.ui.ask("Version to deploy (if is a tag make sure to push it first):") {|q| q.default = default_tag}
 end

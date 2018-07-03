@@ -1,8 +1,8 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe User do
 	def valid_user
-		User.new :username => "N4m3_W1th-V4l1d.Ch4r", :email => 'anyone@somedomain.com', :password => '1qaz2wsx'
+		User.new :username => "N4m3_W1th-V4l1d.Ch4r", :email => "anyone@somedomain.com", :password => "1qaz2wsx"
 	end
 
 	context "validity" do
@@ -12,8 +12,8 @@ describe User do
 
 		it "validates with matching password_confirmation" do
 			user = valid_user
-			user.password = 'p4ssw0rd'
-			user.password_confirmation = 'p4ssw0rd'
+			user.password = "p4ssw0rd"
+			user.password_confirmation = "p4ssw0rd"
 			user.should be_valid
 		end
 
@@ -38,8 +38,8 @@ describe User do
 
 		it "fails when password does not match password_confirmation" do
 			user = valid_user
-			user.password = '1qaz2wsx'
-			user.password_confirmation = '0okm9ijn'
+			user.password = "1qaz2wsx"
+			user.password_confirmation = "0okm9ijn"
 			user.should_not be_valid
 		end
 

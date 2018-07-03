@@ -1,10 +1,10 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe "repositories/index.html.erb" do
   before(:each) do
     assign(:repositories, [
-      stub_model(Repository, :url => 'repo1'),
-      stub_model(Repository, :url => 'repo2')
+      stub_model(Repository, :url => "repo1"),
+      stub_model(Repository, :url => "repo2")
     ])
     assign(:collaborative_repositories, [])
   end

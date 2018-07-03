@@ -1,1 +1,4 @@
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
 inherit_from: .rubocop_todo.yml

@@ -1,4 +1,4 @@
-require 'spec_helper'
+require "spec_helper"
 
 describe "repositories/new.html.erb" do
   before(:each) do

@@ -35,7 +35,7 @@ Capistrano::Configuration.instance.load do
           mailer_sender: "gitito@example.com"
         EOF
 
-        location = fetch(:template_dir, "config/deploy") + '/gitito.yml.erb'
+        location = fetch(:template_dir, "config/deploy") + "/gitito.yml.erb"
         template = File.file?(location) ? File.read(location) : default_template
 
         config = ERB.new(template)
