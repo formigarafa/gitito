@@ -1,4 +1,8 @@
+inherit_from: .rubocop_todo.yml
+
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 
-inherit_from: .rubocop_todo.yml
+Layout/AlignParameters:
+  EnforcedStyle: with_fixed_indentation
+  IndentationWidth: 0
