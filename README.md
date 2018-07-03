@@ -13,7 +13,8 @@ This security check is not done, yet.
 
 # Requirements:
 
-Ruby 2.0.0
+Ruby 2.3.7
+Other versions to bechecked
 
 # Configuration
 create files config/gitito.yml and config/database.yml 
