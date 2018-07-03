@@ -1,4 +1,4 @@
-# 
+#
 unless Capistrano::Configuration.respond_to?(:instance)
   abort "This extension requires Capistrano 2"
 end
@@ -19,9 +19,9 @@ Capistrano::Configuration.instance.load do
 
         When this recipe is loaded, gitito:setup is automatically configured \
         to be invoked after deploy:setup. You can skip this task setting \
-        the variable :skip_db_setup to true. This is especially useful \ 
+        the variable :skip_db_setup to true. This is especially useful \
         if you are using this recipe in combination with \
-        capistrano-ext/multistaging to avoid multiple db:setup calls \ 
+        capistrano-ext/multistaging to avoid multiple db:setup calls \
         when running deploy:setup for all stages one by one.
       DESC
       task :setup, :except => { :no_release => true } do
@@ -40,8 +40,8 @@ Capistrano::Configuration.instance.load do
 
         config = ERB.new(template)
 
-        run "mkdir -p #{shared_path}/db" 
-        run "mkdir -p #{shared_path}/config" 
+        run "mkdir -p #{shared_path}/db"
+        run "mkdir -p #{shared_path}/config"
         put config.result(binding), "#{shared_path}/config/gitito.yml"
       end
 
@@ -49,7 +49,7 @@ Capistrano::Configuration.instance.load do
         [internal] Updates the symlink for gitito.yml file to the just deployed release.
       DESC
       task :symlink, :except => { :no_release => true } do
-        run "ln -nfs #{shared_path}/config/gitito.yml #{release_path}/config/gitito.yml" 
+        run "ln -nfs #{shared_path}/config/gitito.yml #{release_path}/config/gitito.yml"
       end
 
     end

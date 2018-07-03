@@ -1,4 +1,4 @@
-set :bundle_cmd do 
+set :bundle_cmd do
   "/home/#{user}/.gems/bin/bundle"
 end
 
@@ -17,7 +17,7 @@ default_run_options[:pty] = true
 # be sure to change these
 set :user, "xaa"
 set :application, "gitito"
-set :deploy_to do 
+set :deploy_to do
   "/home/#{user}/#{domain}"
 end
 
@@ -77,15 +77,15 @@ namespace :data do
 
   end
 
-  namespace :backup do 
+  namespace :backup do
     task :default do
       database
       files
     end
-    
+
     task :files, :roles => :db, :only => { :primary => true } do
       run "mkdir -p #{backup_path}"
-      run "tar cjf #{backup_path}/system.tar.bz2 #{shared_path}/system" 
+      run "tar cjf #{backup_path}/system.tar.bz2 #{shared_path}/system"
     end
 
     task :database, :roles => :db, :only => { :primary => true } do
@@ -104,4 +104,3 @@ end
 after "deploy:update_code", "data:backup"
 after "deploy:setup",           "data:repositories:setup"
 after "deploy:finalize_update", "data:repositories:symlink"
-

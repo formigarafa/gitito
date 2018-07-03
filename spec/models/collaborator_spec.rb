@@ -5,7 +5,7 @@ describe Collaborator do
     owner = User.new
     repository = Repository.new :user => owner
     collaborator = User.new
-    
+
     Collaborator.new :user => collaborator, :repository => repository
   end
 
@@ -66,7 +66,7 @@ describe Collaborator do
     it "is not valid when user is owner of the repository" do
       collaborator = valid_collaborator
       collaborator.user = collaborator.repository.user
-      collaborator.should_not be_valid     
+      collaborator.should_not be_valid
     end
   end
 end

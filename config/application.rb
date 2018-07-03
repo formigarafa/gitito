@@ -43,8 +43,8 @@ module Gitito
       Devise::SessionsController.layout "devise"
       Devise::RegistrationsController.layout proc{ |controller| user_signed_in? ? "application" : "devise" }
       Devise::ConfirmationsController.layout "devise"
-      Devise::UnlocksController.layout "devise"            
-      Devise::PasswordsController.layout "devise"        
+      Devise::UnlocksController.layout "devise"
+      Devise::PasswordsController.layout "devise"
       Gitito::Application.configure do
         config.action_mailer.default_url_options = { :host => Rails.configuration.gitito[:web_host] }
       end

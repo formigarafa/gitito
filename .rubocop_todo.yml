@@ -189,49 +189,6 @@ Layout/SpaceInsideParens:
   Exclude:
     - 'spec/models/repository_spec.rb'
 
-# Offense count: 368
-# Cop supports --auto-correct.
-# Configuration parameters: IndentationWidth.
-Layout/Tab:
-  Exclude:
-    - 'app/controllers/repositories_controller.rb'
-    - 'app/controllers/user_credentials_controller.rb'
-    - 'app/models/user.rb'
-    - 'app/models/user_credential.rb'
-    - 'config/initializers/gitito.rb'
-    - 'spec/models/repository_spec.rb'
-    - 'spec/models/user_credential_spec.rb'
-    - 'spec/models/user_spec.rb'
-    - 'spec/views/user_credentials/index.html.erb_spec.rb'
-
-# Offense count: 7
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: final_newline, final_blank_line
-Layout/TrailingBlankLines:
-  Exclude:
-    - 'Capfile'
-    - 'config/deploy.rb'
-    - 'config/deploy/capistrano_database_yml.rb'
-    - 'config/deploy/capistrano_gitito_yml.rb'
-    - 'config/deploy/xaa.rb'
-    - 'spec/models/collaborator_spec.rb'
-    - 'spec/models/user_spec.rb'
-
-# Offense count: 42
-# Cop supports --auto-correct.
-# Configuration parameters: AllowInHeredoc.
-Layout/TrailingWhitespace:
-  Exclude:
-    - 'app/controllers/repositories_controller.rb'
-    - 'config/application.rb'
-    - 'config/deploy.rb'
-    - 'config/deploy/capistrano_database_yml.rb'
-    - 'config/deploy/capistrano_gitito_yml.rb'
-    - 'config/initializers/gitito.rb'
-    - 'spec/models/collaborator_spec.rb'
-    - 'spec/models/user_credential_spec.rb'
-
 # Offense count: 1
 Lint/AmbiguousBlockAssociation:
   Exclude:
