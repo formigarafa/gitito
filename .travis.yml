@@ -7,4 +7,5 @@ rvm:
 
 before_script:
   - "cp ./config/database.yml.example ./config/database.yml"
+  - "cp ./config/gitito.yml.example ./config/gitito.yml"
 
