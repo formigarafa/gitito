@@ -1,4 +1,4 @@
-require File.expand_path('../boot', __FILE__)
+require File.expand_path('boot', __dir__)
 
 require 'rails/all'
 
@@ -34,19 +34,19 @@ module Gitito
     # config.action_view.javascript_expansions[:defaults] = %w(jquery rails)
 
     # Configure the default encoding used in templates for Ruby 1.9.
-    config.encoding = "utf-8"
+    config.encoding = 'utf-8'
 
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
 
     config.to_prepare do
-      Devise::SessionsController.layout "devise"
-      Devise::RegistrationsController.layout proc{ |controller| user_signed_in? ? "application" : "devise" }
-      Devise::ConfirmationsController.layout "devise"
-      Devise::UnlocksController.layout "devise"            
-      Devise::PasswordsController.layout "devise"        
+      Devise::SessionsController.layout 'devise'
+      Devise::RegistrationsController.layout proc { |_controller| user_signed_in? ? 'application' : 'devise' }
+      Devise::ConfirmationsController.layout 'devise'
+      Devise::UnlocksController.layout 'devise'
+      Devise::PasswordsController.layout 'devise'
       Gitito::Application.configure do
-        config.action_mailer.default_url_options = { :host => Rails.configuration.gitito[:web_host] }
+        config.action_mailer.default_url_options = { host: Rails.configuration.gitito[:web_host] }
       end
     end
   end

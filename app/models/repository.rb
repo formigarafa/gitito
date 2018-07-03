@@ -4,8 +4,8 @@ class Repository < ActiveRecord::Base
 
   attr_readonly :name
 
-  validates :name, :presence => true, :format => { :with => /^[a-zA-Z0-9\-_.]*$/ }, :uniqueness => {:scope => :user_id}
-  validates :user, :presence => true
+  validates :name, presence: true, format: { with: /^[a-zA-Z0-9\-_.]*$/ }, uniqueness: { scope: :user_id }
+  validates :user, presence: true
 
   def self.repos_root
     "#{Rails.root}/db/users_repositories/#{Rails.env}"
@@ -28,17 +28,17 @@ class Repository < ActiveRecord::Base
   end
 
   def folder_exists?
-    File.exists? server_path
+    File.exist? server_path
   end
 
   def structure_ok?
     Rugged::Repository.new server_path
-  rescue
+  rescue StandardError
     false
   end
 
   def create_structure
-    Rugged::Repository.init_at(server_path, bare=true) unless folder_exists?
+    Rugged::Repository.init_at(server_path, bare = true) unless folder_exists?
   end
 
   def remove_structure
@@ -53,7 +53,7 @@ class Repository < ActiveRecord::Base
     remove_structure
   end
 
-  def owned_by? supposed_owner
-    self.user == supposed_owner
+  def owned_by?(supposed_owner)
+    user == supposed_owner
   end
 end

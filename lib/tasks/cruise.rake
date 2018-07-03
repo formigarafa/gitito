@@ -1,5 +1,5 @@
-desc "cruise control continuous integration"
-task :cruise => [:spec, "metrics:all"]
+desc 'cruise control continuous integration'
+task cruise: [:spec, 'metrics:all']
 
 # MetricFu::Configuration.run do |config|
 #   # config.rcov[:test_files] = ['spec/**/*_spec.rb']
