@@ -1,0 +1,18 @@
+script: bundle exec rake spec
+language: ruby
+cache: bundler
+bundler_args: --without development
+rvm:
+- 2.3.7
+
+before_install:
+  - umask 022
+
+before_script:
+  - "cp ./config/database.yml.example ./config/database.yml"
+  - "cp ./config/gitito.yml.example ./config/gitito.yml"
+
+script: 
+  - bundle exec rake db:schema:load
+  - bundle exec rake db:test:prepare
+  - bundle exec rake spec
