@@ -75,10 +75,10 @@ describe UserCredential do
 				auth_keys_folder = File.dirname auth_keys_file
 
 				subject.stub(:authorized_keys_absolute_path).and_return(auth_keys_file)
-				File.exists?(auth_keys_folder).should be_false
+				File.exists?(auth_keys_folder).should be_falsey
 				subject.generate_authorized_keys_file
 
-				File.exists?(auth_keys_folder).should be_true
+				File.exists?(auth_keys_folder).should be_truthy
 				File.new(auth_keys_folder).stat.mode.to_s(8)[-3..-1].should == '700'
 			end
 		end
@@ -88,7 +88,7 @@ describe UserCredential do
 				auth_keys_file = "#{tmp_dir}/s1/s2/.ssh/authorized_keys"
 				
 				subject.stub(:authorized_keys_absolute_path).and_return(auth_keys_file)
-				File.exists?(auth_keys_file).should be_false
+				File.exists?(auth_keys_file).should be_falsey
 
 				subject.generate_authorized_keys_file
 				File.new(auth_keys_file).stat.size.should == 0
@@ -102,7 +102,7 @@ describe UserCredential do
 					auth_keys_file = "#{tmp_dir}/.ssh/authorized_keys"
 					
 					subject.stub(:authorized_keys_absolute_path).and_return(auth_keys_file)
-					File.exists?(auth_keys_file).should be_false
+					File.exists?(auth_keys_file).should be_falsey
 
 					subject.generate_authorized_keys_file
 					File.new(auth_keys_file).stat.mode.to_s(8)[-3..-1].should == '644'

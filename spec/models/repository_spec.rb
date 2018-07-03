@@ -107,38 +107,38 @@ describe Repository do
 			repo = Repository.new
 			repo.should_receive(:server_path).and_return("#{Rails.root}/spec/fixtures/not_repo_test")
 
-			repo.folder_exists?.should be_true
+			repo.folder_exists?.should be_truthy
 		end
 
 		it "can check if there is NOT a folder on repository place" do
 			repo = Repository.new
 			repo.should_receive(:server_path).and_return("#{Rails.root}/spec/fixtures/somewhere_else")
 
-			repo.folder_exists?.should be_false
+			repo.folder_exists?.should be_falsey
 		end
 
 		it "can check if there is a repo placed" do
 			repo = Repository.new
 			repo.should_receive(:server_path).and_return("#{Rails.root}/spec/fixtures/repo_test.git")
 
-			repo.structure_ok?.should be_true
+			repo.structure_ok?.should be_truthy
 		end
 
 		it "can check if there is NOT a repo placed" do
 			repo = Repository.new
 			repo.should_receive(:server_path).and_return("#{Rails.root}/spec/fixtures/none_repo_test.git")
 
-			repo.structure_ok?.should be_false
+			repo.structure_ok?.should be_falsey
 		end
 
 		it "create repository tree when doesn't exist one" do
 			Dir.mktmpdir do |tmp_dir|
 				repo = Repository.new
 				repo.stub(:server_path).and_return(tmp_dir+"/juca/repo_tmp")
-				
-				repo.folder_exists?.should be_false
+
+				repo.folder_exists?.should be_falsey
 				repo.create_structure
-				repo.folder_exists?.should be_true
+				repo.folder_exists?.should be_truthy
 			end
 		end
 
@@ -148,7 +148,7 @@ describe Repository do
 
 				repo.stub(:folder_exists?).and_return(true)
 				Rugged::Repository.should_not_receive :init_at
-				
+
 				repo.create_structure
 			end
 		end
@@ -162,12 +162,12 @@ describe Repository do
 				repo = Repository.new
 				repo.stub(:server_path).and_return("#{tmp_dir}/1")
 
-				repo.folder_exists?.should be_true
+				repo.folder_exists?.should be_truthy
 				repo.remove_structure
 
-				repo.folder_exists?.should be_false
+				repo.folder_exists?.should be_falsey
 			end
-			
+
 		end
 	end
 
@@ -182,7 +182,7 @@ describe Repository do
 		end
 
 		it "has no collaborators" do
-			subject.collaborators.should have(0).collaborators
+			subject.collaborators.size.should eq(0)
 		end
 	end
 
@@ -190,14 +190,14 @@ describe Repository do
 		it "returns true for users equals to given parameter" do
 			user = mock_model User
 			subject.user = 	user
-			subject.owned_by?(user).should be_true
+			subject.owned_by?(user).should be_truthy
 		end
 
 		it "returns false for users equals to given parameter" do
 			user = mock_model User
 			different_user = mock_model User
 			subject.user = 	user
-			subject.owned_by?(different_user).should be_false
+			subject.owned_by?(different_user).should be_falsey
 		end
 	end
 

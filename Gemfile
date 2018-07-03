@@ -17,6 +17,7 @@ group :development, :test do
   gem 'sqlite3'
   gem 'capybara'
   gem "rspec-rails"
+  gem "rspec-activemodel-mocks"
   gem 'rake', '< 11.0' # locked because of rspec-core
   gem 'test-unit' # rspec need that, now
   gem "ZenTest", "~> 4.4.2"

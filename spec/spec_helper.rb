@@ -2,7 +2,7 @@
 ENV["RAILS_ENV"] ||= 'test'
 
 if ENV['coverage'] == 'on'
-  require 'simplecov'  
+  require 'simplecov'
   SimpleCov.start 'rails' do
     add_filter "vendor/ruby/"
     puts ENV["CC_BUILD_ARTIFACTS"]
@@ -42,4 +42,5 @@ RSpec.configure do |config|
   # rspec-rails.
   config.infer_base_class_for_anonymous_controllers = false
   config.include Devise::TestHelpers, :type => :controller
+  config.infer_spec_type_from_file_location!
 end
