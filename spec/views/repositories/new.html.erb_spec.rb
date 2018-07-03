@@ -8,8 +8,9 @@ describe "repositories/new.html.erb" do
   it "renders new repository form" do
     render
 
-    # Run the generator again with the --webrat flag if you want to use webrat matchers
-    assert_select "form", :action => repositories_path, :method => "post" do
+    # Run the generator again with the --webrat flag
+    # if you want to use webrat matchers
+    assert_select "form", action: repositories_path, method: "post" do
     end
   end
 end

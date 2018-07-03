@@ -2,7 +2,7 @@ require "spec_helper"
 
 describe Repository do
   def valid_repo
-    Repository.new :name => "N4m3_W1th-V4l1d.Ch4r", :user => mock_model(User, :username => "juca")
+    Repository.new name: "N4m3_W1th-V4l1d.Ch4r", user: mock_model(User, username: "juca")
   end
 
   context "validity" do
@@ -35,7 +35,7 @@ describe Repository do
     end
 
     it "is not allowed to one user have two repositories with the same name" do
-      user = mock_model(User, :username => "juca")
+      user = mock_model(User, username: "juca")
       repo1 = Repository.new
       repo1.stub(:create_structure)
       repo1.name = "same_name"
@@ -54,12 +54,12 @@ describe Repository do
       repo1 = Repository.new
       repo1.name = "same_name"
       repo1.stub(:create_structure)
-      repo1.user = mock_model(User, :username => "juca")
+      repo1.user = mock_model(User, username: "juca")
       repo1.save
 
       repo2 = Repository.new
       repo2.stub(:create_structure)
-      repo2.user = mock_model(User, :username => "drica.silva")
+      repo2.user = mock_model(User, username: "drica.silva")
       repo2.name = "same_name"
       repo2.should be_valid
     end
@@ -87,13 +87,13 @@ describe Repository do
     end
 
     it "has method to get repository path on file server" do
-      repo = Repository.new :name => "tilt", :user => stub_model( User,  :username => "formigarafa" )
+      repo = Repository.new name: "tilt", user: stub_model( User,  username: "formigarafa" )
       Repository.stub(:repos_root).and_return("/rOOt")
       repo.server_path.should == "/rOOt/formigarafa/tilt.git"
     end
 
     it "has method to get repository access url" do
-      repo = Repository.new :name => "tilt", :user => stub_model( User,  :username => "formigarafa" )
+      repo = Repository.new name: "tilt", user: stub_model( User,  username: "formigarafa" )
       repo.stub(:ssh_user).and_return("git")
       repo.stub(:ssh_host).and_return("gitito.com")
 

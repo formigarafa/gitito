@@ -46,7 +46,7 @@ module Gitito
       Devise::UnlocksController.layout "devise"
       Devise::PasswordsController.layout "devise"
       Gitito::Application.configure do
-        config.action_mailer.default_url_options = { :host => Rails.configuration.gitito[:web_host] }
+        config.action_mailer.default_url_options = { host: Rails.configuration.gitito[:web_host] }
       end
     end
   end

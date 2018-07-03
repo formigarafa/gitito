@@ -1,8 +1,33 @@
 inherit_from: .rubocop_todo.yml
 
+Rails:
+  enabled: true
+
+AllCops:
+  Excludes:
+    - db/schema.rb
+
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 
 Layout/AlignParameters:
   EnforcedStyle: with_fixed_indentation
-  IndentationWidth: 0
+  IndentationWidth: 2
+
+Metrics/LineLength:
+  Max: 110
+
+Style/HashSyntax:
+  EnforcedStyle: ruby19
+
+Style/TrailingCommaInArguments:
+  EnforcedStyleForMultiline: consistent_comma
+
+Style/TrailingCommaInArrayLiteral:
+  EnforcedStyleForMultiline: consistent_comma
+
+Style/TrailingCommaInHashLiteral:
+  EnforcedStyleForMultiline: consistent_comma
+
+Layout/FirstParameterIndentation:
+  EnforcedStyle: consistent

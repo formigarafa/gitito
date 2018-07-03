@@ -8,8 +8,9 @@ describe "user_credentials/new.html.erb" do
   it "renders new user_credential form" do
     render
 
-    # Run the generator again with the --webrat flag if you want to use webrat matchers
-    assert_select "form", :action => user_credentials_path, :method => "post" do
+    # Run the generator again with the --webrat flag
+    # if you want to use webrat matchers
+    assert_select "form", action: user_credentials_path, method: "post" do
     end
   end
 end

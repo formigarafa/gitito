@@ -2,7 +2,7 @@ require "spec_helper"
 
 describe User do
   def valid_user
-    User.new :username => "N4m3_W1th-V4l1d.Ch4r", :email => "anyone@somedomain.com", :password => "1qaz2wsx"
+    User.new username: "N4m3_W1th-V4l1d.Ch4r", email: "anyone@somedomain.com", password: "1qaz2wsx"
   end
 
   context "validity" do

@@ -2,10 +2,19 @@ require "spec_helper"
 
 describe UserCredential do
   def valid_credential
+    key = [
+      "ssh-rsa ",
+      "AAAAB3NzaC1yc2EAAAADAQABAAABAQC4d8XdRasriu5HA/GrmNv6wM50TioIgjsW/NcuVnH",
+      "fuF29SGZkb1mjodDkKVP7BboGIfyE1SG4mgAxv8VGtN3FBtSZPWPCD1zOGwg/uFgbugYgWR",
+      "Lg8IVKoSdDSgG7YwdLF7fktjpUCidFAaYCBnkzDkw+tWt9y79IdgokRwK+bmVuf80xXAr6m",
+      "D9WLNqTxqXdmCHd9cMePzszdIVUtjIk0R/YHaoCZat+T2D+ICLs2oz2lv+4z5A6who82u6d",
+      "0X5HDV7dIxf5s8rb/8HGbU1hshsK7VE6SXzph/dj7otkl4Mq4bJ3yLx6l7YktZ9hmVsn+S0",
+      "zKcnlasD+ND2LM30X user@comment.part.com",
+    ].join("")
     UserCredential.new(
-      :title => "test key",
-      :key => "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC4d8XdRasriu5HA/GrmNv6wM50TioIgjsW/NcuVnHfuF29SGZkb1mjodDkKVP7BboGIfyE1SG4mgAxv8VGtN3FBtSZPWPCD1zOGwg/uFgbugYgWRLg8IVKoSdDSgG7YwdLF7fktjpUCidFAaYCBnkzDkw+tWt9y79IdgokRwK+bmVuf80xXAr6mD9WLNqTxqXdmCHd9cMePzszdIVUtjIk0R/YHaoCZat+T2D+ICLs2oz2lv+4z5A6who82u6d0X5HDV7dIxf5s8rb/8HGbU1hshsK7VE6SXzph/dj7otkl4Mq4bJ3yLx6l7YktZ9hmVsn+S0zKcnlasD+ND2LM30X user@comment.part.com",
-      :user => mock_model(User)
+      title: "test key",
+      key: key,
+      user: mock_model(User),
     )
   end
 
@@ -30,7 +39,15 @@ describe UserCredential do
 
       it "fails for duplicated keys" do
         user = mock_model(User)
-        key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC4d8XdRasriu5HA/GrmNv6wM50TioIgjsW/NcuVnHfuF29SGZkb1mjodDkKVP7BboGIfyE1SG4mgAxv8VGtN3FBtSZPWPCD1zOGwg/uFgbugYgWRLg8IVKoSdDSgG7YwdLF7fktjpUCidFAaYCBnkzDkw+tWt9y79IdgokRwK+bmVuf80xXAr6mD9WLNqTxqXdmCHd9cMePzszdIVUtjIk0R/YHaoCZat+T2D+ICLs2oz2lv+4z5A6who82u6d0X5HDV7dIxf5s8rb/8HGbU1hshsK7VE6SXzph/dj7otkl4Mq4bJ3yLx6l7YktZ9hmVsn+S0zKcnlasD+ND2LM30X user@comment.part.com"
+        key = [
+          "ssh-rsa ",
+          "AAAAB3NzaC1yc2EAAAADAQABAAABAQC4d8XdRasriu5HA/GrmNv6wM50TioIgjsW/NcuVnH",
+          "fuF29SGZkb1mjodDkKVP7BboGIfyE1SG4mgAxv8VGtN3FBtSZPWPCD1zOGwg/uFgbugYgWR",
+          "Lg8IVKoSdDSgG7YwdLF7fktjpUCidFAaYCBnkzDkw+tWt9y79IdgokRwK+bmVuf80xXAr6m",
+          "D9WLNqTxqXdmCHd9cMePzszdIVUtjIk0R/YHaoCZat+T2D+ICLs2oz2lv+4z5A6who82u6d",
+          "0X5HDV7dIxf5s8rb/8HGbU1hshsK7VE6SXzph/dj7otkl4Mq4bJ3yLx6l7YktZ9hmVsn+S0",
+          "zKcnlasD+ND2LM30X user@comment.part.com",
+        ].join("")
         UserCredential.stub(:generate_authorized_keys_file)
         credential1 = valid_credential
         credential1.key = key
@@ -116,8 +133,8 @@ describe UserCredential do
       Dir.mktmpdir do |tmp_dir|
         auth_keys_file = "#{tmp_dir}/authorized_keys"
         records_mock = []
-        records_mock << mock_model(UserCredential, :authorized_keys_line => "line1")
-        records_mock << mock_model(UserCredential, :authorized_keys_line => "line2")
+        records_mock << mock_model(UserCredential, authorized_keys_line: "line1")
+        records_mock << mock_model(UserCredential, authorized_keys_line: "line2")
 
         subject.stub(:all).and_return(records_mock)
         subject.stub(:authorized_keys_absolute_path).and_return(auth_keys_file)

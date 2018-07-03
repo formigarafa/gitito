@@ -70,14 +70,6 @@ Layout/ExtraSpacing:
     - 'script/rails'
     - 'spec/models/repository_spec.rb'
 
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, IndentationWidth.
-# SupportedStyles: consistent, consistent_relative_to_receiver, special_for_inner_method_call, special_for_inner_method_call_in_parentheses
-Layout/FirstParameterIndentation:
-  Exclude:
-    - 'spec/models/user_credential_spec.rb'
-
 # Offense count: 4
 # Cop supports --auto-correct.
 # Configuration parameters: EnforcedStyle, IndentationWidth.
@@ -231,7 +223,7 @@ Metrics/BlockLength:
 # Offense count: 1
 # Configuration parameters: CountComments.
 Metrics/MethodLength:
-  Max: 11
+  Max: 14
 
 # Offense count: 2
 # Configuration parameters: Blacklist.
@@ -324,13 +316,6 @@ Style/ExpandPathArguments:
     - 'spec/spec_helper.rb'
     - 'test/test_helper.rb'
 
-# Offense count: 124
-# Cop supports --auto-correct.
-# Configuration parameters: UseHashRocketsWithSymbolValues, PreferHashRocketsForNonAlnumEndingSymbols.
-# SupportedStyles: ruby19, hash_rockets, no_mixed_keys, ruby19_no_mixed_keys
-Style/HashSyntax:
-  EnforcedStyle: hash_rockets
-
 # Offense count: 2
 # Cop supports --auto-correct.
 Style/IfUnlessModifier:
@@ -389,17 +374,3 @@ Style/RescueStandardError:
 Style/StringLiteralsInInterpolation:
   Exclude:
     - 'spec/spec_helper.rb'
-
-# Offense count: 1
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyleForMultiline.
-# SupportedStylesForMultiline: comma, consistent_comma, no_comma
-Style/TrailingCommaInArrayLiteral:
-  Exclude:
-    - 'spec/views/user_credentials/index.html.erb_spec.rb'
-
-# Offense count: 118
-# Configuration parameters: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, IgnoredPatterns.
-# URISchemes: http, https
-Metrics/LineLength:
-  Max: 422

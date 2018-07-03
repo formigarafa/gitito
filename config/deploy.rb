@@ -32,7 +32,7 @@ role :web do
   domain
 end
 
-role :db, :primary => true do
+role :db, primary: true do
   domain
 end
 
@@ -43,7 +43,9 @@ set :branch do
   # default_tag = `git tag`.split("\n").last
   default_tag = "master"
 
-  Capistrano::CLI.ui.ask("Version to deploy (if is a tag make sure to push it first):") {|q| q.default = default_tag}
+  Capistrano::CLI.ui.ask(
+    "Version to deploy (if is a tag make sure to push it first):",
+  ) {|q| q.default = default_tag}
 end
 
 set :git_shallow_clone, 1
@@ -67,11 +69,11 @@ end
 namespace :data do
   namespace :repositories do
     # só com setup
-    task :setup, :roles => :db, :only => { :primary => true } do
+    task :setup, roles: :db, only: { primary: true } do
       run "mkdir -p #{users_repositories_path}"
     end
 
-    task :symlink, :except => { :no_release => true } do
+    task :symlink, except: { no_release: true } do
       run "ln -nfs #{users_repositories_path} #{release_path}/db/users_repositories"
     end
 
@@ -83,18 +85,29 @@ namespace :data do
       files
     end
 
-    task :files, :roles => :db, :only => { :primary => true } do
+    task :files, roles: :db, only: { primary: true } do
       run "mkdir -p #{backup_path}"
       run "tar cjf #{backup_path}/system.tar.bz2 #{shared_path}/system"
     end
 
-    task :database, :roles => :db, :only => { :primary => true } do
+    task :database, roles: :db, only: { primary: true } do
       run "mkdir -p #{backup_path}"
       filename = "#{backup_path}/mysqldump.sql.bz2"
-      text = capture "if [ -f #{deploy_to}/current/config/database.yml ]; then cat #{deploy_to}/current/config/database.yml; else cat #{shared_path}/cached-copy/config/database.yml; fi"
+      text = capture [
+        "if [ -f #{deploy_to}/current/config/database.yml ]",
+        "then cat #{deploy_to}/current/config/database.yml",
+        "else cat #{shared_path}/cached-copy/config/database.yml",
+        "fi",
+      ].join("; ")
       yaml = YAML::load(text)
 
-      run "mysqldump -h #{yaml['production']['host']} -u #{yaml['production']['username']} -p #{yaml['production']['database']} | bzip2 -c > #{filename}" do |ch, stream, out|
+      run [
+        "mysqldump",
+        "-h #{yaml['production']['host']}",
+        "-u #{yaml['production']['username']}",
+        "-p #{yaml['production']['database']}",
+        "| bzip2 -c > #{filename}",
+      ].join(" ") do |ch, stream, out|
         ch.send_data "#{yaml['production']['password']}\n" if out =~ /^Enter password:/
       end
     end

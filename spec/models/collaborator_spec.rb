@@ -3,10 +3,10 @@ require "spec_helper"
 describe Collaborator do
   def valid_collaborator
     owner = User.new
-    repository = Repository.new :user => owner
+    repository = Repository.new user: owner
     collaborator = User.new
 
-    Collaborator.new :user => collaborator, :repository => repository
+    Collaborator.new user: collaborator, repository: repository
   end
 
   context "validity" do
@@ -30,10 +30,10 @@ describe Collaborator do
       repository = mock_model Repository
       repository.stub(:owned_by?).and_return(false)
       user = mock_model User
-      collaborator = Collaborator.new :user => user, :repository => repository
+      collaborator = Collaborator.new user: user, repository: repository
       collaborator.save
 
-      collaborator = Collaborator.new :user => user, :repository => repository
+      collaborator = Collaborator.new user: user, repository: repository
       collaborator.should_not be_valid
     end
 
@@ -42,10 +42,10 @@ describe Collaborator do
       repository.stub(:owned_by?).and_return(false)
       user1 = mock_model User
       user2 = mock_model User
-      collaborator = Collaborator.new :user => user1, :repository => repository
+      collaborator = Collaborator.new user: user1, repository: repository
       collaborator.save
 
-      collaborator = Collaborator.new :user => user2, :repository => repository
+      collaborator = Collaborator.new user: user2, repository: repository
       collaborator.should be_valid
     end
 
@@ -56,10 +56,10 @@ describe Collaborator do
       repository2.stub(:owned_by?).and_return(false)
 
       user = mock_model User
-      collaborator = Collaborator.new :user => user, :repository => repository1
+      collaborator = Collaborator.new user: user, repository: repository1
       collaborator.save
 
-      collaborator = Collaborator.new :user => user, :repository => repository2
+      collaborator = Collaborator.new user: user, repository: repository2
       collaborator.should be_valid
     end
 
