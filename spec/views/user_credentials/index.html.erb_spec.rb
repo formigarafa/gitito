@@ -1,12 +1,11 @@
 require "spec_helper"
 
 describe "user_credentials/index.html.erb" do
-
   context "with 2 credentials" do
     before(:each) do
       assign(:user_credentials, [
-      stub_model(UserCredential, title: "key one", key: "contents-key-one"),
-      stub_model(UserCredential, title: "key two", key: "contents-key-two"),
+        stub_model(UserCredential, title: "key one", key: "contents-key-one"),
+        stub_model(UserCredential, title: "key two", key: "contents-key-two"),
       ],)
     end
 

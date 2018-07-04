@@ -23,6 +23,9 @@ Style/HashSyntax:
 Style/TrailingCommaInArguments:
   EnforcedStyleForMultiline: consistent_comma
 
+Layout/IndentArray:
+  EnforcedStyle: consistent
+
 Style/TrailingCommaInArrayLiteral:
   EnforcedStyleForMultiline: consistent_comma
 
@@ -31,3 +34,12 @@ Style/TrailingCommaInHashLiteral:
 
 Layout/FirstParameterIndentation:
   EnforcedStyle: consistent
+
+Layout/SpaceInsideBlockBraces:
+  EnforcedStyle: space
+  EnforcedStyleForEmptyBraces: no_space
+  SpaceBeforeBlockParameters: false
+
+Layout/SpaceInsideHashLiteralBraces:
+  EnforcedStyle: no_space
+  EnforcedStyleForEmptyBraces: no_space

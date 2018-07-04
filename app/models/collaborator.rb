@@ -1,6 +1,4 @@
 class Collaborator < ActiveRecord::Base
-  attr_accessor :username
-
   belongs_to :user
   belongs_to :repository
 

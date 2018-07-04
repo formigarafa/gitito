@@ -61,13 +61,12 @@ describe UserCredential do
         credential2.should_not be_valid
       end
 
-
       # ref: http://stackoverflow.com/questions/2494450/ssh-rsa-public-key-validation-using-a-regular-expression
       # latter, dont'botter me, yet.
-      #it "fails with no spaces separating fields"
-      #it "fails when first field not in [ssh-rsa, ssh-dsa]"
-      #it "fails when second field can't be base64 decoded"
-      #it "fails when decoded second field has wrong leading"
+      # it "fails with no spaces separating fields"
+      # it "fails when first field not in [ssh-rsa, ssh-dsa]"
+      # it "fails when second field can't be base64 decoded"
+      # it "fails when decoded second field has wrong leading"
     end
   end
 
@@ -81,7 +80,7 @@ describe UserCredential do
   end
 
   context "authorized_keys generation" do
-    subject {UserCredential}
+    subject { UserCredential }
 
     it { should respond_to :generate_authorized_keys_file }
 
@@ -91,10 +90,10 @@ describe UserCredential do
         auth_keys_folder = File.dirname auth_keys_file
 
         subject.stub(:authorized_keys_absolute_path).and_return(auth_keys_file)
-        File.exists?(auth_keys_folder).should be_falsey
+        File.exist?(auth_keys_folder).should be_falsey
         subject.generate_authorized_keys_file
 
-        File.exists?(auth_keys_folder).should be_truthy
+        File.exist?(auth_keys_folder).should be_truthy
         File.new(auth_keys_folder).stat.mode.to_s(8)[-3..-1].should == "700"
       end
     end
@@ -104,7 +103,7 @@ describe UserCredential do
         auth_keys_file = "#{tmp_dir}/s1/s2/.ssh/authorized_keys"
 
         subject.stub(:authorized_keys_absolute_path).and_return(auth_keys_file)
-        File.exists?(auth_keys_file).should be_falsey
+        File.exist?(auth_keys_file).should be_falsey
 
         subject.generate_authorized_keys_file
         File.new(auth_keys_file).stat.size.should == 0
@@ -118,7 +117,7 @@ describe UserCredential do
           auth_keys_file = "#{tmp_dir}/.ssh/authorized_keys"
 
           subject.stub(:authorized_keys_absolute_path).and_return(auth_keys_file)
-          File.exists?(auth_keys_file).should be_falsey
+          File.exist?(auth_keys_file).should be_falsey
 
           subject.generate_authorized_keys_file
           File.new(auth_keys_file).stat.mode.to_s(8)[-3..-1].should == "644"

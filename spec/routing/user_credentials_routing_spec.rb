@@ -2,7 +2,6 @@ require "spec_helper"
 
 describe UserCredentialsController do
   describe "routing" do
-
     it "routes to #index" do
       get("/user_credentials").should route_to("user_credentials#index")
     end
@@ -30,6 +29,5 @@ describe UserCredentialsController do
     it "routes to #destroy" do
       delete("/user_credentials/1").should route_to("user_credentials#destroy", id: "1")
     end
-
   end
 end

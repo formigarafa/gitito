@@ -2,7 +2,6 @@ require "spec_helper"
 
 describe RepositoriesController do
   describe "routing" do
-
     it "routes to #index" do
       get("/repositories").should route_to("repositories#index")
     end
@@ -30,6 +29,5 @@ describe RepositoriesController do
     it "routes to #destroy" do
       delete("/repositories/1").should route_to("repositories#destroy", id: "1")
     end
-
   end
 end

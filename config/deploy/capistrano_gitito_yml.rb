@@ -1,14 +1,10 @@
-#
 unless Capistrano::Configuration.respond_to?(:instance)
   abort "This extension requires Capistrano 2"
 end
 
 Capistrano::Configuration.instance.load do
-
   namespace :deploy do
-
     namespace :gitito do
-
       desc <<-DESC
         Creates the gitito.yml configuration file in shared path.
 
@@ -24,8 +20,7 @@ Capistrano::Configuration.instance.load do
         capistrano-ext/multistaging to avoid multiple db:setup calls \
         when running deploy:setup for all stages one by one.
       DESC
-      task :setup, except: { no_release: true } do
-
+      task :setup, except: {no_release: true} do
         default_template = <<-EOF
         gitito:
           ssh_authorized_keys_file: ~/.ssh/authorized_keys
@@ -48,15 +43,12 @@ Capistrano::Configuration.instance.load do
       desc <<-DESC
         [internal] Updates the symlink for gitito.yml file to the just deployed release.
       DESC
-      task :symlink, except: { no_release: true } do
+      task :symlink, except: {no_release: true} do
         run "ln -nfs #{shared_path}/config/gitito.yml #{release_path}/config/gitito.yml"
       end
-
     end
 
-    after "deploy:setup",           "deploy:gitito:setup"   unless fetch(:skip_db_setup, false)
+    after "deploy:setup",           "deploy:gitito:setup" unless fetch(:skip_db_setup, false)
     after "deploy:finalize_update", "deploy:gitito:symlink"
-
   end
-
 end

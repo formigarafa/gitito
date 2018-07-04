@@ -63,7 +63,6 @@ describe Repository do
       repo2.name = "same_name"
       repo2.should be_valid
     end
-
   end
 
   it "forbides repository name changes" do
@@ -81,19 +80,18 @@ describe Repository do
   end
 
   context "path" do
-
     it "has method to get where I can find all repositories" do
       Repository.repos_root.should == "#{Rails.root}/db/users_repositories/#{Rails.env}"
     end
 
     it "has method to get repository path on file server" do
-      repo = Repository.new name: "tilt", user: stub_model( User,  username: "formigarafa" )
+      repo = Repository.new name: "tilt", user: stub_model(User, username: "formigarafa")
       Repository.stub(:repos_root).and_return("/rOOt")
       repo.server_path.should == "/rOOt/formigarafa/tilt.git"
     end
 
     it "has method to get repository access url" do
-      repo = Repository.new name: "tilt", user: stub_model( User,  username: "formigarafa" )
+      repo = Repository.new name: "tilt", user: stub_model(User, username: "formigarafa")
       repo.stub(:ssh_user).and_return("git")
       repo.stub(:ssh_host).and_return("gitito.com")
 
@@ -102,7 +100,6 @@ describe Repository do
   end
 
   context "file tree" do
-
     it "can check if there is a folder on repository place" do
       repo = Repository.new
       repo.should_receive(:server_path).and_return("#{Rails.root}/spec/fixtures/not_repo_test")
@@ -134,7 +131,7 @@ describe Repository do
     it "create repository tree when doesn't exist one" do
       Dir.mktmpdir do |tmp_dir|
         repo = Repository.new
-        repo.stub(:server_path).and_return(tmp_dir+"/juca/repo_tmp")
+        repo.stub(:server_path).and_return(tmp_dir + "/juca/repo_tmp")
 
         repo.folder_exists?.should be_falsey
         repo.create_structure
@@ -167,13 +164,12 @@ describe Repository do
 
         repo.folder_exists?.should be_falsey
       end
-
     end
   end
 
   context "being shared" do
     it "has many collaborators" do
-      collaborators = [mock_model(Collaborator),mock_model(Collaborator)]
+      collaborators = [mock_model(Collaborator), mock_model(Collaborator)]
       collaborators.each do |collaborator|
         subject.collaborators << collaborator
       end
@@ -189,7 +185,7 @@ describe Repository do
   context "method owned_by?" do
     it "returns true for users equals to given parameter" do
       user = mock_model User
-      subject.user =   user
+      subject.user = user
       subject.owned_by?(user).should be_truthy
     end
 

@@ -17,7 +17,6 @@ describe User do
       user.should be_valid
     end
 
-
     it "fails with no username" do
       user = valid_user
       user.username = nil
@@ -54,7 +53,6 @@ describe User do
       user.username = "some user name"
       user.should_not be_valid
     end
-
   end
 
   context "being destroyed" do

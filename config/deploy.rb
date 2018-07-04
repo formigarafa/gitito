@@ -45,7 +45,7 @@ set :branch do
 
   Capistrano::CLI.ui.ask(
     "Version to deploy (if is a tag make sure to push it first):",
-  ) {|q| q.default = default_tag}
+  ) {|q| q.default = default_tag }
 end
 
 set :git_shallow_clone, 1
@@ -69,14 +69,13 @@ end
 namespace :data do
   namespace :repositories do
     # só com setup
-    task :setup, roles: :db, only: { primary: true } do
+    task :setup, roles: :db, only: {primary: true} do
       run "mkdir -p #{users_repositories_path}"
     end
 
-    task :symlink, except: { no_release: true } do
+    task :symlink, except: {no_release: true} do
       run "ln -nfs #{users_repositories_path} #{release_path}/db/users_repositories"
     end
-
   end
 
   namespace :backup do
@@ -85,12 +84,12 @@ namespace :data do
       files
     end
 
-    task :files, roles: :db, only: { primary: true } do
+    task :files, roles: :db, only: {primary: true} do
       run "mkdir -p #{backup_path}"
       run "tar cjf #{backup_path}/system.tar.bz2 #{shared_path}/system"
     end
 
-    task :database, roles: :db, only: { primary: true } do
+    task :database, roles: :db, only: {primary: true} do
       run "mkdir -p #{backup_path}"
       filename = "#{backup_path}/mysqldump.sql.bz2"
       text = capture [
