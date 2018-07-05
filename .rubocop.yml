@@ -1,10 +1,10 @@
 inherit_from: .rubocop_todo.yml
 
 Rails:
-  enabled: true
+  Enabled: true
 
 AllCops:
-  Excludes:
+  Exclude:
     - db/schema.rb
 
 Style/StringLiterals:
@@ -43,3 +43,6 @@ Layout/SpaceInsideBlockBraces:
 Layout/SpaceInsideHashLiteralBraces:
   EnforcedStyle: no_space
   EnforcedStyleForEmptyBraces: no_space
+
+Style/CollectionMethods:
+  Enabled: true
