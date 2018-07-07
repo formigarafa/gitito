@@ -46,3 +46,15 @@ Layout/SpaceInsideHashLiteralBraces:
 
 Style/CollectionMethods:
   Enabled: true
+
+Rails/FilePath:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - config/deploy.rb
+    - config/deploy/*.rb
+    - spec/**/*spec.rb

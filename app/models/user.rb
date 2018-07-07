@@ -8,9 +8,9 @@ class User < ActiveRecord::Base
   attr_accessible :username, :email, :password, :password_confirmation, :remember_me
   validates :username, presence: true, format: {with: /^[a-zA-Z0-9\-_.]*$/}
 
-  has_many :user_credentials
-  has_many :repositories
-  has_many :collaborative_relations, class_name: "Collaborator"
+  has_many :user_credentials, dependent: :destroy
+  has_many :repositories, dependent: :restrict
+  has_many :collaborative_relations, dependent: :destroy, class_name: "Collaborator"
 
   def gravatar_url
     hash = Digest::MD5.hexdigest(email)

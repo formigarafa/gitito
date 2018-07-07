@@ -1,6 +1,6 @@
 class Repository < ActiveRecord::Base
   belongs_to :user
-  has_many :collaborators
+  has_many :collaborators, dependent: :destroy
 
   attr_readonly :name
 
@@ -33,12 +33,13 @@ class Repository < ActiveRecord::Base
 
   def structure_ok?
     Rugged::Repository.new server_path
-  rescue
+  rescue StandardError
     false
   end
 
   def create_structure
-    Rugged::Repository.init_at(server_path, bare = true) unless folder_exists?
+    bare = true
+    Rugged::Repository.init_at(server_path, bare) unless folder_exists?
   end
 
   def remove_structure
@@ -53,7 +54,7 @@ class Repository < ActiveRecord::Base
     remove_structure
   end
 
-  def owned_by? supposed_owner
-    self.user == supposed_owner
+  def owned_by?(supposed_owner)
+    user == supposed_owner
   end
 end

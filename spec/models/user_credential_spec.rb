@@ -2,15 +2,10 @@ require "spec_helper"
 
 describe UserCredential do
   def valid_credential
-    key = [
-      "ssh-rsa ",
-      "AAAAB3NzaC1yc2EAAAADAQABAAABAQC4d8XdRasriu5HA/GrmNv6wM50TioIgjsW/NcuVnH",
-      "fuF29SGZkb1mjodDkKVP7BboGIfyE1SG4mgAxv8VGtN3FBtSZPWPCD1zOGwg/uFgbugYgWR",
-      "Lg8IVKoSdDSgG7YwdLF7fktjpUCidFAaYCBnkzDkw+tWt9y79IdgokRwK+bmVuf80xXAr6m",
-      "D9WLNqTxqXdmCHd9cMePzszdIVUtjIk0R/YHaoCZat+T2D+ICLs2oz2lv+4z5A6who82u6d",
-      "0X5HDV7dIxf5s8rb/8HGbU1hshsK7VE6SXzph/dj7otkl4Mq4bJ3yLx6l7YktZ9hmVsn+S0",
-      "zKcnlasD+ND2LM30X user@comment.part.com",
-    ].join("")
+    charset = ("a".."z").to_a
+    charset += charset.map(&:upcase) + (0..9).to_a.map(&:to_s) + ["+", "/"]
+    key = Array.new(372) { charset.sample }
+    key = "ssh-rsa #{key} user@comment.part.com"
     UserCredential.new(
       title: "test key",
       key: key,

@@ -5,7 +5,7 @@ end
 require "bundler/capistrano"
 
 set :default_stage, "xaa"
-set :stages, %w(xaa)
+set :stages, %w[xaa]
 
 require "capistrano/ext/multistage"
 
@@ -68,7 +68,7 @@ end
 
 namespace :data do
   namespace :repositories do
-    # só com setup
+    # only to be run with setup
     task :setup, roles: :db, only: {primary: true} do
       run "mkdir -p #{users_repositories_path}"
     end
@@ -98,7 +98,7 @@ namespace :data do
         "else cat #{shared_path}/cached-copy/config/database.yml",
         "fi",
       ].join("; ")
-      yaml = YAML::load(text)
+      yaml = YAML.safe_load(text)
 
       run [
         "mysqldump",
@@ -106,7 +106,7 @@ namespace :data do
         "-u #{yaml['production']['username']}",
         "-p #{yaml['production']['database']}",
         "| bzip2 -c > #{filename}",
-      ].join(" ") do |ch, stream, out|
+      ].join(" ") do |ch, _stream, out|
         ch.send_data "#{yaml['production']['password']}\n" if out =~ /^Enter password:/
       end
     end

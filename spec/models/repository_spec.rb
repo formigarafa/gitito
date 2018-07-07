@@ -140,7 +140,7 @@ describe Repository do
     end
 
     it "does not create repository tree when exist something there" do
-      Dir.mktmpdir do |tmp_dir|
+      Dir.mktmpdir do |_tmp_dir|
         repo = Repository.new
 
         repo.stub(:folder_exists?).and_return(true)

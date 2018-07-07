@@ -1,4 +1,4 @@
-require File.expand_path("../boot", __FILE__)
+require File.expand_path("boot", __dir__)
 
 require "rails/all"
 
@@ -41,7 +41,7 @@ module Gitito
 
     config.to_prepare do
       Devise::SessionsController.layout "devise"
-      Devise::RegistrationsController.layout(proc {|controller| user_signed_in? ? "application" : "devise" })
+      Devise::RegistrationsController.layout(proc {|_controller| user_signed_in? ? "application" : "devise" })
       Devise::ConfirmationsController.layout "devise"
       Devise::UnlocksController.layout "devise"
       Devise::PasswordsController.layout "devise"

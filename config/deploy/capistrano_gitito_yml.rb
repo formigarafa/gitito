@@ -1,7 +1,3 @@
-unless Capistrano::Configuration.respond_to?(:instance)
-  abort "This extension requires Capistrano 2"
-end
-
 Capistrano::Configuration.instance.load do
   namespace :deploy do
     namespace :gitito do
@@ -21,14 +17,14 @@ Capistrano::Configuration.instance.load do
         when running deploy:setup for all stages one by one.
       DESC
       task :setup, except: {no_release: true} do
-        default_template = <<-EOF
+        default_template = <<-TEMPLATE
         gitito:
           ssh_authorized_keys_file: ~/.ssh/authorized_keys
           ssh_user: "gitito"
           ssh_host: "fortito.com.br"
           web_host: "gitito.fortito.com.br"
           mailer_sender: "gitito@example.com"
-        EOF
+        TEMPLATE
 
         location = fetch(:template_dir, "config/deploy") + "/gitito.yml.erb"
         template = File.file?(location) ? File.read(location) : default_template

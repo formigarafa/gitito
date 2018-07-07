@@ -89,10 +89,6 @@
 # This is why I use the Capistrano::CLI utility.
 #
 
-unless Capistrano::Configuration.respond_to?(:instance)
-  abort "This extension requires Capistrano 2"
-end
-
 Capistrano::Configuration.instance.load do
   namespace :deploy do
     namespace :db do
@@ -112,7 +108,7 @@ Capistrano::Configuration.instance.load do
         when running deploy:setup for all stages one by one.
       DESC
       task :setup, except: {no_release: true} do
-        default_template = <<-EOF
+        default_template = <<-TEMPLATE
         base: &base
           adapter: sqlite3
           timeout: 5000
@@ -125,7 +121,7 @@ Capistrano::Configuration.instance.load do
         production:
           database: #{shared_path}/db/production.sqlite3
           <<: *base
-        EOF
+        TEMPLATE
 
         location = fetch(:template_dir, "config/deploy") + "/database.yml.erb"
         template = File.file?(location) ? File.read(location) : default_template
