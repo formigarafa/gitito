@@ -9,7 +9,7 @@ gem "capistrano"
 gem "capistrano-ext"
 
 group :production do
-  # gem 'mysql2', '<0.3'
+  gem 'pg'
 end
 
 group :development, :test do
