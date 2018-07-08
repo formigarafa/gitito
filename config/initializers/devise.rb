@@ -5,6 +5,9 @@ Gitito::Application.config.after_initialize do
 end
 
 Devise.setup do |config|
+  config.secret_key = "8cc4eb567292d3ed0c594b190e2f07c9173a3b5015c310c0a9577" \
+  "c18680a2f0b59cf0d1103cbd7b0d14ace92f08dbe5b55c414034b004cef1fe55db9b3f2d57e"
+
   # # ==> Mailer Configuration
   # # Configure the e-mail address which will be shown in Devise::Mailer,
   # # note that it will be overwritten if you use your own mailer class with default "from" parameter.
@@ -98,10 +101,6 @@ Devise.setup do |config|
 
   # If true, extends the user's remember period when remembered via cookie.
   # config.extend_remember_period = false
-
-  # If true, uses the password salt as remember token. This should be turned
-  # to false if you are not using database authenticatable.
-  config.use_salt_as_remember_token = true
 
   # Options to be passed to the created cookie. For instance, you can set
   # :secure => true in order to force SSL only cookies.

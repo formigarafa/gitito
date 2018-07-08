@@ -37,10 +37,6 @@ GEM
       ZenTest
     bcrypt (3.1.12)
     bcrypt (3.1.12-x86-mingw32)
-    bcrypt-ruby (3.1.5)
-      bcrypt (>= 3.1.3)
-    bcrypt-ruby (3.1.5-x86-mingw32)
-      bcrypt (>= 3.1.3)
     builder (3.0.4)
     capistrano (2.9.0)
       highline
@@ -58,10 +54,13 @@ GEM
       rack-test (>= 0.5.4)
       xpath (>= 2.0, < 4.0)
     concurrent-ruby (1.0.5)
-    devise (1.5.4)
-      bcrypt-ruby (~> 3.0)
-      orm_adapter (~> 0.0.3)
-      warden (~> 1.1)
+    devise (3.5.10)
+      bcrypt (~> 3.0)
+      orm_adapter (~> 0.1)
+      railties (>= 3.2.6, < 5)
+      responders
+      thread_safe (~> 0.1)
+      warden (~> 1.2.3)
     diff-lcs (1.3)
     erubis (2.7.0)
     has_scope (0.5.1)
@@ -81,7 +80,7 @@ GEM
     mime-types (1.25.1)
     mini_mime (1.0.0)
     mini_portile2 (2.3.0)
-    multi_json (1.0.4)
+    multi_json (1.13.1)
     net-scp (1.0.4)
       net-ssh (>= 1.99.1)
     net-sftp (2.0.5)
@@ -93,7 +92,7 @@ GEM
       mini_portile2 (~> 2.3.0)
     nokogiri (1.8.3-x86-mingw32)
       mini_portile2 (~> 2.3.0)
-    orm_adapter (0.0.7)
+    orm_adapter (0.5.0)
     parallel (1.12.1)
     parser (2.5.1.0)
       ast (~> 2.4.0)
@@ -173,6 +172,7 @@ GEM
     test-unit (3.2.8)
       power_assert
     thor (0.20.0)
+    thread_safe (0.3.6)
     tilt (1.4.1)
     treetop (1.4.15)
       polyglot
@@ -195,7 +195,7 @@ DEPENDENCIES
   capistrano
   capistrano-ext
   capybara
-  devise (~> 1.5)
+  devise (~> 3.0)
   inherited_resources
   pg
   rails (~> 3.0)
