@@ -2,7 +2,7 @@ class CollaboratorsController < InheritedResources::Base
   actions :create, :destroy
   belongs_to :repository
 
-  before_filter :initialize_collaborator, on: :create
+  before_action :initialize_collaborator, on: :create
 
   def create
     create! do |success, failure|

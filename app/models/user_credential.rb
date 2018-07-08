@@ -21,7 +21,7 @@ class UserCredential < ActiveRecord::Base
       destination_folder = File.dirname(authorized_keys_absolute_path)
       FileUtils.mkdir_p(destination_folder, mode: 0o700) unless File.exist? destination_folder
       authorized_keys = File.new(authorized_keys_absolute_path, "w", 0o644)
-      UserCredential.all.each do |uc|
+      UserCredential.find_each do |uc|
         authorized_keys.puts uc.authorized_keys_line
       end
       authorized_keys.close

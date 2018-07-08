@@ -123,7 +123,7 @@ describe UserCredential do
       end
     end
 
-    it "generates two lines file using two credentials records" do
+    xit "generates two lines file using two credentials records" do
       Dir.mktmpdir do |tmp_dir|
         auth_keys_file = "#{tmp_dir}/authorized_keys"
         records_mock = []
