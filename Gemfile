@@ -9,7 +9,7 @@ gem "capistrano"
 gem "capistrano-ext"
 
 group :production do
-  # gem 'mysql2', '<0.3'
+  gem "pg"
 end
 
 group :development, :test do
@@ -23,5 +23,6 @@ group :development, :test do
   gem "web-app-theme", ">= 0.6.2"
   gem "ZenTest", "~> 4.4.2"
   # gem "metrical"
+  gem "rubocop"
   gem "simplecov", require: false
 end

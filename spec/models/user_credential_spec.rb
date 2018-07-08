@@ -2,15 +2,10 @@ require "spec_helper"
 
 describe UserCredential do
   def valid_credential
-    key = [
-      "ssh-rsa ",
-      "AAAAB3NzaC1yc2EAAAADAQABAAABAQC4d8XdRasriu5HA/GrmNv6wM50TioIgjsW/NcuVnH",
-      "fuF29SGZkb1mjodDkKVP7BboGIfyE1SG4mgAxv8VGtN3FBtSZPWPCD1zOGwg/uFgbugYgWR",
-      "Lg8IVKoSdDSgG7YwdLF7fktjpUCidFAaYCBnkzDkw+tWt9y79IdgokRwK+bmVuf80xXAr6m",
-      "D9WLNqTxqXdmCHd9cMePzszdIVUtjIk0R/YHaoCZat+T2D+ICLs2oz2lv+4z5A6who82u6d",
-      "0X5HDV7dIxf5s8rb/8HGbU1hshsK7VE6SXzph/dj7otkl4Mq4bJ3yLx6l7YktZ9hmVsn+S0",
-      "zKcnlasD+ND2LM30X user@comment.part.com",
-    ].join("")
+    charset = ("a".."z").to_a
+    charset += charset.map(&:upcase) + (0..9).to_a.map(&:to_s) + ["+", "/"]
+    key = Array.new(372) { charset.sample }
+    key = "ssh-rsa #{key} user@comment.part.com"
     UserCredential.new(
       title: "test key",
       key: key,
@@ -61,13 +56,12 @@ describe UserCredential do
         credential2.should_not be_valid
       end
 
-
       # ref: http://stackoverflow.com/questions/2494450/ssh-rsa-public-key-validation-using-a-regular-expression
       # latter, dont'botter me, yet.
-      #it "fails with no spaces separating fields"
-      #it "fails when first field not in [ssh-rsa, ssh-dsa]"
-      #it "fails when second field can't be base64 decoded"
-      #it "fails when decoded second field has wrong leading"
+      # it "fails with no spaces separating fields"
+      # it "fails when first field not in [ssh-rsa, ssh-dsa]"
+      # it "fails when second field can't be base64 decoded"
+      # it "fails when decoded second field has wrong leading"
     end
   end
 
@@ -81,7 +75,7 @@ describe UserCredential do
   end
 
   context "authorized_keys generation" do
-    subject {UserCredential}
+    subject { UserCredential }
 
     it { should respond_to :generate_authorized_keys_file }
 
@@ -91,10 +85,10 @@ describe UserCredential do
         auth_keys_folder = File.dirname auth_keys_file
 
         subject.stub(:authorized_keys_absolute_path).and_return(auth_keys_file)
-        File.exists?(auth_keys_folder).should be_falsey
+        File.exist?(auth_keys_folder).should be_falsey
         subject.generate_authorized_keys_file
 
-        File.exists?(auth_keys_folder).should be_truthy
+        File.exist?(auth_keys_folder).should be_truthy
         File.new(auth_keys_folder).stat.mode.to_s(8)[-3..-1].should == "700"
       end
     end
@@ -104,7 +98,7 @@ describe UserCredential do
         auth_keys_file = "#{tmp_dir}/s1/s2/.ssh/authorized_keys"
 
         subject.stub(:authorized_keys_absolute_path).and_return(auth_keys_file)
-        File.exists?(auth_keys_file).should be_falsey
+        File.exist?(auth_keys_file).should be_falsey
 
         subject.generate_authorized_keys_file
         File.new(auth_keys_file).stat.size.should == 0
@@ -118,7 +112,7 @@ describe UserCredential do
           auth_keys_file = "#{tmp_dir}/.ssh/authorized_keys"
 
           subject.stub(:authorized_keys_absolute_path).and_return(auth_keys_file)
-          File.exists?(auth_keys_file).should be_falsey
+          File.exist?(auth_keys_file).should be_falsey
 
           subject.generate_authorized_keys_file
           File.new(auth_keys_file).stat.mode.to_s(8)[-3..-1].should == "644"

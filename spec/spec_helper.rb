@@ -6,18 +6,17 @@ if ENV["coverage"] == "on"
   SimpleCov.start "rails" do
     add_filter "vendor/ruby/"
     puts ENV["CC_BUILD_ARTIFACTS"]
-    coverage_dir "../#{File.basename(ENV["CC_BUILD_ARTIFACTS"])}/coverage" if ENV["CC_BUILD_ARTIFACTS"]
+    coverage_dir "../#{File.basename(ENV['CC_BUILD_ARTIFACTS'])}/coverage" if ENV["CC_BUILD_ARTIFACTS"]
   end
 end
 
-require File.expand_path("../../config/environment", __FILE__)
+require File.expand_path("../config/environment", __dir__)
 require "rspec/rails"
 require "rspec/autorun"
 
-
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
-Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
+Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f }
 
 RSpec.configure do |config|
   # == Mock Framework

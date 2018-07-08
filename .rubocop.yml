@@ -1,10 +1,10 @@
 inherit_from: .rubocop_todo.yml
 
 Rails:
-  enabled: true
+  Enabled: true
 
 AllCops:
-  Excludes:
+  Exclude:
     - db/schema.rb
 
 Style/StringLiterals:
@@ -23,6 +23,9 @@ Style/HashSyntax:
 Style/TrailingCommaInArguments:
   EnforcedStyleForMultiline: consistent_comma
 
+Layout/IndentArray:
+  EnforcedStyle: consistent
+
 Style/TrailingCommaInArrayLiteral:
   EnforcedStyleForMultiline: consistent_comma
 
@@ -31,3 +34,27 @@ Style/TrailingCommaInHashLiteral:
 
 Layout/FirstParameterIndentation:
   EnforcedStyle: consistent
+
+Layout/SpaceInsideBlockBraces:
+  EnforcedStyle: space
+  EnforcedStyleForEmptyBraces: no_space
+  SpaceBeforeBlockParameters: false
+
+Layout/SpaceInsideHashLiteralBraces:
+  EnforcedStyle: no_space
+  EnforcedStyleForEmptyBraces: no_space
+
+Style/CollectionMethods:
+  Enabled: true
+
+Rails/FilePath:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - config/deploy.rb
+    - config/deploy/*.rb
+    - spec/**/*spec.rb

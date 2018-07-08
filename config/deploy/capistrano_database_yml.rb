@@ -1,6 +1,5 @@
-#
 # = Capistrano database.yml task
-#
+
 # Provides a couple of tasks for creating the database.yml
 # configuration file dynamically when deploy:setup is run.
 #
@@ -73,6 +72,7 @@
 #     username: #{user}
 #     password: #{Capistrano::CLI.ui.ask("Enter MySQL database password: ")}
 #     encoding: utf8
+
 #     timeout: 5000
 #
 # Because this is an Erb template, you can place variables and Ruby scripts
@@ -89,16 +89,9 @@
 # This is why I use the Capistrano::CLI utility.
 #
 
-unless Capistrano::Configuration.respond_to?(:instance)
-  abort "This extension requires Capistrano 2"
-end
-
 Capistrano::Configuration.instance.load do
-
   namespace :deploy do
-
     namespace :db do
-
       desc <<-DESC
         Creates the database.yml configuration file in shared path.
 
@@ -114,9 +107,8 @@ Capistrano::Configuration.instance.load do
         capistrano-ext/multistaging to avoid multiple db:setup calls \
         when running deploy:setup for all stages one by one.
       DESC
-      task :setup, except: { no_release: true } do
-
-        default_template = <<-EOF
+      task :setup, except: {no_release: true} do
+        default_template = <<-TEMPLATE
         base: &base
           adapter: sqlite3
           timeout: 5000
@@ -129,7 +121,7 @@ Capistrano::Configuration.instance.load do
         production:
           database: #{shared_path}/db/production.sqlite3
           <<: *base
-        EOF
+        TEMPLATE
 
         location = fetch(:template_dir, "config/deploy") + "/database.yml.erb"
         template = File.file?(location) ? File.read(location) : default_template
@@ -144,15 +136,12 @@ Capistrano::Configuration.instance.load do
       desc <<-DESC
         [internal] Updates the symlink for database.yml file to the just deployed release.
       DESC
-      task :symlink, except: { no_release: true } do
+      task :symlink, except: {no_release: true} do
         run "ln -nfs #{shared_path}/config/database.yml #{release_path}/config/database.yml"
       end
-
     end
 
-    after "deploy:setup",           "deploy:db:setup"   unless fetch(:skip_db_setup, false)
+    after "deploy:setup",           "deploy:db:setup" unless fetch(:skip_db_setup, false)
     after "deploy:finalize_update", "deploy:db:symlink"
-
   end
-
 end

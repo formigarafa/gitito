@@ -1,16 +1,14 @@
 class Collaborator < ActiveRecord::Base
-  attr_accessor :username
-
   belongs_to :user
   belongs_to :repository
 
   validates :user, presence: {message: "User not found"}
   validate :that_user_is_not_owner
-  validates_uniqueness_of :user_id, scope: :repository_id, message: "Collaborator is already on the list"
+  validates :user_id, uniqueness: {scope: :repository_id, message: "Collaborator is already on the list"}
   validates :repository, presence: {message: "Repository not found"}
 
   def username
-    user and user.username
+    user && user.username
   end
 
   def that_user_is_not_owner
@@ -18,6 +16,6 @@ class Collaborator < ActiveRecord::Base
   end
 
   def collaborator_owns_repository?
-    repository and repository.owned_by? user
+    repository && repository.owned_by?(user)
   end
 end
