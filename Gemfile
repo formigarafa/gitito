@@ -1,8 +1,8 @@
 source "http://rubygems.org"
 
-gem "devise", "~> 1.5"
+gem "devise", "~> 3.0"
 gem "inherited_resources"
-gem "rails", "~> 3.0"
+gem "rails", "~> 4.0"
 gem "rugged"
 
 gem "capistrano"

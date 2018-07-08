@@ -4,12 +4,10 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
     :recoverable, :rememberable, :trackable, :validatable
 
-  # Setup accessible (or protected) attributes for your model
-  attr_accessible :username, :email, :password, :password_confirmation, :remember_me
-  validates :username, presence: true, format: {with: /^[a-zA-Z0-9\-_.]*$/}
+  validates :username, presence: true, format: {with: /\A[a-zA-Z0-9\-_.]*\z/}
 
   has_many :user_credentials, dependent: :destroy
-  has_many :repositories, dependent: :restrict
+  has_many :repositories, dependent: :restrict_with_error
   has_many :collaborative_relations, dependent: :destroy, class_name: "Collaborator"
 
   def gravatar_url

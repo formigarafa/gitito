@@ -4,7 +4,7 @@ class Repository < ActiveRecord::Base
 
   attr_readonly :name
 
-  validates :name, presence: true, format: {with: /^[a-zA-Z0-9\-_.]*$/}, uniqueness: {scope: :user_id}
+  validates :name, presence: true, format: {with: /\A[a-zA-Z0-9\-_.]*\z/}, uniqueness: {scope: :user_id}
   validates :user, presence: true
 
   def self.repos_root
