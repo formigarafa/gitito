@@ -87,7 +87,9 @@
 # I don't like to store passwords in files under version control
 # because they will live forever in your history.
 # This is why I use the Capistrano::CLI utility.
-#
+
+# encoding: UTF-8
+# frozen_string_literal: true
 
 Capistrano::Configuration.instance.load do
   namespace :deploy do

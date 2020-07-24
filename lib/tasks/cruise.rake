@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 desc "cruise control continuous integration"
 task cruise: [:spec, "metrics:all"]
 

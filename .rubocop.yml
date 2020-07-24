@@ -1,3 +1,6 @@
+require:
+  - rubocop-rails
+
 Rails:
   Enabled: true
 
@@ -8,7 +11,7 @@ AllCops:
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 
-Layout/AlignParameters:
+Layout/ParameterAlignment:
   EnforcedStyle: with_fixed_indentation
   IndentationWidth: 2
 
@@ -21,7 +24,7 @@ Style/HashSyntax:
 Style/TrailingCommaInArguments:
   EnforcedStyleForMultiline: consistent_comma
 
-Layout/IndentArray:
+Layout/FirstArrayElementIndentation:
   EnforcedStyle: consistent
 
 Style/TrailingCommaInArrayLiteral:

@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 describe "repositories/index.html.erb" do
-  before(:each) do
+  before do
     assign(:repositories, [
       stub_model(Repository, url: "repo1"),
       stub_model(Repository, url: "repo2"),

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Capistrano::Configuration.instance.load do
   namespace :deploy do
     namespace :gitito do

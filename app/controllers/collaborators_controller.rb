@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CollaboratorsController < InheritedResources::Base
   actions :create, :destroy
   belongs_to :repository

@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 describe "user_credentials/edit.html.erb" do
-  before(:each) do
+  before do
     @user_credential = assign(:user_credential, stub_model(UserCredential))
   end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 describe User do
@@ -7,51 +9,51 @@ describe User do
 
   context "validity" do
     it "validates with valid attributes" do
-      valid_user.should be_valid
+      expect(valid_user).to be_valid
     end
 
     it "validates with matching password_confirmation" do
       user = valid_user
       user.password = "p4ssw0rd"
       user.password_confirmation = "p4ssw0rd"
-      user.should be_valid
+      expect(user).to be_valid
     end
 
     it "fails with no username" do
       user = valid_user
       user.username = nil
-      user.should_not be_valid
+      expect(user).to_not be_valid
     end
 
     it "fails with no email" do
       user = valid_user
       user.email = nil
-      user.should_not be_valid
+      expect(user).to_not be_valid
     end
 
     it "fails with no password" do
       user = valid_user
       user.password = nil
-      user.should_not be_valid
+      expect(user).to_not be_valid
     end
 
     it "fails when password does not match password_confirmation" do
       user = valid_user
       user.password = "1qaz2wsx"
       user.password_confirmation = "0okm9ijn"
-      user.should_not be_valid
+      expect(user).to_not be_valid
     end
 
     it "fails with complicated username (special characters)" do
       user = valid_user
       user.username = "f*cking_user"
-      user.should_not be_valid
+      expect(user).to_not be_valid
     end
 
     it "fails with spaces on username" do
       user = valid_user
       user.username = "some user name"
-      user.should_not be_valid
+      expect(user).to_not be_valid
     end
   end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UserCredential < ActiveRecord::Base
   belongs_to :user
   validates :key, presence: true, uniqueness: true
