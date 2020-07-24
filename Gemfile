@@ -24,5 +24,6 @@ group :development, :test do
   gem "ZenTest", "~> 4.4.2"
   # gem "metrical"
   gem "rubocop"
+  gem "rubocop-rails"
   gem "simplecov", require: false
 end

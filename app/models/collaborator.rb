@@ -8,7 +8,7 @@ class Collaborator < ActiveRecord::Base
   validates :repository, presence: {message: "Repository not found"}
 
   def username
-    user && user.username
+    user&.username
   end
 
   def that_user_is_not_owner
@@ -16,6 +16,6 @@ class Collaborator < ActiveRecord::Base
   end
 
   def collaborator_owns_repository?
-    repository && repository.owned_by?(user)
+    repository&.owned_by?(user)
   end
 end
