@@ -77,7 +77,7 @@ describe UserCredential do
   context "authorized_keys generation" do
     subject { UserCredential }
 
-    it { should respond_to :generate_authorized_keys_file }
+    it { is_expected.to respond_to :generate_authorized_keys_file }
 
     it "create folders with 700 mode when specified path doed not exists" do
       Dir.mktmpdir do |tmp_dir|

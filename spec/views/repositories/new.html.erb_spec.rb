@@ -1,7 +1,7 @@
 require "spec_helper"
 
 describe "repositories/new.html.erb" do
-  before(:each) do
+  before do
     assign(:repository, stub_model(Repository).as_new_record)
   end
 

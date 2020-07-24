@@ -25,5 +25,6 @@ group :development, :test do
   # gem "metrical"
   gem "rubocop"
   gem "rubocop-rails"
+  gem "rubocop-rspec"
   gem "simplecov", require: false
 end
