@@ -175,8 +175,6 @@ GEM
       activesupport (>= 4.2.0)
       rack (>= 1.1)
       rubocop (>= 0.82.0)
-    rubocop-rspec (1.41.0)
-      rubocop (>= 0.68.1)
     ruby-progressbar (1.10.1)
     rugged (0.16.0)
     simplecov (0.6.4)
@@ -224,7 +222,6 @@ DEPENDENCIES
   rspec-rails
   rubocop (= 0.83.0)
   rubocop-rails
-  rubocop-rspec
   rugged
   simplecov
   sqlite3
