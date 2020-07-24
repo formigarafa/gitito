@@ -25,7 +25,7 @@ group :development, :test do
   gem "web-app-theme", ">= 0.6.2"
   gem "ZenTest", "~> 4.4.2"
   # gem "metrical"
-  gem "rubocop"
+  gem "rubocop", "0.83.0"
   gem "rubocop-rails"
   gem "rubocop-rspec"
   gem "simplecov", require: false
