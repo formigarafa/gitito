@@ -15,7 +15,7 @@ end
 group :development, :test do
   gem "autotest-rails", "~> 4.1.0"
   gem "capybara"
-  gem "rake", "< 11.0" # locked because of rspec-core
+  gem "rake", "< 13.0" # locked because of rspec-core
   gem "rspec-activemodel-mocks"
   gem "rspec-rails"
   gem "sqlite3"
