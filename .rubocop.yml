@@ -60,3 +60,6 @@ Metrics/BlockLength:
     - config/deploy.rb
     - config/deploy/*.rb
     - spec/**/*spec.rb
+
+RSpec/NotToNot:
+  Enabled: false

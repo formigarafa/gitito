@@ -14,8 +14,8 @@ describe "user_credentials/index.html.erb" do
     it "display both user credentials" do
       render
 
-      expect(rendered).to match /key one/
-      expect(rendered).to match /key two/
+      expect(rendered).to match(/key one/)
+      expect(rendered).to match(/key two/)
     end
   end
 end
