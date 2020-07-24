@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class RepositoriesController < InheritedResources::Base
   actions :new, :create, :index, :show, :destroy
 

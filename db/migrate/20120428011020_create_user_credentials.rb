@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateUserCredentials < ActiveRecord::Migration
   def self.up
     create_table :user_credentials do |t|

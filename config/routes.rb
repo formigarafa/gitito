@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Gitito::Application.routes.draw do
   devise_for :users
 

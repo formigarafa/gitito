@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 set :bundle_cmd do
   "/home/#{user}/.gems/bin/bundle"
 end

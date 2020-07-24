@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Rails.configuration.instance_eval do
   @gitito = HashWithIndifferentAccess.new YAML.load_file("#{Rails.root}/config/gitito.yml")
 end

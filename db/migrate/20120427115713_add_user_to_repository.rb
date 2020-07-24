@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class AddUserToRepository < ActiveRecord::Migration
   def self.up
     add_column :repositories, :user_id, :integer

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 describe Repository do
@@ -36,13 +38,13 @@ describe Repository do
 
     it "is not allowed to one user have two repositories with the same name" do
       user = mock_model(User, username: "juca")
-      repo1 = Repository.new
+      repo1 = described_class.new
       repo1.stub(:create_structure)
       repo1.name = "same_name"
       repo1.user = user
       repo1.save
 
-      repo2 = Repository.new
+      repo2 = described_class.new
       repo2.stub(:create_structure)
       repo2.user = user
       repo2.name = "same_name"
@@ -51,13 +53,13 @@ describe Repository do
     end
 
     it "is allowed for two different user have two repositories with the same name" do
-      repo1 = Repository.new
+      repo1 = described_class.new
       repo1.name = "same_name"
       repo1.stub(:create_structure)
       repo1.user = mock_model(User, username: "juca")
       repo1.save
 
-      repo2 = Repository.new
+      repo2 = described_class.new
       repo2.stub(:create_structure)
       repo2.user = mock_model(User, username: "drica.silva")
       repo2.name = "same_name"
@@ -81,17 +83,17 @@ describe Repository do
 
   context "path" do
     it "has method to get where I can find all repositories" do
-      Repository.repos_root.should == "#{Rails.root}/db/users_repositories/#{Rails.env}"
+      described_class.repos_root.should == "#{Rails.root}/db/users_repositories/#{Rails.env}"
     end
 
     it "has method to get repository path on file server" do
-      repo = Repository.new name: "tilt", user: stub_model(User, username: "formigarafa")
-      Repository.stub(:repos_root).and_return("/rOOt")
+      repo = described_class.new name: "tilt", user: stub_model(User, username: "formigarafa")
+      described_class.stub(:repos_root).and_return("/rOOt")
       repo.server_path.should == "/rOOt/formigarafa/tilt.git"
     end
 
     it "has method to get repository access url" do
-      repo = Repository.new name: "tilt", user: stub_model(User, username: "formigarafa")
+      repo = described_class.new name: "tilt", user: stub_model(User, username: "formigarafa")
       repo.stub(:ssh_user).and_return("git")
       repo.stub(:ssh_host).and_return("gitito.com")
 
@@ -101,28 +103,28 @@ describe Repository do
 
   context "file tree" do
     it "can check if there is a folder on repository place" do
-      repo = Repository.new
+      repo = described_class.new
       repo.should_receive(:server_path).and_return("#{Rails.root}/spec/fixtures/not_repo_test")
 
       repo.folder_exists?.should be_truthy
     end
 
     it "can check if there is NOT a folder on repository place" do
-      repo = Repository.new
+      repo = described_class.new
       repo.should_receive(:server_path).and_return("#{Rails.root}/spec/fixtures/somewhere_else")
 
       repo.folder_exists?.should be_falsey
     end
 
     it "can check if there is a repo placed" do
-      repo = Repository.new
+      repo = described_class.new
       repo.should_receive(:server_path).and_return("#{Rails.root}/spec/fixtures/repo_test.git")
 
       repo.structure_ok?.should be_truthy
     end
 
     it "can check if there is NOT a repo placed" do
-      repo = Repository.new
+      repo = described_class.new
       repo.should_receive(:server_path).and_return("#{Rails.root}/spec/fixtures/none_repo_test.git")
 
       repo.structure_ok?.should be_falsey
@@ -130,7 +132,7 @@ describe Repository do
 
     it "create repository tree when doesn't exist one" do
       Dir.mktmpdir do |tmp_dir|
-        repo = Repository.new
+        repo = described_class.new
         repo.stub(:server_path).and_return(tmp_dir + "/juca/repo_tmp")
 
         repo.folder_exists?.should be_falsey
@@ -141,7 +143,7 @@ describe Repository do
 
     it "does not create repository tree when exist something there" do
       Dir.mktmpdir do |_tmp_dir|
-        repo = Repository.new
+        repo = described_class.new
 
         repo.stub(:folder_exists?).and_return(true)
         Rugged::Repository.should_not_receive :init_at
@@ -156,7 +158,7 @@ describe Repository do
         Dir.mkdir "#{tmp_dir}/1/2"
         Dir.mkdir "#{tmp_dir}/1/2/3"
 
-        repo = Repository.new
+        repo = described_class.new
         repo.stub(:server_path).and_return("#{tmp_dir}/1")
 
         repo.folder_exists?.should be_truthy

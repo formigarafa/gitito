@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 describe UserCredential do
@@ -43,7 +45,7 @@ describe UserCredential do
           "0X5HDV7dIxf5s8rb/8HGbU1hshsK7VE6SXzph/dj7otkl4Mq4bJ3yLx6l7YktZ9hmVsn+S0",
           "zKcnlasD+ND2LM30X user@comment.part.com",
         ].join("")
-        UserCredential.stub(:generate_authorized_keys_file)
+        described_class.stub(:generate_authorized_keys_file)
         credential1 = valid_credential
         credential1.key = key
         credential1.user = user
@@ -75,7 +77,7 @@ describe UserCredential do
   end
 
   context "authorized_keys generation" do
-    subject { UserCredential }
+    subject { described_class }
 
     it { is_expected.to respond_to :generate_authorized_keys_file }
 
@@ -127,8 +129,8 @@ describe UserCredential do
       Dir.mktmpdir do |tmp_dir|
         auth_keys_file = "#{tmp_dir}/authorized_keys"
         records_mock = []
-        records_mock << mock_model(UserCredential, authorized_keys_line: "line1")
-        records_mock << mock_model(UserCredential, authorized_keys_line: "line2")
+        records_mock << mock_model(described_class, authorized_keys_line: "line1")
+        records_mock << mock_model(described_class, authorized_keys_line: "line2")
 
         subject.stub(:all).and_return(records_mock)
         subject.stub(:authorized_keys_absolute_path).and_return(auth_keys_file)
