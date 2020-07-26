@@ -1,11 +1,12 @@
 script: bundle exec rake spec
 language: ruby
-cache: bundler
+# cache: bundler
 rvm:
-- 2.4.1
+- 2.4.5
 
 before_install:
   - umask 022
+  - gem install bundler:1.17.3
 
 before_script:
   - "cp ./config/database.yml.example ./config/database.yml"
