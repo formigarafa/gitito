@@ -6,6 +6,7 @@ rvm:
 
 before_install:
   - umask 022
+  - gem install bundler:1.17.3 --no-rdoc --no-ri
 
 before_script:
   - "cp ./config/database.yml.example ./config/database.yml"
