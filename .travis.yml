@@ -2,7 +2,7 @@ script: bundle exec rake spec
 language: ruby
 # cache: bundler
 rvm:
-- 2.4.5
+- 2.5.8
 
 before_install:
   - umask 022
