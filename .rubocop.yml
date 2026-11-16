@@ -61,8 +61,6 @@ Style/Documentation:
 
 Metrics/BlockLength:
   Exclude:
-    - config/deploy.rb
-    - config/deploy/*.rb
     - spec/**/*spec.rb
 
 Metrics/MethodLength:

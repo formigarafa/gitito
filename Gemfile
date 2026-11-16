@@ -11,11 +11,6 @@ gem "rails", "~> 8.1.0"
 gem "rugged", "~> 1.9"
 gem "sqlite3", ">= 2.1"
 
-group :deployment do
-  gem "capistrano", "~> 2.15", require: false
-  gem "capistrano-ext", require: false
-end
-
 group :development, :test do
   gem "autotest-rails", require: false
   gem "capybara"
