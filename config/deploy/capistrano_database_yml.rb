@@ -88,7 +88,6 @@
 # because they will live forever in your history.
 # This is why I use the Capistrano::CLI utility.
 
-# encoding: UTF-8
 # frozen_string_literal: true
 
 Capistrano::Configuration.instance.load do
@@ -125,7 +124,7 @@ Capistrano::Configuration.instance.load do
           <<: *base
         TEMPLATE
 
-        location = fetch(:template_dir, "config/deploy") + "/database.yml.erb"
+        location = "#{fetch(:template_dir, 'config/deploy')}/database.yml.erb"
         template = File.file?(location) ? File.read(location) : default_template
 
         config = ERB.new(template)

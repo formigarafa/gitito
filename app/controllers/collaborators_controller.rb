@@ -19,7 +19,7 @@ class CollaboratorsController < InheritedResources::Base
   private
 
   def initialize_collaborator
-    @collaborator = Repository.find(params[:repository_id]).collaborators.new(
+    @collaborator = Repository.find(params.expect(:repository_id)).collaborators.new(
       user: user_to_become_collaborator,
     )
   end

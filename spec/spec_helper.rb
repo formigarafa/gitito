@@ -7,7 +7,7 @@ if ENV["coverage"] == "on"
   require "simplecov"
   SimpleCov.start "rails" do
     add_filter "vendor/ruby/"
-    puts ENV["CC_BUILD_ARTIFACTS"]
+    puts ENV.fetch("CC_BUILD_ARTIFACTS", nil)
     coverage_dir "../#{File.basename(ENV['CC_BUILD_ARTIFACTS'])}/coverage" if ENV["CC_BUILD_ARTIFACTS"]
   end
 end
@@ -17,7 +17,7 @@ require "rspec/rails"
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
-Dir[Rails.root.join("spec/support/**/*.rb")].sort.each {|f| require f }
+Rails.root.glob("spec/support/**/*.rb").each {|f| require f }
 
 # Checks for pending migrations and applies them before tests are run.
 begin

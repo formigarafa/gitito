@@ -44,7 +44,7 @@ describe UserCredential do
           "D9WLNqTxqXdmCHd9cMePzszdIVUtjIk0R/YHaoCZat+T2D+ICLs2oz2lv+4z5A6who82u6d",
           "0X5HDV7dIxf5s8rb/8HGbU1hshsK7VE6SXzph/dj7otkl4Mq4bJ3yLx6l7YktZ9hmVsn+S0",
           "zKcnlasD+ND2LM30X user@comment.part.com",
-        ].join("")
+        ].join
         allow(described_class).to receive(:generate_authorized_keys_file)
         credential1 = valid_credential
         credential1.key = key
@@ -68,7 +68,7 @@ describe UserCredential do
   end
 
   it "generates authorized_keys line with its key" do
-    key = "ssh-rsa AAAAB3NzaC1yc2EA" + "A" * 356
+    key = "ssh-rsa AAAAB3NzaC1yc2EA#{'A' * 356}"
     subject.key = key
     allow(subject).to receive(:id).and_return("42")
     expected_line = "command=\"#{Rails.root}/script/ssh-command-proxy.sh 42\" #{key}"
@@ -91,7 +91,7 @@ describe UserCredential do
         subject.generate_authorized_keys_file
 
         expect(File.exist?(auth_keys_folder)).to be_truthy
-        expect(File.new(auth_keys_folder).stat.mode.to_s(8)[-3..-1]).to eq "700"
+        expect(File.new(auth_keys_folder).stat.mode.to_s(8)[-3..]).to eq "700"
       end
     end
 
@@ -117,7 +117,7 @@ describe UserCredential do
           expect(File.exist?(auth_keys_file)).to be_falsey
 
           subject.generate_authorized_keys_file
-          expect(File.new(auth_keys_file).stat.mode.to_s(8)[-3..-1]).to eq "644"
+          expect(File.new(auth_keys_file).stat.mode.to_s(8)[-3..]).to eq "644"
         end
       ensure
         File.umask previous_umask
@@ -137,7 +137,7 @@ describe UserCredential do
 
         subject.generate_authorized_keys_file
 
-        generated_file_lines = File.open(auth_keys_file).to_io.read.split("\n")
+        generated_file_lines = File.read(auth_keys_file).split("\n")
         expect(generated_file_lines).to include("line1", "line2")
       end
     end
