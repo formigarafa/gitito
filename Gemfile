@@ -1,27 +1,29 @@
 # frozen_string_literal: true
 
-source "http://rubygems.org"
+source "https://rubygems.org"
 
-gem "devise", "~> 4.7"
-gem "inherited_resources"
-gem "rails", "~> 4.0"
-gem "rugged"
-gem "sqlite3"
+ruby file: ".ruby-version"
 
-gem "capistrano"
-gem "capistrano-ext"
+gem "devise", "~> 5.0"
+gem "inherited_resources", "~> 2.1"
+gem "puma"
+gem "rails", "~> 8.1.0"
+gem "rugged", "~> 1.9"
+gem "sqlite3", ">= 2.1"
+
+group :deployment do
+  gem "capistrano", "~> 2.15", require: false
+  gem "capistrano-ext", require: false
+end
 
 group :development, :test do
-  gem "autotest-rails", "~> 4.1.0"
+  gem "autotest-rails", require: false
   gem "capybara"
   gem "rake"
   gem "rspec-activemodel-mocks"
-  gem "rspec-rails"
-  gem "test-unit" # rspec need that, now
-  gem "web-app-theme", ">= 0.6.2"
-  gem "ZenTest", "~> 4.4.2"
-  # gem "metrical"
-  gem "rubocop", "0.83.0"
-  gem "rubocop-rails"
+  gem "rspec-rails", "~> 8.0"
+  gem "rubocop", require: false
+  gem "rubocop-rails", require: false
   gem "simplecov", require: false
+  gem "ZenTest", require: false
 end

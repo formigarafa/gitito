@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class UserCredential < ActiveRecord::Base
-  belongs_to :user
+class UserCredential < ApplicationRecord
+  belongs_to :user, optional: true
   validates :key, presence: true, uniqueness: true
   validates :user, presence: true
 

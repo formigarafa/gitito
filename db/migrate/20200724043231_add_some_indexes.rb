@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AddSomeIndexes < ActiveRecord::Migration
+class AddSomeIndexes < ActiveRecord::Migration[4.2]
   def change
     add_index :collaborators, %i[repository_id user_id], unique: true
     add_index :repositories, %i[name user_id], unique: true

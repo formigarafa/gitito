@@ -13,8 +13,9 @@ This security check is not done, yet.
 
 # Requirements:
 
-Ruby 2.3.7
-Other versions to bechecked
+Ruby 4.0.9 (see `.ruby-version`), Rails 8.1, SQLite 3 (used in every environment, including production).
+
+In production set `SECRET_KEY_BASE` (or use Rails credentials).
 
 # Configuration
 create files config/gitito.yml and config/database.yml 
@@ -24,3 +25,4 @@ create files config/gitito.yml and config/database.yml
 
 $ gem install bundler
 $ bundle install
+$ bin/rails db:setup

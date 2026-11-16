@@ -2,7 +2,7 @@
 
 # Use this hook to configure devise mailer, warden hooks and so forth.
 # Many of these configuration options can be set straight in your model.
-Gitito::Application.config.after_initialize do
+Rails.application.config.after_initialize do
   Devise.mailer_sender = Rails.configuration.gitito[:mailer_sender]
 end
 

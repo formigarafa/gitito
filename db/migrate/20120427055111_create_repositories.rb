@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateRepositories < ActiveRecord::Migration
+class CreateRepositories < ActiveRecord::Migration[4.2]
   def self.up
     create_table :repositories do |t|
       t.string :name

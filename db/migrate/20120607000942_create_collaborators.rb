@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class CreateCollaborators < ActiveRecord::Migration
+class CreateCollaborators < ActiveRecord::Migration[4.2]
   def self.up
     create_table :collaborators do |t|
       t.integer :user_id
