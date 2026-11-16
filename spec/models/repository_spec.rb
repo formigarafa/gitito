@@ -73,8 +73,7 @@ describe Repository do
     repo.save
     first_used_name = repo.name
 
-    repo.name = "modified_name"
-    repo.save
+    expect { repo.name = "modified_name" }.to raise_error(ActiveRecord::ReadonlyAttributeError)
 
     repo.reload
 
@@ -133,7 +132,7 @@ describe Repository do
     it "create repository tree when doesn't exist one" do
       Dir.mktmpdir do |tmp_dir|
         repo = described_class.new
-        allow(repo).to receive(:server_path).and_return(tmp_dir + "/juca/repo_tmp")
+        allow(repo).to receive(:server_path).and_return("#{tmp_dir}/juca/repo_tmp")
 
         expect(repo.folder_exists?).to be_falsey
         repo.create_structure
@@ -172,7 +171,7 @@ describe Repository do
 
   context "being shared" do
     it "has many collaborators" do
-      collaborators = [mock_model(Collaborator), mock_model(Collaborator)]
+      collaborators = [stub_model(Collaborator), stub_model(Collaborator)]
       collaborators.each do |collaborator|
         subject.collaborators << collaborator
       end

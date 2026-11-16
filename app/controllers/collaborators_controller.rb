@@ -4,13 +4,13 @@ class CollaboratorsController < InheritedResources::Base
   actions :create, :destroy
   belongs_to :repository
 
-  before_action :initialize_collaborator, on: :create
+  before_action :initialize_collaborator, only: :create
 
   def create
     create! do |success, failure|
       success.html { redirect_to @collaborator.repository }
       failure.html do
-        flash[:error] = @collaborator.errors.values.join(", ")
+        flash[:error] = @collaborator.errors.map(&:message).join(", ")
         redirect_to @collaborator.repository
       end
     end
@@ -19,7 +19,7 @@ class CollaboratorsController < InheritedResources::Base
   private
 
   def initialize_collaborator
-    @collaborator = Repository.find(params[:repository_id]).collaborators.new(
+    @collaborator = Repository.find(params.expect(:repository_id)).collaborators.new(
       user: user_to_become_collaborator,
     )
   end

@@ -25,7 +25,7 @@
           </td>
           <td class="last">
             <%= link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_user_credential_path(user_credential) %> |
-            <%= link_to "#{t("web-app-theme.delete", :default => "Delete")}", user_credential_path(user_credential), :method => :delete, :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}" %>
+            <%= delete_button t("web-app-theme.delete", :default => "Delete"), user_credential_path(user_credential) %>
           </td>
         </tr>          
         <% end -%>

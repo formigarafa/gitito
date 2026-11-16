@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class Repository < ActiveRecord::Base
-  belongs_to :user
+class Repository < ApplicationRecord
+  belongs_to :user, optional: true
   has_many :collaborators, dependent: :destroy
 
   attr_readonly :name

@@ -1,7 +1,0 @@
-gitito:
-  ssh_authorized_keys_file: "<%= Capistrano::CLI.ui.ask("Enter full path for .ssh/authorized_keys file: ") {|q| q.default = '~/.ssh/authorized_keys'} %>"
-  ssh_user: "<%= Capistrano::CLI.ui.ask("Enter gitito ssh username: ") {|q| q.default = 'git'} %>"
-  ssh_host: "<%= Capistrano::CLI.ui.ask("Enter gitito ssh hostname: ") {|q| q.default = 'example.com'} %>"
-  web_host: "<%= Capistrano::CLI.ui.ask("Enter gitito web hostname: ") {|q| q.default = 'www.example.com'} %>"
-  mailer_sender: "<%= Capistrano::CLI.ui.ask("Enter gitito mailer sender address: ") {|q| q.default = 'gitito@example.com'} %>"
-  

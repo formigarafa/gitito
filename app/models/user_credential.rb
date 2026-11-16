@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class UserCredential < ActiveRecord::Base
-  belongs_to :user
+class UserCredential < ApplicationRecord
+  belongs_to :user, optional: true
   validates :key, presence: true, uniqueness: true
   validates :user, presence: true
 
@@ -21,7 +21,7 @@ class UserCredential < ActiveRecord::Base
   class << self
     def generate_authorized_keys_file
       destination_folder = File.dirname(authorized_keys_absolute_path)
-      FileUtils.mkdir_p(destination_folder, mode: 0o700) unless File.exist? destination_folder
+      FileUtils.mkdir_p(destination_folder, mode: 0o700)
       authorized_keys = File.new(authorized_keys_absolute_path, "w", 0o644)
       UserCredential.find_each do |uc|
         authorized_keys.puts uc.authorized_keys_line

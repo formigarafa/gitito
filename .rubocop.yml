@@ -1,12 +1,17 @@
-require:
+plugins:
   - rubocop-rails
 
 Rails:
   Enabled: true
 
 AllCops:
+  NewCops: enable
+  SuggestExtensions: false
+  TargetRubyVersion: 4.0
   Exclude:
+    - bin/*
     - db/schema.rb
+    - vendor/**/*
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes
@@ -15,7 +20,7 @@ Layout/ParameterAlignment:
   EnforcedStyle: with_fixed_indentation
   IndentationWidth: 2
 
-Metrics/LineLength:
+Layout/LineLength:
   Max: 110
 
 Style/HashSyntax:
@@ -56,6 +61,12 @@ Style/Documentation:
 
 Metrics/BlockLength:
   Exclude:
-    - config/deploy.rb
-    - config/deploy/*.rb
     - spec/**/*spec.rb
+
+Metrics/MethodLength:
+  Exclude:
+    - db/migrate/*.rb
+
+# This app is English only; validation messages live next to the validations.
+Rails/I18nLocaleTexts:
+  Enabled: false

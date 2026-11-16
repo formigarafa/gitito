@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-class Collaborator < ActiveRecord::Base
-  belongs_to :user
-  belongs_to :repository
+class Collaborator < ApplicationRecord
+  belongs_to :user, optional: true
+  belongs_to :repository, optional: true
 
   validates :user, presence: {message: "User not found"}
   validate :that_user_is_not_owner

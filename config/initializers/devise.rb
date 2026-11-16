@@ -2,13 +2,13 @@
 
 # Use this hook to configure devise mailer, warden hooks and so forth.
 # Many of these configuration options can be set straight in your model.
-Gitito::Application.config.after_initialize do
+Rails.application.config.after_initialize do
   Devise.mailer_sender = Rails.configuration.gitito[:mailer_sender]
 end
 
 Devise.setup do |config|
   config.secret_key = "8cc4eb567292d3ed0c594b190e2f07c9173a3b5015c310c0a9577" \
-  "c18680a2f0b59cf0d1103cbd7b0d14ace92f08dbe5b55c414034b004cef1fe55db9b3f2d57e"
+                      "c18680a2f0b59cf0d1103cbd7b0d14ace92f08dbe5b55c414034b004cef1fe55db9b3f2d57e"
 
   # # ==> Mailer Configuration
   # # Configure the e-mail address which will be shown in Devise::Mailer,
