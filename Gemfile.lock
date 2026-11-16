@@ -1,7 +1,6 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    ZenTest (4.12.2)
     action_text-trix (2.1.19)
       railties
     actioncable (8.1.4.1)
@@ -79,8 +78,6 @@ GEM
     addressable (2.9.2)
       public_suffix (>= 2.0.2, < 8.0)
     ast (2.4.3)
-    autotest-rails (4.2.1)
-      ZenTest (~> 4.5)
     base64 (0.3.0)
     bcrypt (3.1.22)
     bigdecimal (4.1.3)
@@ -321,8 +318,6 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  ZenTest
-  autotest-rails
   capybara
   devise (~> 5.0)
   inherited_resources (~> 2.1)
@@ -337,7 +332,6 @@ DEPENDENCIES
   sqlite3 (>= 2.1)
 
 CHECKSUMS
-  ZenTest (4.12.2) sha256=814e7478a28f631df8f802aee40bd1faa2a53df1fb50e086eb8655f9ee5d60b9
   action_text-trix (2.1.19) sha256=7012f59421009cf284aa651294896414d653a61a2417c9b8714c8476d2f74009
   actioncable (8.1.4.1) sha256=007670f7297973e94809e9f32a56624a7aa60b6e9d6696cd078064ce86d1c7fc
   actionmailbox (8.1.4.1) sha256=18b43dd842bf3a3e31b8e38b7917c21e48c128fc8b263c893481cc66ee1a8f78
@@ -352,7 +346,6 @@ CHECKSUMS
   activesupport (8.1.4.1) sha256=16ac4f341ca65c85a1fcdb8ac73f68891aae9e3c4a6f9c3a27daed8b00017ed7
   addressable (2.9.2) sha256=9117c7e7d6ee07230e75ce41fb9401ae55354dc654fcd0e862ba41d539e9a610
   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
-  autotest-rails (4.2.1) sha256=b4bce718d7feb5c6ec3d3a901ec93159359a0669487f90e6ee9936487faa2dec
   base64 (0.3.0) sha256=27337aeabad6ffae05c265c450490628ef3ebd4b67be58257393227588f5a97b
   bcrypt (3.1.22) sha256=1f0072e88c2d705d94aff7f2c5cb02eb3f1ec4b8368671e19112527489f29032
   bigdecimal (4.1.3) sha256=61ebe1e5e559bdc3cc6f2c0ee7f427321fc838f59611c294356eb04d6e21cf66
