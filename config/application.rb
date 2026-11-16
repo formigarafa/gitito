@@ -32,6 +32,12 @@ module Gitito
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
 
+    # inherited_resources responds through the responders gem, which keeps 200
+    # and 302 for compatibility. Hotwire/Turbo needs failed form submissions to
+    # render with 422 and redirects after non-GET requests to use 303.
+    config.responders.error_status = :unprocessable_content
+    config.responders.redirect_status = :see_other
+
     config.to_prepare do
       Devise::SessionsController.layout "devise"
       Devise::RegistrationsController.layout(proc { |_controller| user_signed_in? ? "application" : "devise" })

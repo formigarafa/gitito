@@ -26,7 +26,7 @@ class UserCredentialsViewsTest < ActionView::TestCase
 
     render template: "user_credentials/index"
 
-    assert_select "form.button_to[onsubmit*=confirm]", count: 2 do
+    assert_select "form.button_to[data-turbo-confirm]", count: 2 do
       assert_select "input[name=_method][value=delete]"
     end
   end
