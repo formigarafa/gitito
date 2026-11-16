@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "test_helper"
 
 class UserCredentialsViewsTest < ActionView::TestCase
@@ -10,7 +8,7 @@ class UserCredentialsViewsTest < ActionView::TestCase
   def build_credentials
     [
       UserCredential.new(id: 1, title: "key one", key: "contents-key-one"),
-      UserCredential.new(id: 2, title: "key two", key: "contents-key-two"),
+      UserCredential.new(id: 2, title: "key two", key: "contents-key-two")
     ]
   end
 

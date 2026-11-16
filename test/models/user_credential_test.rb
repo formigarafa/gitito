@@ -1,9 +1,7 @@
-# frozen_string_literal: true
-
 require "test_helper"
 
 class UserCredentialTest < ActiveSupport::TestCase
-  BASE64_CHARSET = [*"a".."z", *"A".."Z", *"0".."9", "+", "/"].freeze
+  BASE64_CHARSET = [ *"a".."z", *"A".."Z", *"0".."9", "+", "/" ].freeze
 
   def valid_credential
     key = "ssh-rsa #{Array.new(372) { BASE64_CHARSET.sample }.join} user@comment.part.com"
@@ -44,7 +42,7 @@ class UserCredentialTest < ActiveSupport::TestCase
       "Lg8IVKoSdDSgG7YwdLF7fktjpUCidFAaYCBnkzDkw+tWt9y79IdgokRwK+bmVuf80xXAr6m",
       "D9WLNqTxqXdmCHd9cMePzszdIVUtjIk0R/YHaoCZat+T2D+ICLs2oz2lv+4z5A6who82u6d",
       "0X5HDV7dIxf5s8rb/8HGbU1hshsK7VE6SXzph/dj7otkl4Mq4bJ3yLx6l7YktZ9hmVsn+S0",
-      "zKcnlasD+ND2LM30X user@comment.part.com",
+      "zKcnlasD+ND2LM30X user@comment.part.com"
     ].join
 
     credential1 = valid_credential
@@ -136,7 +134,7 @@ class UserCredentialTest < ActiveSupport::TestCase
       auth_keys_file = "#{tmp_dir}/authorized_keys"
       records = [
         Minitest::Mock.new.expect(:authorized_keys_line, "line1"),
-        Minitest::Mock.new.expect(:authorized_keys_line, "line2"),
+        Minitest::Mock.new.expect(:authorized_keys_line, "line2")
       ]
 
       UserCredential.stub(:all, records) do

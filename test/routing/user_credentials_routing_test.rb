@@ -1,12 +1,10 @@
-# frozen_string_literal: true
-
 require "test_helper"
 
 class UserCredentialsRoutingTest < ActionDispatch::IntegrationTest
   def assert_routes(method, path, action, **params)
     assert_recognizes(
-      {controller: "user_credentials", action: action, **params},
-      {path: path, method: method},
+      { controller: "user_credentials", action: action, **params },
+      { path: path, method: method },
     )
   end
 

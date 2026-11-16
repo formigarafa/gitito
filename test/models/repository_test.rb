@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "test_helper"
 
 class RepositoryTest < ActiveSupport::TestCase
@@ -155,7 +153,7 @@ class RepositoryTest < ActiveSupport::TestCase
 
   test "has many collaborators" do
     repo = Repository.new
-    collaborators = [Collaborator.new, Collaborator.new]
+    collaborators = [ Collaborator.new, Collaborator.new ]
     collaborators.each do |collaborator|
       repo.collaborators << collaborator
     end

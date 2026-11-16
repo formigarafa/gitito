@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 module ApplicationHelper
   # Renders a small form that sends a DELETE request, asking the browser for
   # confirmation first. Works without any JavaScript framework (the old
@@ -10,7 +8,7 @@ module ApplicationHelper
       path,
       method: :delete,
       class: options.delete(:class) || "link_button",
-      form: {class: "button_to inline", onsubmit: "return confirm(#{confirm.to_json})"},
+      form: { class: "button_to inline", onsubmit: "return confirm(#{confirm.to_json})" },
       **options,
     )
   end

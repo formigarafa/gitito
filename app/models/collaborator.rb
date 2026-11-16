@@ -1,13 +1,11 @@
-# frozen_string_literal: true
-
 class Collaborator < ApplicationRecord
   belongs_to :user, optional: true
   belongs_to :repository, optional: true
 
-  validates :user, presence: {message: "User not found"}
+  validates :user, presence: { message: "User not found" }
   validate :that_user_is_not_owner
-  validates :user_id, uniqueness: {scope: :repository_id, message: "Collaborator is already on the list"}
-  validates :repository, presence: {message: "Repository not found"}
+  validates :user_id, uniqueness: { scope: :repository_id, message: "Collaborator is already on the list" }
+  validates :repository, presence: { message: "Repository not found" }
 
   def username
     user&.username

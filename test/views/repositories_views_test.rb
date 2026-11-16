@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "test_helper"
 
 class RepositoriesViewsTest < ActionView::TestCase
@@ -8,7 +6,7 @@ class RepositoriesViewsTest < ActionView::TestCase
   end
 
   test "index renders a list of repositories" do
-    @repositories = [repositories(:tilt), repositories(:rails)]
+    @repositories = [ repositories(:tilt), repositories(:rails) ]
     @collaborative_repositories = []
 
     render template: "repositories/index"
