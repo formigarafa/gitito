@@ -19,8 +19,6 @@ gem "jbuilder"
 
 # Flexible authentication solution for Rails [https://github.com/heartcombo/devise]
 gem "devise", "~> 5.0"
-# Rails RESTful controllers with less code [https://github.com/activeadmin/inherited_resources]
-gem "inherited_resources", "~> 2.1"
 # Ruby bindings to libgit2, used to create bare repositories [https://github.com/libgit2/rugged]
 gem "rugged", "~> 1.9"
 
