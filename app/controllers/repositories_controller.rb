@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class RepositoriesController < InheritedResources::Base
   actions :new, :create, :index, :show, :destroy
 
@@ -15,6 +13,6 @@ class RepositoriesController < InheritedResources::Base
   end
 
   def permitted_params
-    params.permit(repository: [:name])
+    params.permit(repository: [ :name ])
   end
 end

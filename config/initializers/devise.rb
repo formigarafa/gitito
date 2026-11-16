@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Use this hook to configure devise mailer, warden hooks and so forth.
 # Many of these configuration options can be set straight in your model.
 Rails.application.config.after_initialize do
@@ -44,12 +42,12 @@ Devise.setup do |config|
   # Configure which authentication keys should be case-insensitive.
   # These keys will be downcased upon creating or modifying a user and when used
   # to authenticate or find a user. Default is :email.
-  config.case_insensitive_keys = [:email]
+  config.case_insensitive_keys = [ :email ]
 
   # Configure which authentication keys should have whitespace stripped.
   # These keys will have whitespace before and after removed upon creating or
   # modifying a user and when used to authenticate or find a user. Default is :email.
-  config.strip_whitespace_keys = [:email]
+  config.strip_whitespace_keys = [ :email ]
 
   # Tell if authentication through request.params is enabled. True by default.
   # config.params_authenticatable = true
@@ -214,4 +212,12 @@ Devise.setup do |config|
   #   manager.intercept_401 = false
   #   manager.default_strategies(:scope => :user).unshift :some_external_strategy
   # end
+
+  # ==> Hotwire/Turbo configuration
+  # When using Devise with Hotwire/Turbo, the http status for error responses
+  # and some redirects must match the following. The default in Devise for existing
+  # apps is `200 OK` and `302 Found` respectively, but new apps are generated with
+  # these new defaults that match Hotwire/Turbo behavior.
+  config.responder.error_status = :unprocessable_content
+  config.responder.redirect_status = :see_other
 end

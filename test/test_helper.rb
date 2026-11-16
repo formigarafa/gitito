@@ -1,13 +1,8 @@
-# frozen_string_literal: true
-
 ENV["RAILS_ENV"] ||= "test"
 
-if ENV["coverage"] == "on"
+if ENV["COVERAGE"]
   require "simplecov"
-  SimpleCov.start "rails" do
-    add_filter "vendor/ruby/"
-    coverage_dir "../#{File.basename(ENV['CC_BUILD_ARTIFACTS'])}/coverage" if ENV["CC_BUILD_ARTIFACTS"]
-  end
+  SimpleCov.start "rails"
 end
 
 require_relative "../config/environment"
@@ -16,7 +11,12 @@ require "minitest/mock"
 
 module ActiveSupport
   class TestCase
+    # Run tests in parallel with specified workers
+    parallelize(workers: :number_of_processors)
+
     # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
     fixtures :all
+
+    # Add more helper methods to be used by all tests here...
   end
 end

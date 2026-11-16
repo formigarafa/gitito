@@ -1,0 +1,21 @@
+# Settings for the git hosting side of gitito. Every value can be set with an
+# environment variable, which is how config/deploy.yml configures production.
+shared:
+  # File the app writes users' public keys to; each key runs script/ssh-command-proxy.sh.
+  ssh_authorized_keys_file: <%= ENV.fetch("GITITO_SSH_AUTHORIZED_KEYS_FILE", "~/.ssh/authorized_keys") %>
+  # User and host shown in clone URLs: <ssh_user>@<ssh_host>:<owner>/<repository>.git
+  ssh_user: <%= ENV.fetch("GITITO_SSH_USER", "gitito") %>
+  ssh_host: <%= ENV.fetch("GITITO_SSH_HOST", "example.com") %>
+  # Host used for links in emails.
+  web_host: <%= ENV.fetch("GITITO_WEB_HOST", "example.com") %>
+  # Sender address for emails.
+  mailer_sender: <%= ENV.fetch("GITITO_MAILER_SENDER", "gitito@example.com") %>
+
+# Keep development and tests away from your own ~/.ssh/authorized_keys.
+development:
+  ssh_authorized_keys_file: <%= ENV.fetch("GITITO_SSH_AUTHORIZED_KEYS_FILE", "tmp/development/authorized_keys") %>
+  ssh_host: <%= ENV.fetch("GITITO_SSH_HOST", "localhost") %>
+  web_host: <%= ENV.fetch("GITITO_WEB_HOST", "localhost:3000") %>
+
+test:
+  ssh_authorized_keys_file: tmp/test/authorized_keys

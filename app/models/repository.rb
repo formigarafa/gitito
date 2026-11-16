@@ -1,16 +1,14 @@
-# frozen_string_literal: true
-
 class Repository < ApplicationRecord
   belongs_to :user, optional: true
   has_many :collaborators, dependent: :destroy
 
   attr_readonly :name
 
-  validates :name, presence: true, format: {with: /\A[a-zA-Z0-9\-_.]*\z/}, uniqueness: {scope: :user_id}
+  validates :name, presence: true, format: { with: /\A[a-zA-Z0-9\-_.]*\z/ }, uniqueness: { scope: :user_id }
   validates :user, presence: true
 
   def self.repos_root
-    "#{Rails.root}/db/users_repositories/#{Rails.env}"
+    Rails.root.join("storage/repositories", Rails.env).to_s
   end
 
   def server_path

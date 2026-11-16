@@ -1,72 +1,8 @@
-plugins:
-  - rubocop-rails
+# Omakase Ruby styling for Rails
+inherit_gem: { rubocop-rails-omakase: rubocop.yml }
 
-Rails:
-  Enabled: true
-
-AllCops:
-  NewCops: enable
-  SuggestExtensions: false
-  TargetRubyVersion: 4.0
-  Exclude:
-    - bin/*
-    - db/schema.rb
-    - vendor/**/*
-
-Style/StringLiterals:
-  EnforcedStyle: double_quotes
-
-Layout/ParameterAlignment:
-  EnforcedStyle: with_fixed_indentation
-  IndentationWidth: 2
-
-Layout/LineLength:
-  Max: 110
-
-Style/HashSyntax:
-  EnforcedStyle: ruby19
-
-Style/TrailingCommaInArguments:
-  EnforcedStyleForMultiline: consistent_comma
-
-Layout/FirstArrayElementIndentation:
-  EnforcedStyle: consistent
-
-Style/TrailingCommaInArrayLiteral:
-  EnforcedStyleForMultiline: consistent_comma
-
-Style/TrailingCommaInHashLiteral:
-  EnforcedStyleForMultiline: consistent_comma
-
-Layout/FirstParameterIndentation:
-  EnforcedStyle: consistent
-
-Layout/SpaceInsideBlockBraces:
-  EnforcedStyle: space
-  EnforcedStyleForEmptyBraces: no_space
-  SpaceBeforeBlockParameters: false
-
-Layout/SpaceInsideHashLiteralBraces:
-  EnforcedStyle: no_space
-  EnforcedStyleForEmptyBraces: no_space
-
-Style/CollectionMethods:
-  Enabled: true
-
-Rails/FilePath:
-  Enabled: false
-
-Style/Documentation:
-  Enabled: false
-
-Metrics/ClassLength:
-  Exclude:
-    - test/**/*_test.rb
-
-Metrics/MethodLength:
-  Exclude:
-    - db/migrate/*.rb
-
-# This app is English only; validation messages live next to the validations.
-Rails/I18nLocaleTexts:
-  Enabled: false
+# Overwrite or add rules to create your own house style
+#
+# # Use `[a, [b, c]]` not `[ a, [ b, c ] ]`
+# Layout/SpaceInsideArrayLiteralBrackets:
+#   Enabled: false

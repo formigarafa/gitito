@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class UserCredentialsController < InheritedResources::Base
   actions :new, :create, :index, :edit, :update, :destroy
 
