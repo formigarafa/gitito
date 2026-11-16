@@ -1,28 +1,29 @@
-class CollaboratorsController < InheritedResources::Base
-  actions :create, :destroy
-  belongs_to :repository
-
-  before_action :initialize_collaborator, only: :create
+class CollaboratorsController < ApplicationController
+  before_action :set_repository
 
   def create
-    create! do |success, failure|
-      success.html { redirect_to @collaborator.repository }
-      failure.html do
-        flash[:error] = @collaborator.errors.map(&:message).join(", ")
-        redirect_to @collaborator.repository
-      end
+    @collaborator = @repository.collaborators.new(user: user_to_become_collaborator)
+
+    if @collaborator.save
+      flash[:notice] = "Collaborator was successfully created."
+    else
+      flash[:error] = @collaborator.errors.map(&:message).join(", ")
     end
+    redirect_to @repository
+  end
+
+  def destroy
+    @repository.collaborators.find(params.expect(:id)).destroy
+    redirect_to @repository, notice: "Collaborator was successfully destroyed.", status: :see_other
   end
 
   private
 
-  def initialize_collaborator
-    @collaborator = Repository.find(params.expect(:repository_id)).collaborators.new(
-      user: user_to_become_collaborator,
-    )
+  def set_repository
+    @repository = Repository.find(params.expect(:repository_id))
   end
 
   def user_to_become_collaborator
-    User.where(username: params[:collaborator][:username]).first
+    User.find_by(username: params.expect(collaborator: [ :username ])[:username])
   end
 end
