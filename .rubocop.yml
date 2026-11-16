@@ -59,9 +59,9 @@ Rails/FilePath:
 Style/Documentation:
   Enabled: false
 
-Metrics/BlockLength:
+Metrics/ClassLength:
   Exclude:
-    - spec/**/*spec.rb
+    - test/**/*_test.rb
 
 Metrics/MethodLength:
   Exclude:
