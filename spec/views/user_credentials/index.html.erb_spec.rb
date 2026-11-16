@@ -17,5 +17,13 @@ describe "user_credentials/index.html.erb" do
       expect(rendered).to match(/key one/)
       expect(rendered).to match(/key two/)
     end
+
+    it "renders a delete button asking for confirmation for each credential" do
+      render
+
+      assert_select "form.button_to[onsubmit*=confirm]", count: 2 do
+        assert_select "input[name=_method][value=delete]"
+      end
+    end
   end
 end
