@@ -68,7 +68,7 @@ class RepositoryTest < ActiveSupport::TestCase
   end
 
   test "has method to get where I can find all repositories" do
-    assert_equal "#{Rails.root}/db/users_repositories/#{Rails.env}", Repository.repos_root
+    assert_equal Rails.root.join("storage/repositories", Rails.env).to_s, Repository.repos_root
   end
 
   test "has method to get repository path on file server" do

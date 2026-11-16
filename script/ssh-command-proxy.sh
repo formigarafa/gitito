@@ -6,7 +6,7 @@
 SCRIPT_PATH="$( cd "$( dirname "$0" )" && pwd )"
 LOG_PATH=$(dirname $SCRIPT_PATH)/log
 LOG_FILE=$LOG_PATH/ssh-command-proxy.log
-REPOSITORIES_PATH=$(dirname $SCRIPT_PATH)/db/users_repositories/production
+REPOSITORIES_PATH=$(dirname $SCRIPT_PATH)/storage/repositories/production
 
 cd "$REPOSITORIES_PATH"
 if [ -n "$SSH_ORIGINAL_COMMAND" ]; then

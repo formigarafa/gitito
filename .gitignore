@@ -21,9 +21,12 @@
 !/tmp/pids/
 !/tmp/pids/.keep
 
-# Ignore SQLite databases and the git repositories created by the app.
-/db/*.sqlite3
-/db/users_repositories/
+# Ignore storage (SQLite databases and the git repositories served by the app).
+/storage/*
+!/storage/.keep
+/tmp/storage/*
+!/tmp/storage/
+!/tmp/storage/.keep
 
 /public/assets
 

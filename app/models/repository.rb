@@ -10,7 +10,7 @@ class Repository < ApplicationRecord
   validates :user, presence: true
 
   def self.repos_root
-    "#{Rails.root}/db/users_repositories/#{Rails.env}"
+    Rails.root.join("storage/repositories", Rails.env).to_s
   end
 
   def server_path
