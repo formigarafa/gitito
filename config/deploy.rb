@@ -93,24 +93,10 @@ namespace :data do
 
     task :database, roles: :db, only: {primary: true} do
       run "mkdir -p #{backup_path}"
-      filename = "#{backup_path}/mysqldump.sql.bz2"
-      text = capture [
-        "if [ -f #{deploy_to}/current/config/database.yml ]",
-        "then cat #{deploy_to}/current/config/database.yml",
-        "else cat #{shared_path}/cached-copy/config/database.yml",
-        "fi",
-      ].join("; ")
-      yaml = YAML.safe_load(text)
-
-      run [
-        "mysqldump",
-        "-h #{yaml['production']['host']}",
-        "-u #{yaml['production']['username']}",
-        "-p #{yaml['production']['database']}",
-        "| bzip2 -c > #{filename}",
-      ].join(" ") do |ch, _stream, out|
-        ch.send_data "#{yaml['production']['password']}\n" if out =~ /^Enter password:/
-      end
+      database_file = "#{shared_path}/db/production.sqlite3"
+      backup_file = "#{backup_path}/production.sqlite3"
+      run "if [ -f #{database_file} ]; then " \
+          "sqlite3 #{database_file} \".backup '#{backup_file}'\" && bzip2 #{backup_file}; fi"
     end
   end
 end
