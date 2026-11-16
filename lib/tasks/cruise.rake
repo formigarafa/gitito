@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 desc "cruise control continuous integration"
-task cruise: [:spec, "metrics:all"]
+task cruise: [:test, "metrics:all"]
 
 # MetricFu::Configuration.run do |config|
 # config.rcov[:test_files] = ['spec/**/*_spec.rb']

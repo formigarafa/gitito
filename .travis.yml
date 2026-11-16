@@ -12,4 +12,4 @@ before_script:
 script:
   - bin/rails db:schema:load
   - bin/rails db:test:prepare
-  - bundle exec rspec
+  - bin/rails test

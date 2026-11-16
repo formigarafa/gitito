@@ -14,9 +14,8 @@ gem "sqlite3", ">= 2.1"
 group :development, :test do
   gem "autotest-rails", require: false
   gem "capybara"
+  gem "minitest-mock"
   gem "rake"
-  gem "rspec-activemodel-mocks"
-  gem "rspec-rails", "~> 8.0"
   gem "rubocop", require: false
   gem "rubocop-rails", require: false
   gem "simplecov", require: false
