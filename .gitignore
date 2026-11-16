@@ -35,6 +35,3 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
-
-# Ignore the app's local configuration.
-/config/gitito.yml

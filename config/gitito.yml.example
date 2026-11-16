@@ -1,7 +1,0 @@
-gitito:
-  ssh_authorized_keys_file: ~/.ssh/authorized_keys
-  ssh_user: "gitito"
-  ssh_host: "example.com"
-  web_host: "example.com"
-  mailer_sender: "gitito@example.com"
-
