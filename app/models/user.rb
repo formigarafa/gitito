@@ -10,7 +10,10 @@ class User < ApplicationRecord
 
   normalizes :email, with: ->(email) { email.strip.downcase }
 
-  validates :username, presence: true, format: { with: /\A[a-zA-Z0-9\-_.]*\z/ }
+  # The username is the folder of the user's repositories, so two users cannot
+  # share one and it cannot point outside the repositories root.
+  validates :username, presence: true, format: { with: /\A[a-zA-Z0-9\-_.]*\z/ },
+    uniqueness: true, exclusion: { in: %w[. ..] }
   validates :email, presence: true, uniqueness: true, format: { with: /\A[^@\s]+@[^@\s]+\z/, allow_blank: true }
   validates :password, length: { minimum: 6 }, allow_nil: true
 

@@ -15,12 +15,6 @@ git clone gitito@example.com:alice/project.git
 It only manages keys, repositories and access. There is no code browser,
 issues or pull requests.
 
-## Known issues
-
-SSH access is not yet checked per repository: any user with a registered key
-can reach any repository whose address they know. Only run it for people you
-trust.
-
 ## Requirements
 
 - Ruby (version in `.ruby-version`)
@@ -54,9 +48,21 @@ variables:
 ## How SSH access works
 
 Each registered key becomes a line in the authorized keys file with a forced
-command, `script/ssh-command-proxy.sh`, which hands the git command to
-`git-shell` inside `storage/repositories/production`. Users can run git
-commands but never get a shell.
+command, `script/ssh-command-proxy.sh`, which is told which key was used.
+Users can run git commands but never get a shell.
+
+The app also keeps an access list in
+`storage/repositories/production.access`, with the repositories each key can
+reach: the ones its user owns or collaborates on. The script only hands a git
+command to `git-shell`, inside `storage/repositories/production`, when the
+repository is on that list for that key. Anything else is refused, the same
+way whether the repository exists or not, and logged to
+`log/ssh-command-proxy.log`.
+
+Both files are rewritten whenever keys, repositories or collaborators change.
+To rewrite them by hand, as when upgrading from a version without the access
+list, run `bin/rails gitito:sync_ssh_access`. The Docker image does it on
+boot. Until the access list exists every request is refused.
 
 In production the file defaults to `~/.ssh/authorized_keys` of the user
 running the app, and **its contents are replaced**. Run the app as a dedicated

@@ -10,10 +10,12 @@ class UserCredential < ApplicationRecord
 
   after_save do
     UserCredential.generate_authorized_keys_file
+    Repository.generate_access_file
   end
 
   after_destroy do
     UserCredential.generate_authorized_keys_file
+    Repository.generate_access_file
   end
 
   class << self

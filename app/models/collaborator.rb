@@ -7,6 +7,14 @@ class Collaborator < ApplicationRecord
   validates :user_id, uniqueness: { scope: :repository_id, message: "Collaborator is already on the list" }
   validates :repository, presence: { message: "Repository not found" }
 
+  after_save do
+    Repository.generate_access_file
+  end
+
+  after_destroy do
+    Repository.generate_access_file
+  end
+
   def username
     user&.username
   end
