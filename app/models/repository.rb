@@ -11,29 +11,6 @@ class Repository < ApplicationRecord
     Rails.root.join("storage/repositories", Rails.env).to_s
   end
 
-  # File script/ssh-command-proxy.sh reads to decide which repositories an SSH
-  # key can reach.
-  def self.access_file_path
-    Rails.root.join("storage/repositories", "#{Rails.env}.access").to_s
-  end
-
-  # One "<user credential id> <owner>/<name>.git" line for each repository
-  # each key can reach: the keys of its owner and of its collaborators.
-  def self.access_lines
-    includes(user: :user_credentials, collaborators: { user: :user_credentials }).flat_map do |repository|
-      users = [ repository.user, *repository.collaborators.map(&:user) ].compact
-      users.flat_map(&:user_credentials).map { |credential| "#{credential.id} #{repository.relative_path}" }
-    end
-  end
-
-  # Written aside and renamed, so sshd never reads a half written file.
-  def self.generate_access_file
-    FileUtils.mkdir_p File.dirname(access_file_path)
-    temporary_path = "#{access_file_path}.#{Process.pid}.tmp"
-    File.write temporary_path, access_lines.map { |line| "#{line}\n" }.join, perm: 0o644
-    File.rename temporary_path, access_file_path
-  end
-
   def relative_path
     "#{user.username}/#{name}.git"
   end
@@ -75,15 +52,18 @@ class Repository < ApplicationRecord
 
   after_create do
     create_structure
-    Repository.generate_access_file
   end
 
   after_destroy do
     remove_structure
-    Repository.generate_access_file
   end
 
   def owned_by?(supposed_owner)
     user == supposed_owner
+  end
+
+  # The owner and the collaborators can fetch from and push to the repository.
+  def accessible_by?(supposed_user)
+    owned_by?(supposed_user) || collaborators.exists?(user: supposed_user)
   end
 end

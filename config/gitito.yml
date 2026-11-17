@@ -3,6 +3,8 @@
 shared:
   # File the app writes users' public keys to; each key runs script/ssh-command-proxy.sh.
   ssh_authorized_keys_file: <%= ENV.fetch("GITITO_SSH_AUTHORIZED_KEYS_FILE", "~/.ssh/authorized_keys") %>
+  # Where script/ssh-command-proxy.sh reaches this app from the SSH host.
+  ssh_access_url: <%= ENV.fetch("GITITO_SSH_ACCESS_URL", "http://localhost:3000") %>
   # User and host shown in clone URLs: <ssh_user>@<ssh_host>:<owner>/<repository>.git
   ssh_user: <%= ENV.fetch("GITITO_SSH_USER", "gitito") %>
   ssh_host: <%= ENV.fetch("GITITO_SSH_HOST", "example.com") %>

@@ -10,16 +10,16 @@ class UserCredential < ApplicationRecord
 
   after_save do
     UserCredential.generate_authorized_keys_file
-    Repository.generate_access_file
   end
 
   after_destroy do
     UserCredential.generate_authorized_keys_file
-    Repository.generate_access_file
   end
 
   class << self
+    # Also writes what the forced command of the keys needs to reach the app.
     def generate_authorized_keys_file
+      SshAccess.write_config
       destination_folder = File.dirname(authorized_keys_absolute_path)
       FileUtils.mkdir_p(destination_folder, mode: 0o700)
       authorized_keys = File.new(authorized_keys_absolute_path, "w", 0o644)

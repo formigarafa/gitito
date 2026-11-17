@@ -65,6 +65,8 @@ env:
     GITITO_MAILER_SENDER: gitito@example.com
     # Keys live on the persistent volume; the host's sshd must read them from there.
     GITITO_SSH_AUTHORIZED_KEYS_FILE: /rails/storage/authorized_keys
+    # Where the host's sshd reaches the app to check access to a repository.
+    GITITO_SSH_ACCESS_URL: https://example.com
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
 # "bin/kamal logs -r job" will tail logs from the first server in the job section.
