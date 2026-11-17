@@ -1,10 +1,10 @@
-<p>Hello <%= @user.email %>!</p>
+<p>Hello <%= @user.username %>,</p>
 
-<p>Someone has requested a link to change your password, and you can do this through the link below.</p>
+<p>Someone asked for a link to change the password of your gitito account. If it was you, choose a new one here:</p>
 
-<p><%= link_to "Change my password", edit_password_url(@user.password_reset_token) %></p>
+<p><%= link_to "Change my password", edit_password_url(@user.password_reset_token), class: "mail__button" %></p>
 
-<p>This link will expire in <%= distance_of_time_in_words(0, @user.password_reset_token_expires_in) %>.</p>
-
-<p>If you didn't request this, please ignore this email.</p>
-<p>Your password won't change until you access the link above and create a new one.</p>
+<p class="mail__muted">
+  This link will expire in <%= distance_of_time_in_words(0, @user.password_reset_token_expires_in) %>.
+  If you didn't ask for it, ignore this email: your password stays as it is until you open the link and choose a new one.
+</p>
