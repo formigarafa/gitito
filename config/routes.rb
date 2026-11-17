@@ -11,7 +11,7 @@ Rails.application.routes.draw do
 
   # Asked by script/ssh-command-proxy.sh on every SSH connection.
   namespace :internal do
-    resource :ssh_access, only: :show, controller: "ssh_access"
+    resource :ssh_access, only: :create, controller: "ssh_access"
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

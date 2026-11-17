@@ -2,10 +2,23 @@ class Repository < ApplicationRecord
   belongs_to :user, optional: true
   has_many :collaborators, dependent: :destroy
 
+  # A repository is kept, and asked for, at <username of the owner>/<name>.git.
+  # Both names are made of these characters only, so the path is always one
+  # folder inside another and never points anywhere else.
+  NAME_CHARACTER = /[a-zA-Z0-9\-_.]/
+  NAME_FORMAT = /\A#{NAME_CHARACTER}*\z/
+  RELATIVE_PATH_FORMAT = %r{\A(?<owner>#{NAME_CHARACTER}+)/(?<name>#{NAME_CHARACTER}+)\.git\z}
+
   attr_readonly :name
 
-  validates :name, presence: true, format: { with: /\A[a-zA-Z0-9\-_.]*\z/ }, uniqueness: { scope: :user_id }
+  validates :name, presence: true, format: { with: NAME_FORMAT }, uniqueness: { scope: :user_id }
   validates :user, presence: true
+
+  # The repository at +path+, as in "<owner>/<name>.git", when there is one.
+  def self.find_by_relative_path(path)
+    match = RELATIVE_PATH_FORMAT.match(path.to_s)
+    match && joins(:user).find_by(name: match[:name], users: { username: match[:owner] })
+  end
 
   def relative_path
     "#{user.username}/#{name}.git"
@@ -20,7 +33,7 @@ class Repository < ApplicationRecord
   end
 
   def url
-    "#{ssh_user}@#{ssh_host}:#{user.username}/#{name}.git"
+    "#{ssh_user}@#{ssh_host}:#{relative_path}"
   end
 
   # The git repository is created with the record, so failing to create it

@@ -98,6 +98,35 @@ class RepositoryTest < ActiveSupport::TestCase
     assert_equal "formigarafa/tilt.git", repositories(:tilt).relative_path
   end
 
+  test "is found by the path it has" do
+    Repository.find_each do |repository|
+      assert_equal repository, Repository.find_by_relative_path(repository.relative_path)
+    end
+  end
+
+  test "is found by the name of its owner, not of a namesake repository" do
+    namesake = Repository.create!(name: "tilt", user: users(:juca))
+
+    assert_equal namesake, Repository.find_by_relative_path("juca/tilt.git")
+    assert_equal repositories(:tilt), Repository.find_by_relative_path("formigarafa/tilt.git")
+  end
+
+  test "is found with every character a username and a name can have" do
+    owner = User.create!(username: "N4m3_W1th-V4l1d.Ch4r", email: "owner@example.com", password: "1qaz2wsx")
+    repository = Repository.create!(name: "N4m3_W1th-V4l1d.Ch4r.git", user: owner)
+
+    assert_equal "N4m3_W1th-V4l1d.Ch4r/N4m3_W1th-V4l1d.Ch4r.git.git", repository.relative_path
+    assert_equal repository, Repository.find_by_relative_path(repository.relative_path)
+  end
+
+  test "is not found by what is not the path of a repository" do
+    [ nil, "", "tilt.git", "formigarafa/tilt", "formigarafa/nothing.git", "nobody/tilt.git",
+      "formigarafa/tilt.git/", "/formigarafa/tilt.git", "x/formigarafa/tilt.git", "formigarafa/tilt.git\n",
+      "formigarafa/.git", "formi garafa/tilt.git", "formigarafa/ti*lt.git" ].each do |path|
+      assert_nil Repository.find_by_relative_path(path), "expected #{path.inspect} not to find a repository"
+    end
+  end
+
   test "is accessible by its owner and its collaborators only" do
     repo = repositories(:tilt)
     repo.collaborators.create!(user: users(:juca))
