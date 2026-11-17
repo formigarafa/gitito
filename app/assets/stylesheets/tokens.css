@@ -2,6 +2,11 @@
  * Design tokens: every colour, size and shadow the other stylesheets use.
  * The palette is built on a "digital blue". The design is flat: only what has
  * to float over the page (dialogs) takes a shadow.
+ *
+ * The fonts are served by the app, from app/assets/fonts: Inter for
+ * everything, and JetBrains Mono for what goes to a terminal, such as clone
+ * URLs, commands and keys. Both are the variable fonts, latin subset, of
+ * Fontsource 5.3.0, under the SIL Open Font License 1.1.
  */
 
 @font-face {
