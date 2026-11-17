@@ -1,11 +1,9 @@
 require "test_helper"
 
 class UserCredentialsControllerTest < ActionDispatch::IntegrationTest
-  include Devise::Test::IntegrationHelpers
-
   setup do
     @user = users(:juca)
-    sign_in @user
+    sign_in_as @user
   end
 
   def without_authorized_keys_file(&)

@@ -1,11 +1,9 @@
 require "test_helper"
 
 class CollaboratorsControllerTest < ActionDispatch::IntegrationTest
-  include Devise::Test::IntegrationHelpers
-
   setup do
     @repository = repositories(:tilt)
-    sign_in users(:formigarafa)
+    sign_in_as users(:formigarafa)
   end
 
   test "create adds the user as collaborator and redirects to the repository" do

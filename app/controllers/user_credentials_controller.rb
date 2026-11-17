@@ -2,18 +2,18 @@ class UserCredentialsController < ApplicationController
   before_action :set_user_credential, only: %i[edit update destroy]
 
   def index
-    @user_credentials = current_user.user_credentials
+    @user_credentials = Current.user.user_credentials
   end
 
   def new
-    @user_credential = current_user.user_credentials.new
+    @user_credential = Current.user.user_credentials.new
   end
 
   def edit
   end
 
   def create
-    @user_credential = current_user.user_credentials.new(user_credential_params)
+    @user_credential = Current.user.user_credentials.new(user_credential_params)
 
     if @user_credential.save
       redirect_to user_credentials_path, notice: "User credential was successfully created.", status: :see_other
@@ -38,7 +38,7 @@ class UserCredentialsController < ApplicationController
   private
 
   def set_user_credential
-    @user_credential = current_user.user_credentials.find(params.expect(:id))
+    @user_credential = Current.user.user_credentials.find(params.expect(:id))
   end
 
   def user_credential_params

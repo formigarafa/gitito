@@ -1,0 +1,68 @@
+<div id="box">
+  <div class="block" id="block-signup">
+    <h2>Edit User</h2>
+    &nbsp;
+    <div class="content">
+      <%= render "shared/error_messages", resource: @user %>
+
+      <%= form_with model: @user, url: registration_path, method: :put, class: "form login" do |f| %>
+        <div class="group wat-cf">
+          <div class="left">
+            <%= f.label :email, "email", class: "label" %>
+          </div>
+          <div class="right">
+            <%= f.email_field :email, class: "text_field", required: true, autocomplete: "username" %>
+          </div>
+        </div>
+
+        <div class="group wat-cf">
+          <div class="left">
+            <%= f.label :password, "password", class: "label" %>
+          </div>
+          <div class="right">
+            <%= f.password_field :password, class: "text_field", autocomplete: "new-password", maxlength: 72 %>
+            <span class="description">leave blank if you don't want to change it</span>
+          </div>
+        </div>
+
+        <div class="group wat-cf">
+          <div class="left">
+            <%= f.label :password_confirmation, "password confirmation", class: "label" %>
+          </div>
+          <div class="right">
+            <%= f.password_field :password_confirmation, class: "text_field", autocomplete: "new-password", maxlength: 72 %>
+          </div>
+        </div>
+
+        <div class="group wat-cf">
+          <div class="left">
+            <%= f.label :password_challenge, "current password", class: "label" %>
+          </div>
+          <div class="right">
+            <%= f.password_field :password_challenge, class: "text_field", required: true, autocomplete: "current-password", maxlength: 72 %>
+            <span class="description">we need your current password to confirm your changes</span>
+          </div>
+        </div>
+
+        <div class="group navform wat-cf">
+          <div class="right">
+            <button class="button" type="submit">
+              <%= image_tag "web-app-theme/icons/tick.png", alt: "Save" %> Update
+            </button>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="block" id="block-signup">
+    <h2>Cancel my account</h2>
+    &nbsp;
+
+    <div class="content">
+      <p>
+        Unhappy? <%= delete_button "Cancel my account", registration_path %>.
+      </p>
+    </div>
+  </div>
+</div>

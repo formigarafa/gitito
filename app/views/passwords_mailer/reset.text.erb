@@ -1,0 +1,10 @@
+Hello <%= @user.email %>!
+
+Someone has requested a link to change your password, and you can do this through the link below.
+
+<%= edit_password_url(@user.password_reset_token) %>
+
+This link will expire in <%= distance_of_time_in_words(0, @user.password_reset_token_expires_in) %>.
+
+If you didn't request this, please ignore this email.
+Your password won't change until you access the link above and create a new one.

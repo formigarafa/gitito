@@ -1,11 +1,9 @@
 require "test_helper"
 
 class RepositoriesControllerTest < ActionDispatch::IntegrationTest
-  include Devise::Test::IntegrationHelpers
-
   setup do
     @owner = users(:formigarafa)
-    sign_in @owner
+    sign_in_as @owner
   end
 
   test "index lists own and collaborative repositories" do
@@ -22,7 +20,7 @@ class RepositoriesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "index does not list repositories of other users" do
-    sign_in users(:juca)
+    sign_in_as users(:juca)
 
     get repositories_path
 
@@ -43,7 +41,7 @@ class RepositoriesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "show does not find repositories of other users" do
-    sign_in users(:juca)
+    sign_in_as users(:juca)
     get repository_path(repositories(:tilt))
     assert_response :not_found
   end
@@ -83,7 +81,7 @@ class RepositoriesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "destroy does not find repositories of other users" do
-    sign_in users(:juca)
+    sign_in_as users(:juca)
     assert_no_difference -> { Repository.count } do
       delete repository_path(repositories(:tilt))
     end
