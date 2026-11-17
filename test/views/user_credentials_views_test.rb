@@ -40,7 +40,7 @@ class UserCredentialsViewsTest < ActionView::TestCase
   end
 
   test "edit renders the edit user_credential form" do
-    @user_credential = UserCredential.create!(title: "key one", key: "contents-key-one", user: users(:juca))
+    @user_credential = UserCredential.create!(title: "key one", key: ssh_key, user: users(:juca))
 
     render template: "user_credentials/edit"
 

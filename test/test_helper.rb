@@ -39,6 +39,12 @@ module ActiveSupport
       FileUtils.remove_entry @repositories_root
     end
 
+    # A public key of no one else, the way ssh-keygen prints it.
+    def ssh_key(comment = nil)
+      blob = [ 11, "ssh-ed25519", 32, SecureRandom.random_bytes(32) ].pack("Na*Na*")
+      [ "ssh-ed25519", [ blob ].pack("m0"), comment ].compact.join(" ")
+    end
+
     # Where the git data of +repository+ is expected to be.
     def storage_path_of(repository)
       File.join(RepositoryStorage.default.root, repository.relative_path)

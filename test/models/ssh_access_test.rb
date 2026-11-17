@@ -5,7 +5,7 @@ class SshAccessTest < ActiveSupport::TestCase
   NOT_ALLOWED = "Command not allowed".freeze
 
   def add_key(user)
-    user.user_credentials.create!(key: "ssh-ed25519 AAAA#{SecureRandom.hex} #{user.username}")
+    user.user_credentials.create!(key: ssh_key(user.username))
   end
 
   def assert_granted(verb, repository, credential, command)
