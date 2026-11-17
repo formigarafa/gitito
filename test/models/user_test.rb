@@ -181,7 +181,7 @@ class UserTest < ActiveSupport::TestCase
 
   test "generates gravatar url from user email" do
     user = User.new email: "juca@example.com"
-    assert_equal "http://www.gravatar.com/avatar/#{Digest::MD5.hexdigest('juca@example.com')}", user.gravatar_url
+    assert_equal "https://www.gravatar.com/avatar/#{Digest::MD5.hexdigest('juca@example.com')}?d=identicon&s=128", user.gravatar_url
   end
 
   test "gravatar url ignores case and surrounding spaces in the email" do

@@ -1,15 +1,14 @@
 <% if authenticated? %>
-  <li>
-    <%= link_to Current.user.username, edit_registration_path %>
-  </li>
-  <li>
-    <%= button_to "Logout", session_path, method: :delete, class: "logout link_button", form: { class: "button_to inline" } %>
-  </li>
+  <%= link_to edit_registration_path, class: "usernav__link", title: "Your account",
+        aria: { current: ("page" if controller_name == "registrations") } do %>
+    <%= avatar Current.user, class: "avatar--sm" %>
+    <span class="usernav__name"><%= Current.user.username %></span>
+  <% end %>
+  <%= button_to session_path, method: :delete, class: "usernav__link", title: "Sign out" do %>
+    <%= icon "log-out" %>
+    <span class="usernav__signout-label">Sign out</span>
+  <% end %>
 <% else %>
-  <li>
-    <%= link_to "Register", new_registration_path %>
-  </li>
-  <li>
-    <%= link_to "Login", new_session_path %>
-  </li>
+  <%= link_to "Sign up", new_registration_path, class: "usernav__link" %>
+  <%= link_to "Sign in", new_session_path, class: "usernav__link" %>
 <% end %>

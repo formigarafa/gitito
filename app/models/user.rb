@@ -53,6 +53,6 @@ class User < ApplicationRecord
 
   def gravatar_url
     hash = Digest::MD5.hexdigest(email)
-    "http://www.gravatar.com/avatar/#{hash}"
+    "https://www.gravatar.com/avatar/#{hash}?d=identicon&s=128"
   end
 end

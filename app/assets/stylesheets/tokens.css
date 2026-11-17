@@ -1,0 +1,170 @@
+/*
+ * Design tokens: every colour, size and shadow the other stylesheets use.
+ * The palette is built on a "digital blue". The design is flat: only what has
+ * to float over the page (dialogs) takes a shadow.
+ */
+
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/inter-latin-wght-normal.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: url("/jetbrains-mono-latin-wght-normal.woff2") format("woff2");
+}
+
+:root {
+  color-scheme: light dark;
+
+  /* Digital blue */
+  --blue-50: #eef4ff;
+  --blue-100: #dbe7ff;
+  --blue-200: #bdd2ff;
+  --blue-300: #8fb3ff;
+  --blue-400: #5a8bff;
+  --blue-500: #2f66ff;
+  --blue-600: #1a4fef;
+  --blue-700: #143fd0;
+  --blue-800: #1535a3;
+  --blue-900: #152f80;
+  --blue-950: #0e1d4f;
+
+  /* Neutrals, leaning to the blue */
+  --gray-50: #f5f7fb;
+  --gray-100: #edf0f6;
+  --gray-200: #dee3ed;
+  --gray-300: #c5cddb;
+  --gray-400: #97a2b6;
+  --gray-500: #6a768c;
+  --gray-600: #4c576b;
+  --gray-700: #364053;
+  --gray-800: #1f2738;
+  --gray-900: #0f1626;
+
+  /* Roles */
+  --bg: var(--gray-50);
+  --surface: #fff;
+  --surface-sunken: var(--gray-100);
+  --border: var(--gray-200);
+  --border-strong: var(--gray-300);
+  --text: var(--gray-900);
+  --text-muted: var(--gray-600);
+  --text-subtle: var(--gray-500);
+
+  --primary: var(--blue-600);
+  --primary-hover: var(--blue-700);
+  --primary-soft: var(--blue-50);
+  --primary-soft-hover: var(--blue-100);
+  --primary-text: var(--blue-700);
+  --on-primary: #fff;
+  --focus-ring: var(--blue-400);
+
+  --danger: #d42d3c;
+  --danger-hover: #b32231;
+  --danger-soft: #fdecee;
+  --danger-border: #f6c5ca;
+  --danger-text: #a51d2b;
+
+  --success-soft: #e5f6ee;
+  --success-border: #b5e3cc;
+  --success-text: #0b6b48;
+
+  --warning-soft: #fff5dd;
+  --warning-border: #f3dca0;
+  --warning-text: #7a4d00;
+
+  --topbar-bg: var(--blue-600);
+  --topbar-border: var(--blue-600);
+  --topbar-text: #fff;
+  --topbar-text-muted: rgb(255 255 255 / 0.78);
+  --topbar-hover: rgb(255 255 255 / 0.12);
+  --topbar-active: rgb(255 255 255 / 0.2);
+
+  --code-bg: var(--gray-900);
+  --code-border: var(--gray-900);
+  --code-text: #e3e9f6;
+  --code-muted: #8794ad;
+
+  --backdrop: rgb(15 22 38 / 0.55);
+  --shadow-pop: 0 24px 56px -12px rgb(14 29 79 / 0.35), 0 4px 14px rgb(14 29 79 / 0.12);
+
+  /* Type */
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+
+  /* Space */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 14px;
+
+  --control-height: 2.5rem;
+  --page-width: 60rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0a101f;
+    --surface: #121a2e;
+    --surface-sunken: #0d1425;
+    --border: #243049;
+    --border-strong: #37456a;
+    --text: #e8ecf5;
+    --text-muted: #a6b1c7;
+    --text-subtle: #8290aa;
+
+    --primary: var(--blue-500);
+    --primary-hover: #4a7bff;
+    --primary-soft: rgb(47 102 255 / 0.16);
+    --primary-soft-hover: rgb(47 102 255 / 0.26);
+    --primary-text: var(--blue-300);
+    --focus-ring: var(--blue-300);
+
+    --danger: #e5484d;
+    --danger-hover: #f0595e;
+    --danger-soft: rgb(229 72 77 / 0.14);
+    --danger-border: rgb(229 72 77 / 0.4);
+    --danger-text: #ffa3a7;
+
+    --success-soft: rgb(32 178 126 / 0.14);
+    --success-border: rgb(32 178 126 / 0.4);
+    --success-text: #6ddcb0;
+
+    --warning-soft: rgb(240 180 50 / 0.13);
+    --warning-border: rgb(240 180 50 / 0.38);
+    --warning-text: #f3cc77;
+
+    --topbar-bg: #101a36;
+    --topbar-border: var(--border);
+    --topbar-text-muted: rgb(255 255 255 / 0.7);
+    --topbar-hover: rgb(255 255 255 / 0.08);
+    --topbar-active: rgb(47 102 255 / 0.35);
+
+    --code-bg: #070b16;
+    --code-border: var(--border);
+
+    --backdrop: rgb(3 6 14 / 0.7);
+    --shadow-pop: 0 24px 56px -12px rgb(0 0 0 / 0.7), 0 4px 14px rgb(0 0 0 / 0.4);
+  }
+}

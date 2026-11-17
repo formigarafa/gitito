@@ -1,7 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 
+// Takes its element off the page: the "x" of a message.
 export default class extends Controller {
-  connect() {
-    this.element.textContent = "Hello World!"
+  remove() {
+    this.element.remove()
   }
 }
