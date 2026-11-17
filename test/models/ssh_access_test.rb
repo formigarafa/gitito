@@ -40,13 +40,6 @@ class SshAccessTest < ActiveSupport::TestCase
     end
   end
 
-  test "finds a repository by the name of its owner, not of a namesake repository" do
-    namesake = Repository.create!(name: "tilt", user: users(:juca))
-
-    assert_equal namesake, SshAccess.find_repository("juca/tilt.git")
-    assert_equal repositories(:tilt), SshAccess.find_repository("formigarafa/tilt.git")
-  end
-
   test "has a token that stays the same and tells others apart" do
     assert_match(/\A\h{64}\z/, SshAccess.token)
     assert_equal SshAccess.token, SshAccess.token

@@ -1,21 +1,14 @@
 # The answer to what script/ssh-command-proxy.sh asks the app on every SSH
 # connection: can this key reach this repository?
 module SshAccess
-  REPOSITORY_PATH = %r{\A(?<owner>[^/]+)/(?<name>[^/]+)\.git\z}
-
   class << self
     # Can the key of +credential_id+ reach the repository at +path+, as in
     # "<owner>/<name>.git"?
     def allowed?(credential_id, path)
       user = UserCredential.find_by(id: credential_id)&.user
-      repository = find_repository(path)
+      repository = Repository.find_by_relative_path(path)
 
       user.present? && repository.present? && repository.accessible_by?(user)
-    end
-
-    def find_repository(path)
-      match = REPOSITORY_PATH.match(path.to_s)
-      match && Repository.joins(:user).find_by(name: match[:name], users: { username: match[:owner] })
     end
 
     # Shared with the script through the config file SshFiles writes. Derived
