@@ -89,6 +89,67 @@ class PasswordsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+
+  test "create ignores case and surrounding spaces in the email" do
+    post passwords_path, params: { email: " JUCA@example.com " }
+    assert_enqueued_email_with PasswordsMailer, :reset, args: [ @user ]
+  end
+
+  test "create without an email sends no mail" do
+    post passwords_path
+    assert_enqueued_emails 0
+    assert_redirected_to new_session_path
+  end
+
+  test "edit renders the form for the token" do
+    token = @user.password_reset_token
+
+    get edit_password_path(token)
+
+    assert_select "form[action=?]", password_path(token)
+  end
+
+  test "update with invalid password reset token" do
+    assert_no_changes -> { @user.reload.password_digest } do
+      put password_path("invalid token"), params: { password: "n3wp4ss", password_confirmation: "n3wp4ss" }
+    end
+    assert_redirected_to new_password_path
+
+    follow_redirect!
+    assert_notice "reset link is invalid"
+  end
+
+  test "update with a token older than two hours" do
+    token = @user.password_reset_token
+
+    travel 2.hours + 1.minute do
+      assert_no_changes -> { @user.reload.password_digest } do
+        put password_path(token), params: { password: "n3wp4ss", password_confirmation: "n3wp4ss" }
+      end
+      assert_redirected_to new_password_path
+    end
+  end
+
+  test "update that fails keeps the sessions of the user" do
+    @user.sessions.create!
+
+    put password_path(@user.password_reset_token), params: { password: "n3wp4ss", password_confirmation: "match" }
+
+    assert_equal 1, @user.sessions.count
+  end
+
+  test "the whole flow works while signed in" do
+    sign_in_as @user
+
+    get new_password_path
+    assert_response :success
+    put password_path(@user.password_reset_token), params: { password: "n3wp4ss", password_confirmation: "n3wp4ss" }
+    assert_redirected_to new_session_path
+
+    get repositories_path
+    assert_redirected_to new_session_path
+  end
+
   private
     def assert_notice(text)
       assert_select ".flash .message", /#{text}/

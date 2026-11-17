@@ -32,4 +32,87 @@ class CollaboratorsControllerTest < ActionDispatch::IntegrationTest
     assert_response :see_other
     assert_equal "Collaborator was successfully destroyed.", flash[:notice]
   end
+
+
+  test "create requires authentication" do
+    sign_out
+
+    assert_no_difference -> { Collaborator.count } do
+      post repository_collaborators_path(@repository), params: { collaborator: { username: "juca" } }
+    end
+    assert_redirected_to new_session_path
+  end
+
+  test "create does not add the owner as collaborator" do
+    assert_no_difference -> { Collaborator.count } do
+      post repository_collaborators_path(@repository), params: { collaborator: { username: "formigarafa" } }
+    end
+    assert_redirected_to repository_path(@repository)
+    assert_equal "Repository owner cannot be also a collaborator", flash[:error]
+  end
+
+  test "create does not add the same collaborator twice" do
+    @repository.collaborators.create!(user: users(:juca))
+
+    assert_no_difference -> { Collaborator.count } do
+      post repository_collaborators_path(@repository), params: { collaborator: { username: "juca" } }
+    end
+    assert_redirected_to repository_path(@repository)
+    assert_equal "Collaborator is already on the list", flash[:error]
+  end
+
+  test "create shows the error on the repository page" do
+    post repository_collaborators_path(@repository), params: { collaborator: { username: "nobody" } }
+    follow_redirect!
+
+    assert_select ".flash .message.error", text: "User not found"
+  end
+
+  test "create without a username is a bad request" do
+    post repository_collaborators_path(@repository)
+    assert_response :bad_request
+  end
+
+  test "create does not find an unknown repository" do
+    post repository_collaborators_path(0), params: { collaborator: { username: "juca" } }
+    assert_response :not_found
+  end
+
+  test "create does not add collaborators to repositories of other users" do
+    sign_in_as users(:juca)
+
+    assert_no_difference -> { Collaborator.count } do
+      post repository_collaborators_path(@repository), params: { collaborator: { username: "drica.silva" } }
+    end
+    assert_response :not_found
+  end
+
+  test "destroy requires authentication" do
+    collaborator = @repository.collaborators.create!(user: users(:juca))
+    sign_out
+
+    assert_no_difference -> { Collaborator.count } do
+      delete repository_collaborator_path(@repository, collaborator)
+    end
+    assert_redirected_to new_session_path
+  end
+
+  test "destroy does not find collaborators of another repository" do
+    collaborator = repositories(:rails).collaborators.create!(user: users(:juca))
+
+    assert_no_difference -> { Collaborator.count } do
+      delete repository_collaborator_path(@repository, collaborator)
+    end
+    assert_response :not_found
+  end
+
+  test "destroy does not remove collaborators from repositories of other users" do
+    collaborator = @repository.collaborators.create!(user: users(:drica))
+    sign_in_as users(:juca)
+
+    assert_no_difference -> { Collaborator.count } do
+      delete repository_collaborator_path(@repository, collaborator)
+    end
+    assert_response :not_found
+  end
 end

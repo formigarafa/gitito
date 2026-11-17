@@ -81,6 +81,83 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_empty cookies[:session_id]
   end
 
+
+  test "visitors are sent back to the requested page only once" do
+    get repositories_path
+    post session_path, params: { email: @user.email, password: "password" }
+    assert_redirected_to repositories_url
+
+    post session_path, params: { email: @user.email, password: "password" }
+    assert_redirected_to root_url
+  end
+
+  test "a cookie of a session that no longer exists does not authenticate" do
+    sign_in_as @user
+    @user.sessions.destroy_all
+
+    get repositories_path
+    assert_redirected_to new_session_path
+  end
+
+  test "a tampered cookie does not authenticate" do
+    sign_in_as @user
+    cookies["session_id"] = Current.session.id.to_s
+
+    get repositories_path
+    assert_redirected_to new_session_path
+  end
+
+  test "create starts a session for the user" do
+    assert_difference -> { @user.sessions.count } do
+      post session_path, params: { email: @user.email, password: "password" }, headers: { "User-Agent" => "Minitest" }
+    end
+    assert_equal "Minitest", @user.sessions.last.user_agent
+  end
+
+  test "create with invalid credentials starts no session and tracks no sign in" do
+    assert_no_difference -> { Session.count } do
+      post session_path, params: { email: @user.email, password: "wrong" }
+    end
+    assert_equal 0, @user.reload.sign_in_count
+  end
+
+  test "create with an unknown email" do
+    post session_path, params: { email: "nobody@example.com", password: "password" }
+
+    assert_response :unprocessable_content
+    assert_nil cookies[:session_id]
+  end
+
+  test "create without remember me checked keeps the session until the browser closes" do
+    post session_path, params: { email: @user.email, password: "password", remember_me: "0" }
+
+    assert_no_match(/expires=/i, session_cookie_header)
+  end
+
+  test "create marks the session cookie as http only" do
+    post session_path, params: { email: @user.email, password: "password" }
+
+    assert_match(/httponly/i, session_cookie_header)
+    assert_match(/samesite=lax/i, session_cookie_header)
+  end
+
+  test "destroy requires authentication" do
+    delete session_path
+    assert_redirected_to new_session_path
+    assert_equal "You need to sign in or sign up before continuing.", flash[:alert]
+  end
+
+  test "destroy keeps the other sessions of the user" do
+    other_session = @user.sessions.create!
+    sign_in_as @user
+
+    delete session_path
+
+    assert Session.exists?(other_session.id)
+    get repositories_path
+    assert_redirected_to new_session_path
+  end
+
   private
     def session_cookie_header
       Array(response.headers["Set-Cookie"]).join("\n").lines.grep(/\Asession_id=/).sole

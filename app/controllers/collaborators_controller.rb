@@ -20,7 +20,7 @@ class CollaboratorsController < ApplicationController
   private
 
   def set_repository
-    @repository = Repository.find(params.expect(:repository_id))
+    @repository = Current.user.repositories.find(params.expect(:repository_id))
   end
 
   def user_to_become_collaborator

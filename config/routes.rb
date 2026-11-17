@@ -6,7 +6,7 @@ Rails.application.routes.draw do
 
   resources :user_credentials
   resources :repositories do
-    resources :collaborators
+    resources :collaborators, only: %i[create destroy]
   end
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

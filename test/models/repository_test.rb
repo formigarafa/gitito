@@ -10,6 +10,13 @@ class RepositoryTest < ActiveSupport::TestCase
     repo.stub(:create_structure, nil) { repo.save }
   end
 
+  # Keeps the repositories of the block in a temporary folder.
+  def with_repos_root
+    Dir.mktmpdir do |tmp_dir|
+      Repository.stub(:repos_root, tmp_dir) { yield tmp_dir }
+    end
+  end
+
   test "validates with valid attributes" do
     assert_predicate valid_repo, :valid?
   end
@@ -177,6 +184,91 @@ class RepositoryTest < ActiveSupport::TestCase
   end
 
   test "being destroyed destroys its collaborators" do
-    skip "Not yet implemented"
+    repo = repositories(:tilt)
+    repo.collaborators.create!(user: users(:juca))
+    repo.collaborators.create!(user: users(:drica))
+
+    assert_difference -> { Collaborator.count }, -2 do
+      repo.destroy!
+    end
+  end
+
+  test "reads the ssh user and host from the gitito configuration" do
+    repo = Repository.new
+    assert_equal Rails.configuration.gitito[:ssh_user], repo.ssh_user
+    assert_equal Rails.configuration.gitito[:ssh_host], repo.ssh_host
+  end
+
+  test "builds the url with the configured ssh user and host" do
+    repo = Repository.new name: "tilt", user: users(:formigarafa)
+    config = Rails.configuration.gitito
+    assert_equal "#{config[:ssh_user]}@#{config[:ssh_host]}:formigarafa/tilt.git", repo.url
+  end
+
+  test "a folder that is not a git repository does not have an ok structure" do
+    repo = Repository.new
+    repo.stub(:server_path, file_fixture("not_repo_test").to_s) do
+      assert_predicate repo, :folder_exists?
+      assert_not repo.structure_ok?
+    end
+  end
+
+  test "creates a bare git repository" do
+    Dir.mktmpdir do |tmp_dir|
+      repo = Repository.new
+      repo.stub(:server_path, "#{tmp_dir}/juca/bare.git") do
+        repo.create_structure
+        assert_predicate Rugged::Repository.new(repo.server_path), :bare?
+      end
+    end
+  end
+
+  test "removing the structure of a repository without a folder does nothing" do
+    Dir.mktmpdir do |tmp_dir|
+      repo = Repository.new
+      repo.stub(:server_path, "#{tmp_dir}/nowhere.git") do
+        assert_nothing_raised { repo.remove_structure }
+      end
+    end
+  end
+
+  test "being created creates its structure on the file server" do
+    with_repos_root do
+      repo = Repository.create! name: "fresh", user: users(:juca)
+
+      assert_equal "#{Repository.repos_root}/juca/fresh.git", repo.server_path
+      assert repo.structure_ok?
+    end
+  end
+
+  test "failing to be created leaves the file server untouched" do
+    with_repos_root do |repos_root|
+      repo = Repository.create name: "not valid!", user: users(:juca)
+
+      assert_not repo.persisted?
+      assert_empty Dir.children(repos_root)
+    end
+  end
+
+  test "being destroyed removes its structure from the file server" do
+    with_repos_root do
+      repo = Repository.create! name: "doomed", user: users(:juca)
+      assert_predicate repo, :folder_exists?
+
+      repo.destroy!
+
+      assert_not repo.folder_exists?
+    end
+  end
+
+  test "being destroyed keeps the other repositories of its owner" do
+    with_repos_root do
+      doomed = Repository.create! name: "doomed", user: users(:juca)
+      kept = Repository.create! name: "kept", user: users(:juca)
+
+      doomed.destroy!
+
+      assert kept.structure_ok?
+    end
   end
 end

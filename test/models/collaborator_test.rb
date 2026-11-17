@@ -55,4 +55,46 @@ class CollaboratorTest < ActiveSupport::TestCase
     collaborator.user = collaborator.repository.user
     assert_not collaborator.valid?
   end
+
+  test "explains that the user was not found" do
+    collaborator = Collaborator.new repository: repositories(:tilt)
+    assert_not collaborator.valid?
+    assert_equal [ "User not found" ], collaborator.errors.map(&:message)
+  end
+
+  test "explains that the repository was not found" do
+    collaborator = Collaborator.new user: users(:juca)
+    assert_not collaborator.valid?
+    assert_equal [ "Repository not found" ], collaborator.errors.map(&:message)
+  end
+
+  test "explains that the owner cannot be a collaborator" do
+    collaborator = Collaborator.new user: users(:formigarafa), repository: repositories(:tilt)
+    assert_not collaborator.valid?
+    assert_equal [ "Repository owner cannot be also a collaborator" ], collaborator.errors.map(&:message)
+  end
+
+  test "explains that the user already is a collaborator" do
+    Collaborator.create! user: users(:juca), repository: repositories(:tilt)
+
+    collaborator = Collaborator.new user: users(:juca), repository: repositories(:tilt)
+    assert_not collaborator.valid?
+    assert_equal [ "Collaborator is already on the list" ], collaborator.errors.map(&:message)
+  end
+
+  test "has the username of its user" do
+    assert_equal "juca", Collaborator.new(user: users(:juca)).username
+  end
+
+  test "has no username without a user" do
+    assert_nil Collaborator.new.username
+  end
+
+  test "knows when its user owns the repository" do
+    repository = repositories(:tilt)
+
+    assert Collaborator.new(user: users(:formigarafa), repository: repository).collaborator_owns_repository?
+    assert_not Collaborator.new(user: users(:juca), repository: repository).collaborator_owns_repository?
+    assert_not Collaborator.new(user: users(:juca)).collaborator_owns_repository?
+  end
 end

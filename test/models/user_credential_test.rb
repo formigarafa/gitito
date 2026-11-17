@@ -127,25 +127,97 @@ class UserCredentialTest < ActiveSupport::TestCase
     end
   end
 
-  test "generates two lines file using two credentials records" do
-    skip "Disabled (was xit in the RSpec suite)"
-
+  test "generates one line for each credential record" do
     Dir.mktmpdir do |tmp_dir|
       auth_keys_file = "#{tmp_dir}/authorized_keys"
-      records = [
-        Minitest::Mock.new.expect(:authorized_keys_line, "line1"),
-        Minitest::Mock.new.expect(:authorized_keys_line, "line2")
-      ]
 
-      UserCredential.stub(:all, records) do
-        with_authorized_keys_at(auth_keys_file) do
-          UserCredential.generate_authorized_keys_file
-        end
+      with_authorized_keys_at(auth_keys_file) do
+        credentials = [ valid_credential, valid_credential ].each(&:save!)
+
+        assert_equal credentials.map(&:authorized_keys_line).sort, File.readlines(auth_keys_file, chomp: true).sort
+      end
+    end
+  end
+
+  test "rewrites the file instead of appending to it" do
+    Dir.mktmpdir do |tmp_dir|
+      auth_keys_file = "#{tmp_dir}/authorized_keys"
+      File.write(auth_keys_file, "stale line\n")
+
+      with_authorized_keys_at(auth_keys_file) do
+        UserCredential.generate_authorized_keys_file
       end
 
-      generated_file_lines = File.read(auth_keys_file).split("\n")
-      assert_includes generated_file_lines, "line1"
-      assert_includes generated_file_lines, "line2"
+      assert_empty File.read(auth_keys_file)
     end
+  end
+
+  test "being created adds its line to the authorized_keys file" do
+    Dir.mktmpdir do |tmp_dir|
+      auth_keys_file = "#{tmp_dir}/authorized_keys"
+
+      with_authorized_keys_at(auth_keys_file) do
+        credential = valid_credential
+        credential.save!
+
+        assert_equal [ credential.authorized_keys_line ], File.readlines(auth_keys_file, chomp: true)
+      end
+    end
+  end
+
+  test "being updated changes its line on the authorized_keys file" do
+    Dir.mktmpdir do |tmp_dir|
+      auth_keys_file = "#{tmp_dir}/authorized_keys"
+
+      with_authorized_keys_at(auth_keys_file) do
+        credential = valid_credential
+        credential.save!
+        credential.update!(key: "ssh-ed25519 AAAA changed")
+
+        assert_equal [ "command=\"#{Rails.root}/script/ssh-command-proxy.sh #{credential.id}\" ssh-ed25519 AAAA changed" ],
+          File.readlines(auth_keys_file, chomp: true)
+      end
+    end
+  end
+
+  test "being destroyed removes its line from the authorized_keys file" do
+    Dir.mktmpdir do |tmp_dir|
+      auth_keys_file = "#{tmp_dir}/authorized_keys"
+
+      with_authorized_keys_at(auth_keys_file) do
+        kept = valid_credential
+        doomed = valid_credential
+        [ kept, doomed ].each(&:save!)
+
+        doomed.destroy!
+
+        assert_equal [ kept.authorized_keys_line ], File.readlines(auth_keys_file, chomp: true)
+      end
+    end
+  end
+
+  test "failing to be saved leaves the authorized_keys file untouched" do
+    Dir.mktmpdir do |tmp_dir|
+      auth_keys_file = "#{tmp_dir}/authorized_keys"
+
+      with_authorized_keys_at(auth_keys_file) do
+        assert_not UserCredential.new(title: "no key", user: users(:juca)).save
+      end
+
+      assert_not File.exist?(auth_keys_file)
+    end
+  end
+
+  test "expands the configured authorized_keys path" do
+    configured = Rails.configuration.gitito[:ssh_authorized_keys_file]
+
+    assert_equal File.expand_path(configured), UserCredential.authorized_keys_absolute_path
+    assert_predicate Pathname(UserCredential.authorized_keys_absolute_path), :absolute?
+  end
+
+  test "does not require a title" do
+    credential = valid_credential
+    credential.title = nil
+    assert_predicate credential, :valid?
   end
 end
