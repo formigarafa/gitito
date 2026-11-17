@@ -3,8 +3,8 @@ require "test_helper"
 module Internal
   class SshAccessControllerTest < ActionDispatch::IntegrationTest
     setup do
-      @owner_key = users(:formigarafa).user_credentials.create!(key: "ssh-ed25519 AAAA owner")
-      @other_key = users(:juca).user_credentials.create!(key: "ssh-ed25519 AAAA other")
+      @owner_key = users(:formigarafa).user_credentials.create!(key: ssh_key("owner"))
+      @other_key = users(:juca).user_credentials.create!(key: ssh_key("other"))
     end
 
     def ask(credential_id, command, token: SshAccess.token)

@@ -16,7 +16,7 @@ class SshFilesTest < ActiveSupport::TestCase
   end
 
   def add_key(user = users(:juca))
-    user.user_credentials.create!(key: "ssh-ed25519 AAAA#{SecureRandom.hex} #{user.username}")
+    user.user_credentials.create!(key: ssh_key(user.username))
   end
 
   def line_of(credential)
@@ -50,6 +50,16 @@ class SshFilesTest < ActiveSupport::TestCase
     sync
 
     assert_equal block_of(*credentials.sort_by(&:id)), authorized_keys_lines
+  end
+
+  test "leaves out a user credential holding what is not a public key" do
+    kept = add_key
+    smuggled = add_key(users(:drica))
+    smuggled.update_column :key, "#{smuggled.key}\n#{ssh_key('free to run anything')}"
+
+    sync
+
+    assert_equal block_of(kept), authorized_keys_lines
   end
 
   test "creates the folders of the authorized keys file with 700 mode" do

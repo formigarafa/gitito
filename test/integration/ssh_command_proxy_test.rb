@@ -19,8 +19,8 @@ class SshCommandProxyTest < ActiveSupport::TestCase
     FileUtils.cp Rails.root.join("script/ssh-command-proxy.sh"), "#{@app}/script/"
     File.write "#{@app}/bin/git-shell", "#!/bin/sh\necho \"$PWD\"\necho \"$2\"\n", perm: 0o755
 
-    @owner_key = users(:formigarafa).user_credentials.create!(key: "ssh-ed25519 AAAA owner")
-    @other_key = users(:juca).user_credentials.create!(key: "ssh-ed25519 AAAA other")
+    @owner_key = users(:formigarafa).user_credentials.create!(key: ssh_key("owner"))
+    @other_key = users(:juca).user_credentials.create!(key: ssh_key("other"))
     write_config
   end
 

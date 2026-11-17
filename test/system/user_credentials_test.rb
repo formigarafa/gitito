@@ -1,7 +1,7 @@
 require "application_system_test_case"
 
 class UserCredentialsTest < ApplicationSystemTestCase
-  KEY = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIsystemtest juca@laptop".freeze
+  KEY = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMbFowboGDdo9nzNtsUuX/rvGsiOkd2BAXgvXcf2dipM juca@laptop".freeze
 
   setup do
     @user = users(:juca)

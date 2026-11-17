@@ -185,7 +185,7 @@ class RegistrationsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "destroy removes the credentials, collaborations and sessions of the account" do
-    @user.user_credentials.create!(title: "laptop", key: "ssh-ed25519 AAAA drica")
+    @user.user_credentials.create!(title: "laptop", key: ssh_key("drica"))
     repositories(:tilt).collaborators.create!(user: @user)
     sign_in_as @user
 

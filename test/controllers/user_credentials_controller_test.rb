@@ -7,7 +7,7 @@ class UserCredentialsControllerTest < ActionDispatch::IntegrationTest
   end
 
   def create_credential(user = @user)
-    user.user_credentials.create!(title: "laptop", key: "ssh-ed25519 AAAA #{SecureRandom.hex(4)}")
+    user.user_credentials.create!(title: "laptop", key: ssh_key)
   end
 
   test "index lists only own credentials" do
@@ -30,7 +30,7 @@ class UserCredentialsControllerTest < ActionDispatch::IntegrationTest
 
   test "create builds the credential for the current user" do
     assert_difference -> { @user.user_credentials.count } do
-      post user_credentials_path, params: { user_credential: { title: "laptop", key: "ssh-ed25519 AAAA new" } }
+      post user_credentials_path, params: { user_credential: { title: "laptop", key: ssh_key("new") } }
     end
     assert_redirected_to user_credentials_path
     assert_response :see_other
@@ -104,7 +104,7 @@ class UserCredentialsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to new_session_path
 
     assert_no_changes -> { UserCredential.order(:id).pluck(:id, :title) } do
-      post user_credentials_path, params: { user_credential: { title: "anonymous", key: "ssh-ed25519 AAAA anonymous" } }
+      post user_credentials_path, params: { user_credential: { title: "anonymous", key: ssh_key("anonymous") } }
       assert_redirected_to new_session_path
       patch user_credential_path(credential), params: { user_credential: { title: "anonymous" } }
       assert_redirected_to new_session_path
@@ -134,9 +134,9 @@ class UserCredentialsControllerTest < ActionDispatch::IntegrationTest
 
   test "create ignores an owner given in the params" do
     post user_credentials_path,
-      params: { user_credential: { title: "laptop", key: "ssh-ed25519 AAAA mine", user_id: users(:drica).id } }
+      params: { user_credential: { title: "laptop", key: ssh_key("mine"), user_id: users(:drica).id } }
 
-    assert_equal @user, UserCredential.find_by!(key: "ssh-ed25519 AAAA mine").user
+    assert_equal @user, UserCredential.find_by!(title: "laptop").user
   end
 
   test "create with a key already in use renders the form with 422" do
@@ -169,12 +169,14 @@ class UserCredentialsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create, update and destroy keep the authorized_keys file up to date" do
-    post user_credentials_path, params: { user_credential: { title: "laptop", key: "ssh-ed25519 AAAA first" } }
-    credential = @user.user_credentials.find_by!(key: "ssh-ed25519 AAAA first")
-    assert_equal [ "ssh-ed25519 AAAA first" ], keys_in_authorized_keys
+    first, second = ssh_key("first"), ssh_key("second")
 
-    patch user_credential_path(credential), params: { user_credential: { key: "ssh-ed25519 AAAA second" } }
-    assert_equal [ "ssh-ed25519 AAAA second" ], keys_in_authorized_keys
+    post user_credentials_path, params: { user_credential: { title: "laptop", key: first } }
+    credential = @user.user_credentials.find_by!(key: first)
+    assert_equal [ first ], keys_in_authorized_keys
+
+    patch user_credential_path(credential), params: { user_credential: { key: second } }
+    assert_equal [ second ], keys_in_authorized_keys
 
     delete user_credential_path(credential)
     assert_empty keys_in_authorized_keys

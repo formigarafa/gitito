@@ -16,7 +16,7 @@ class TurboResponsesTest < ActionDispatch::IntegrationTest
 
   test "deleting a user credential redirects with 303" do
     user = users(:juca)
-    credential = user.user_credentials.create!(title: "laptop", key: "ssh-ed25519 AAAA laptop")
+    credential = user.user_credentials.create!(title: "laptop", key: ssh_key("laptop"))
     sign_in_as user
 
     delete user_credential_path(credential)

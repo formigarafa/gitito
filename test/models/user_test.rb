@@ -126,7 +126,7 @@ class UserTest < ActiveSupport::TestCase
 
   test "being destroyed destroys its credentials" do
     user = users(:drica)
-    user.user_credentials.create!(title: "laptop", key: "ssh-ed25519 AAAA drica")
+    user.user_credentials.create!(title: "laptop", key: ssh_key("drica"))
 
     assert_difference -> { UserCredential.count }, -1 do
       user.destroy!

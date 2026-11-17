@@ -63,14 +63,24 @@ class SshFiles
     FileUtils.mkdir_p File.dirname(authorized_keys), mode: 0o700
     path = File.exist?(authorized_keys) ? File.realpath(authorized_keys) : authorized_keys
     before, after = lines_around_block(File.exist?(path) ? File.readlines(path, chomp: true) : [])
-    lines = [ *before, BLOCK_BEGIN, *UserCredential.find_each.map { |credential| line_of(credential) }, BLOCK_END, *after ]
+    lines = [ *before, BLOCK_BEGIN, *UserCredential.find_each.filter_map { |credential| line_of(credential) }, BLOCK_END, *after ]
 
     replace_file path, lines.map { |line| "#{line}\n" }.join, perm: 0o644, keep_perm: true
   end
 
   # command="<app>/script/ssh-command-proxy.sh <user credential id>" <key>
+  #
+  # Only what PublicKey takes for a key is written, whatever the credential
+  # holds: anything else could be a line of its own, free to run any command.
   def line_of(credential)
-    "command=\"#{Rails.root}/script/ssh-command-proxy.sh #{credential.id}\" #{credential.key}"
+    key = credential.public_key
+
+    if key
+      "command=\"#{Rails.root}/script/ssh-command-proxy.sh #{credential.id}\" #{key}"
+    else
+      Rails.logger.warn "SshFiles: user credential #{credential.id} is not a public key, left out of #{authorized_keys}"
+      nil
+    end
   end
 
   # The lines of others before and after the block. Without a complete
