@@ -18,6 +18,14 @@ module ActiveSupport
     # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
     fixtures :all
 
-    # Add more helper methods to be used by all tests here...
+    # Each test process syncs the files sshd relies on into a folder of its
+    # own, so tests read what they wrote and not what another process did.
+    def self.ssh_files_of(worker)
+      folder = Rails.root.join("tmp/test/ssh_files/#{worker}")
+      SshFiles.new(authorized_keys: "#{folder}/authorized_keys", proxy_config: "#{folder}/ssh-command-proxy.conf")
+    end
+
+    SshFiles.default = ssh_files_of(0)
+    parallelize_setup { |worker| SshFiles.default = ssh_files_of(worker) }
   end
 end

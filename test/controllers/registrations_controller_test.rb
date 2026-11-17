@@ -185,14 +185,12 @@ class RegistrationsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "destroy removes the credentials, collaborations and sessions of the account" do
-    UserCredential.stub(:generate_authorized_keys_file, nil) do
-      @user.user_credentials.create!(title: "laptop", key: "ssh-ed25519 AAAA drica")
-      repositories(:tilt).collaborators.create!(user: @user)
-      sign_in_as @user
+    @user.user_credentials.create!(title: "laptop", key: "ssh-ed25519 AAAA drica")
+    repositories(:tilt).collaborators.create!(user: @user)
+    sign_in_as @user
 
-      assert_difference [ -> { UserCredential.count }, -> { Collaborator.count }, -> { Session.count } ], -1 do
-        delete registration_path
-      end
+    assert_difference [ -> { UserCredential.count }, -> { Collaborator.count }, -> { Session.count } ], -1 do
+      delete registration_path
     end
 
     get repositories_path

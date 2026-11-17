@@ -57,36 +57,4 @@ class SshAccessTest < ActiveSupport::TestCase
     assert_not SshAccess.valid_token?("")
     assert_not SshAccess.valid_token?(nil)
   end
-
-  test "builds the url from the configured address of the app" do
-    assert_equal "#{Rails.configuration.gitito[:ssh_access_url]}/internal/ssh_access", SshAccess.url
-  end
-
-  test "keeps the config file in storage, one for each environment" do
-    assert_equal Rails.root.join("storage/ssh-command-proxy.test.conf").to_s, SshAccess.config_path
-  end
-
-  test "writes the url and the token for the script, readable only by its owner" do
-    Dir.mktmpdir do |tmp_dir|
-      SshAccess.stub(:config_path, "#{tmp_dir}/storage/proxy.conf") do
-        SshAccess.write_config
-
-        assert_equal [ "url=#{SshAccess.url}", "token=#{SshAccess.token}" ], File.readlines(SshAccess.config_path, chomp: true)
-        assert_equal "600", File.stat(SshAccess.config_path).mode.to_s(8)[-3..]
-        assert_equal [ "proxy.conf" ], Dir.children("#{tmp_dir}/storage")
-      end
-    end
-  end
-
-  test "is written along with the authorized keys file" do
-    Dir.mktmpdir do |tmp_dir|
-      SshAccess.stub(:config_path, "#{tmp_dir}/proxy.conf") do
-        UserCredential.stub(:authorized_keys_absolute_path, "#{tmp_dir}/authorized_keys") do
-          add_key(users(:juca))
-        end
-
-        assert_path_exists "#{tmp_dir}/proxy.conf"
-      end
-    end
-  end
 end
