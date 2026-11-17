@@ -53,11 +53,12 @@ Each registered key becomes a line in the authorized keys file with a forced
 command, `script/ssh-command-proxy.sh`, which is told which key was used.
 Users can run git commands but never get a shell.
 
-For each connection the script asks the running app, at
-`GITITO_SSH_ACCESS_URL`, whether that key can reach the repository: its user
-has to own it or collaborate on it. Only then is the git command handed to
-`git-shell`, inside the folder the repositories are kept in. Anything else is
-refused, the same way whether the repository exists or not, and logged to
+For each connection the script sends the command it received to the running
+app, at `GITITO_SSH_ACCESS_URL`, and the app answers what to run: a git
+command on a repository the user of that key owns or collaborates on. The
+script hands that answer to `git-shell`, which runs nothing but git commands,
+inside the folder the repositories are kept in. Anything else is refused, the
+same way whether the repository exists or not, and logged to
 `log/ssh-command-proxy.log`. Git access needs the app to be running: when it
 cannot be reached, every request is refused.
 

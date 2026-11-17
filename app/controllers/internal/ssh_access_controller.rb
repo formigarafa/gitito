@@ -1,11 +1,18 @@
 module Internal
-  # Answers script/ssh-command-proxy.sh: 204 when the key can reach the
-  # repository, 403 when it cannot, whether the repository exists or not.
+  # Answers script/ssh-command-proxy.sh in lines of name=value, as the script
+  # reads its config file: 200 with the verb and the repository to run it on,
+  # or 403 with the message for the client.
   class SshAccessController < ActionController::API
     before_action :require_token
 
-    def show
-      head SshAccess.allowed?(params[:credential_id], params[:repository]) ? :no_content : :forbidden
+    def create
+      answer = SshAccess.decide(params[:credential_id], params[:command])
+
+      if answer.granted?
+        render plain: "verb=#{answer.verb}\nrepository=#{answer.repository}\n"
+      else
+        render plain: "message=#{answer.message}\n", status: :forbidden
+      end
     end
 
     private

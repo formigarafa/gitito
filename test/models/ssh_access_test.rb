@@ -1,42 +1,103 @@
 require "test_helper"
 
 class SshAccessTest < ActiveSupport::TestCase
+  NOT_FOUND = "Repository not found or access denied".freeze
+  NOT_ALLOWED = "Command not allowed".freeze
+
   def add_key(user)
     user.user_credentials.create!(key: "ssh-ed25519 AAAA#{SecureRandom.hex} #{user.username}")
   end
 
-  test "allows the keys of the owner" do
-    assert SshAccess.allowed?(add_key(users(:formigarafa)).id, "formigarafa/tilt.git")
+  def assert_granted(verb, repository, credential, command)
+    assert_equal SshAccess::Grant.new(verb: verb, repository: repository), SshAccess.decide(credential.id, command)
   end
 
-  test "allows the keys of a collaborator, until they are removed" do
+  def assert_denied(message, credential_id, command)
+    assert_equal SshAccess::Denial.new(message: message), SshAccess.decide(credential_id, command),
+      "expected #{command.inspect} to be denied"
+  end
+
+  test "lets the keys of the owner fetch from and push to the repository" do
+    key = add_key(users(:formigarafa))
+
+    assert_granted "git-upload-pack", "formigarafa/tilt.git", key, "git-upload-pack 'formigarafa/tilt.git'"
+    assert_granted "git-receive-pack", "formigarafa/tilt.git", key, "git-receive-pack 'formigarafa/tilt.git'"
+    assert_granted "git-upload-archive", "formigarafa/rails.git", key, "git-upload-archive 'formigarafa/rails.git'"
+  end
+
+  test "tells a grant from a denial" do
+    key = add_key(users(:formigarafa))
+
+    assert_predicate SshAccess.decide(key.id, "git-upload-pack 'formigarafa/tilt.git'"), :granted?
+    assert_not SshAccess.decide(key.id, "git-upload-pack 'formigarafa/nothing.git'").granted?
+  end
+
+  test "understands the other ways git writes the same request" do
+    key = add_key(users(:formigarafa))
+
+    [ "git upload-pack 'formigarafa/tilt.git'", "git-upload-pack '/formigarafa/tilt.git'",
+      "git-upload-pack 'formigarafa/tilt'", "git-upload-pack formigarafa/tilt.git",
+      "git upload-pack /formigarafa/tilt" ].each do |command|
+      assert_granted "git-upload-pack", "formigarafa/tilt.git", key, command
+    end
+  end
+
+  test "lets the keys of a collaborator in, until they are removed" do
     key = add_key(users(:juca))
     collaborator = repositories(:tilt).collaborators.create!(user: users(:juca))
 
-    assert SshAccess.allowed?(key.id, "formigarafa/tilt.git")
-    assert_not SshAccess.allowed?(key.id, "formigarafa/rails.git")
+    assert_granted "git-receive-pack", "formigarafa/tilt.git", key, "git-receive-pack 'formigarafa/tilt.git'"
+    assert_denied NOT_FOUND, key.id, "git-receive-pack 'formigarafa/rails.git'"
 
     collaborator.destroy!
-    assert_not SshAccess.allowed?(key.id, "formigarafa/tilt.git")
+    assert_denied NOT_FOUND, key.id, "git-receive-pack 'formigarafa/tilt.git'"
   end
 
-  test "does not allow the keys of other users" do
-    assert_not SshAccess.allowed?(add_key(users(:drica)).id, "formigarafa/tilt.git")
+  test "denies the keys of other users" do
+    assert_denied NOT_FOUND, add_key(users(:drica)).id, "git-upload-pack 'formigarafa/tilt.git'"
   end
 
-  test "does not allow a key that was removed" do
+  test "denies a key that was removed, or that never was" do
     key = add_key(users(:formigarafa))
     key.destroy!
 
-    assert_not SshAccess.allowed?(key.id, "formigarafa/tilt.git")
+    assert_denied NOT_FOUND, key.id, "git-upload-pack 'formigarafa/tilt.git'"
+    assert_denied NOT_FOUND, 0, "git-upload-pack 'formigarafa/tilt.git'"
+    assert_denied NOT_FOUND, nil, "git-upload-pack 'formigarafa/tilt.git'"
   end
 
-  test "does not allow what is not the path of a repository" do
+  test "denies a repository that does not exist the same way as one out of reach" do
     key = add_key(users(:formigarafa))
 
-    [ nil, "", "tilt.git", "formigarafa/tilt", "formigarafa/nothing.git", "nobody/tilt.git",
-      "formigarafa/tilt.git/", "x/formigarafa/tilt.git", "formigarafa/tilt.git\n" ].each do |path|
-      assert_not SshAccess.allowed?(key.id, path), "expected #{path.inspect} not to be allowed"
+    assert_denied NOT_FOUND, key.id, "git-upload-pack 'formigarafa/nothing.git'"
+    assert_denied NOT_FOUND, key.id, "git-upload-pack 'nobody/tilt.git'"
+  end
+
+  test "denies paths that are not of a repository" do
+    key = add_key(users(:formigarafa))
+
+    [ "git-upload-pack 'formigarafa/tilt.git' 'formigarafa/rails.git'",
+      "git-upload-pack 'formigarafa/tilt.git'; cat /etc/passwd",
+      "git-upload-pack 'formigarafa/tilt.git\n'",
+      "git-upload-pack 'formigarafa/tilt.git&credential_id=2'",
+      "git-upload-pack 'formigarafa/tilt.git/'",
+      "git-upload-pack '//formigarafa/tilt.git'",
+      "git-upload-pack 'x/formigarafa/tilt.git'",
+      "git-upload-pack '../formigarafa/tilt.git'",
+      "git-upload-pack 'tilt.git'",
+      "git-upload-pack ''",
+      "git-upload-pack ",
+      "git-upload-pack" ].each do |command|
+      assert_denied NOT_FOUND, key.id, command
+    end
+  end
+
+  test "denies anything that is not a git server command" do
+    key = add_key(users(:formigarafa))
+
+    [ "ls", "cvs server", "git status", "git-shell 'formigarafa/tilt.git'", " git-upload-pack 'formigarafa/tilt.git'",
+      "GIT-UPLOAD-PACK 'formigarafa/tilt.git'", "git  upload-pack 'formigarafa/tilt.git'", "", nil ].each do |command|
+      assert_denied NOT_ALLOWED, key.id, command
     end
   end
 
