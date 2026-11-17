@@ -27,7 +27,7 @@ class RepositoriesTest < ApplicationSystemTestCase
     repository = @user.repositories.create!(name: "my-project")
 
     visit repository_path(repository)
-    accept_confirm("Are you sure?") { click_on "Delete" }
+    confirm_dialog("Are you sure?") { click_on "Delete" }
 
     assert_text "Repository was successfully destroyed."
     assert_current_path repositories_path

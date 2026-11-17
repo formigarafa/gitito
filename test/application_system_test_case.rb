@@ -11,4 +11,15 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     click_on "Sign in"
     assert_text "Signed in successfully."
   end
+
+  # Does what opens the confirmation dialog, in the block, checks what the
+  # dialog asks and answers it with its button named +with+.
+  def confirm_dialog(message, with: "Confirm")
+    yield
+
+    within "dialog[open]" do
+      assert_text message
+      click_on with
+    end
+  end
 end

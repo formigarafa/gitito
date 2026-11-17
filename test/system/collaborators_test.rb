@@ -22,7 +22,7 @@ class CollaboratorsTest < ApplicationSystemTestCase
 
     visit repository_path(@repository)
     assert_selector ".collaborators .collaborator", text: "juca"
-    accept_confirm("Are you sure you want to remove this collaborator?") { click_on "Remove" }
+    confirm_dialog("Are you sure you want to remove this collaborator?") { click_on "Remove" }
 
     assert_text "Collaborator was successfully destroyed."
     assert_no_selector ".collaborators .collaborator"
