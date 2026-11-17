@@ -19,7 +19,7 @@ class SshFiles
     # production config file, from beside the repositories.
     def default
       @default ||= new(
-        authorized_keys: File.expand_path(Rails.configuration.gitito[:ssh_authorized_keys_file]),
+        authorized_keys: Rails.configuration.gitito[:ssh_authorized_keys_file],
         proxy_config: Rails.root.join("storage/ssh-command-proxy.#{Rails.env}.conf").to_s,
       )
     end
@@ -56,7 +56,7 @@ class SshFiles
   end
 
   def access_url
-    "#{Rails.configuration.gitito[:ssh_access_url].chomp('/')}/internal/ssh_access"
+    "#{Rails.configuration.gitito[:ssh_access_url].chomp('/')}#{Rails.application.routes.url_helpers.internal_ssh_access_path}"
   end
 
   def write_authorized_keys

@@ -60,15 +60,6 @@ class RepositoryTest < ActiveSupport::TestCase
     assert_equal first_used_name, repo.name
   end
 
-  test "has method to get repository access url" do
-    repo = Repository.new name: "tilt", user: users(:formigarafa)
-    repo.stub(:ssh_user, "git") do
-      repo.stub(:ssh_host, "gitito.com") do
-        assert_equal "git@gitito.com:formigarafa/tilt.git", repo.url
-      end
-    end
-  end
-
   test "has many collaborators" do
     repo = Repository.new
     collaborators = [ Collaborator.new, Collaborator.new ]
@@ -145,12 +136,6 @@ class RepositoryTest < ActiveSupport::TestCase
     assert_difference -> { Collaborator.count }, -2 do
       repo.destroy!
     end
-  end
-
-  test "reads the ssh user and host from the gitito configuration" do
-    repo = Repository.new
-    assert_equal Rails.configuration.gitito[:ssh_user], repo.ssh_user
-    assert_equal Rails.configuration.gitito[:ssh_host], repo.ssh_host
   end
 
   test "builds the url with the configured ssh user and host" do

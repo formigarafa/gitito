@@ -177,8 +177,7 @@ class SshFilesTest < ActiveSupport::TestCase
     previous = SshFiles.default
     SshFiles.default = nil
 
-    assert_equal File.expand_path(Rails.configuration.gitito[:ssh_authorized_keys_file]), SshFiles.default.authorized_keys
-    assert_predicate Pathname(SshFiles.default.authorized_keys), :absolute?
+    assert_equal Rails.root.join("tmp/test/authorized_keys").to_s, SshFiles.default.authorized_keys
     assert_equal Rails.root.join("storage/ssh-command-proxy.test.conf").to_s, SshFiles.default.proxy_config
   ensure
     SshFiles.default = previous
