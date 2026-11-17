@@ -99,6 +99,17 @@ class UserCredentialTest < ActiveSupport::TestCase
     assert_not File.exist?(SshFiles.default.authorized_keys)
   end
 
+  test "being rolled back leaves the authorized_keys file untouched" do
+    FileUtils.rm_f SshFiles.default.authorized_keys
+
+    UserCredential.transaction do
+      valid_credential.save!
+      raise ActiveRecord::Rollback
+    end
+
+    assert_not File.exist?(SshFiles.default.authorized_keys)
+  end
+
   test "does not require a title" do
     credential = valid_credential
     credential.title = nil

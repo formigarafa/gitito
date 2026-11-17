@@ -3,11 +3,8 @@ class UserCredential < ApplicationRecord
   validates :key, presence: true, uniqueness: true
   validates :user, presence: true
 
-  after_save do
-    SshFiles.sync
-  end
-
-  after_destroy do
+  # After the commit, so the files never get ahead of what was really saved.
+  after_commit do
     SshFiles.sync
   end
 end
