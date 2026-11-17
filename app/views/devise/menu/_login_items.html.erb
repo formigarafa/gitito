@@ -1,9 +1,0 @@
-<% if user_signed_in? %>
-  <li>
-  <%= button_to "Logout", destroy_user_session_path, method: :delete, class: "logout link_button", form: {class: "button_to inline"} %>
-  </li>
-<% else %>
-  <li>
-  <%= link_to('Login', new_user_session_path)  %>  
-  </li>
-<% end %>

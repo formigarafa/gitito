@@ -4,14 +4,14 @@ class NavigationTest < ApplicationSystemTestCase
   test "visitors are sent to the login box" do
     visit root_path
 
-    assert_current_path new_user_session_path
+    assert_current_path new_session_path
     assert_selector "h2", text: "Login Box"
-    assert_field "user[email]"
-    assert_field "user[password]"
+    assert_field "email"
+    assert_field "password"
   end
 
   test "a signed in user browses their repositories" do
-    sign_in users(:formigarafa)
+    sign_in_as users(:formigarafa)
 
     visit root_path
     click_on "Repositories"

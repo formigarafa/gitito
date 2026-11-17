@@ -17,8 +17,8 @@ gem "stimulus-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
-# Flexible authentication solution for Rails [https://github.com/heartcombo/devise]
-gem "devise", "~> 5.0"
+# Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
+gem "bcrypt", "~> 3.1"
 # Ruby bindings to libgit2, used to create bare repositories [https://github.com/libgit2/rugged]
 gem "rugged", "~> 1.9"
 

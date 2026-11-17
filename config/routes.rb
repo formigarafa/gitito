@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-  devise_for :users
+  resource :session, only: %i[ new create destroy ]
+  resource :registration, only: %i[ new create edit update destroy ]
+  resources :passwords, param: :token, only: %i[ new create edit update ]
 
   resources :user_credentials
   resources :repositories do

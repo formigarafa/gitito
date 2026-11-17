@@ -41,6 +41,55 @@ class UserTest < ActiveSupport::TestCase
     assert_not user.valid?
   end
 
+  test "fails with a password shorter than 6 characters" do
+    user = valid_user
+    user.password = "12345"
+    assert_not user.valid?
+  end
+
+  test "fails with a malformed email" do
+    user = valid_user
+    user.email = "not an email"
+    assert_not user.valid?
+  end
+
+  test "fails with an email already taken, whatever the case" do
+    user = valid_user
+    user.email = users(:juca).email.upcase
+    assert_not user.valid?
+  end
+
+  test "normalizes the email" do
+    assert_equal "anyone@somedomain.com", User.new(email: " Anyone@SomeDomain.com ").email
+  end
+
+  test "authenticates with the right password only" do
+    user = users(:juca)
+    assert_equal user, user.authenticate("password")
+    assert_not user.authenticate("wrong")
+  end
+
+  test "authenticates passwords hashed by devise and rehashes them" do
+    user = users(:juca)
+    devise_digest = BCrypt::Password.create("0ldp4ssw0rd#{User::DEVISE_PEPPER}", cost: BCrypt::Engine::MIN_COST).to_s
+    user.update_column(:password_digest, devise_digest)
+
+    assert_not user.authenticate("wrong")
+    assert_equal devise_digest, user.reload.password_digest
+
+    assert_equal user, User.authenticate_by(email: user.email, password: "0ldp4ssw0rd")
+    assert_not_equal devise_digest, user.reload.password_digest
+    assert BCrypt::Password.new(user.password_digest).is_password?("0ldp4ssw0rd")
+  end
+
+  test "being destroyed destroys its sessions" do
+    user = users(:drica)
+    user.sessions.create!
+    assert_difference -> { Session.count }, -1 do
+      user.destroy!
+    end
+  end
+
   test "fails with complicated username (special characters)" do
     user = valid_user
     user.username = "f*cking_user"

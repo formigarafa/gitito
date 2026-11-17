@@ -25,7 +25,14 @@
   <div id="container">
     <div id="box">
       <h1>gitito</h1>
-      <%= yield %>            
+      <div class="flash">
+        <% flash.each do |type, message| -%>
+          <div class="message <%= type %>">
+            <p><%= message %></p>
+          </div>
+        <% end -%>
+      </div>
+      <%= yield %>
     </div>
   </div>
 </body>
