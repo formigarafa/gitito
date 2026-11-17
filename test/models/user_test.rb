@@ -102,23 +102,119 @@ class UserTest < ActiveSupport::TestCase
     assert_not user.valid?
   end
 
+  test "fails with a blank username" do
+    user = valid_user
+    user.username = ""
+    assert_not user.valid?
+    assert_includes user.errors[:username], "can't be blank"
+  end
+
   test "being destroyed destroys its credentials" do
-    skip "Not yet implemented"
+    user = users(:drica)
+    UserCredential.stub(:generate_authorized_keys_file, nil) do
+      user.user_credentials.create!(title: "laptop", key: "ssh-ed25519 AAAA drica")
+
+      assert_difference -> { UserCredential.count }, -1 do
+        user.destroy!
+      end
+    end
   end
 
   test "being destroyed destroys collaborative presence on third party repositories" do
-    skip "Not yet implemented"
+    user = users(:drica)
+    repositories(:tilt).collaborators.create!(user: user)
+
+    assert_difference -> { repositories(:tilt).collaborators.count }, -1 do
+      user.destroy!
+    end
   end
 
-  test "being destroyed destroys its repositories" do
-    skip "Not yet implemented" # think about it...
+  test "cannot be destroyed while it owns repositories" do
+    user = users(:formigarafa)
+
+    assert_no_difference [ -> { User.count }, -> { Repository.count } ] do
+      assert_not user.destroy
+    end
+    assert_includes user.errors.full_messages, "Cannot delete record because dependent repositories exist"
   end
 
   test "has relations with collaborative repositories" do
-    skip "Not yet implemented"
+    user = users(:drica)
+    relation = repositories(:tilt).collaborators.create!(user: user)
+
+    assert_equal [ relation ], user.collaborative_relations.to_a
+    assert_equal [ repositories(:tilt) ], user.collaborative_relations.map(&:repository)
+    assert_empty users(:juca).collaborative_relations
+  end
+
+  test "has the repositories it owns" do
+    assert_equal repositories(:tilt, :rails).sort_by(&:id), users(:formigarafa).repositories.sort_by(&:id)
+    assert_empty users(:juca).repositories
   end
 
   test "generates gravatar url from user email" do
-    skip "Not yet implemented"
+    user = User.new email: "juca@example.com"
+    assert_equal "http://www.gravatar.com/avatar/#{Digest::MD5.hexdigest('juca@example.com')}", user.gravatar_url
+  end
+
+  test "gravatar url ignores case and surrounding spaces in the email" do
+    assert_equal User.new(email: "juca@example.com").gravatar_url, User.new(email: " Juca@Example.com ").gravatar_url
+  end
+
+  test "tracks the first sign in" do
+    user = users(:juca)
+
+    freeze_time do
+      user.track_sign_in("10.0.0.1")
+      user.reload
+
+      assert_equal 1, user.sign_in_count
+      assert_equal Time.current, user.current_sign_in_at
+      assert_equal Time.current, user.last_sign_in_at
+      assert_equal "10.0.0.1", user.current_sign_in_ip
+      assert_equal "10.0.0.1", user.last_sign_in_ip
+    end
+  end
+
+  test "tracking a later sign in keeps the previous one as the last sign in" do
+    user = users(:juca)
+    first_sign_in_at = 3.days.ago.change(usec: 0)
+    travel_to(first_sign_in_at) { user.track_sign_in("10.0.0.1") }
+
+    freeze_time do
+      user.track_sign_in("10.0.0.2")
+      user.reload
+
+      assert_equal 2, user.sign_in_count
+      assert_equal Time.current, user.current_sign_in_at
+      assert_equal first_sign_in_at, user.last_sign_in_at
+      assert_equal "10.0.0.2", user.current_sign_in_ip
+      assert_equal "10.0.0.1", user.last_sign_in_ip
+    end
+  end
+
+  test "tracking a sign in does not touch updated_at" do
+    user = users(:juca)
+    assert_no_changes -> { user.reload.updated_at } do
+      user.track_sign_in("10.0.0.1")
+    end
+  end
+
+  test "is found by its password reset token until the password changes" do
+    user = users(:juca)
+    token = user.password_reset_token
+
+    assert_equal user, User.find_by_password_reset_token(token)
+
+    user.update!(password: "n3wp4ss")
+    assert_nil User.find_by_password_reset_token(token)
+  end
+
+  test "password reset token expires after two hours" do
+    user = users(:juca)
+    token = user.password_reset_token
+
+    travel(2.hours - 1.minute) { assert_equal user, User.find_by_password_reset_token(token) }
+    travel(2.hours + 1.minute) { assert_nil User.find_by_password_reset_token(token) }
   end
 end
