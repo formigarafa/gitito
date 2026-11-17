@@ -17,6 +17,11 @@ class UserCredentialTest < ActiveSupport::TestCase
     UserCredential.stub(:authorized_keys_absolute_path, path, &)
   end
 
+  # The lines gitito keeps in the file for +credentials+.
+  def block_of(*credentials)
+    [ UserCredential::BLOCK_BEGIN, *credentials.map(&:authorized_keys_line), UserCredential::BLOCK_END ]
+  end
+
   test "validates with valid attributes" do
     assert_predicate valid_credential, :valid?
   end
@@ -95,7 +100,7 @@ class UserCredentialTest < ActiveSupport::TestCase
     end
   end
 
-  test "generates empty file with no user credential records" do
+  test "generates an empty block with no user credential records" do
     Dir.mktmpdir do |tmp_dir|
       auth_keys_file = "#{tmp_dir}/s1/s2/.ssh/authorized_keys"
 
@@ -104,7 +109,7 @@ class UserCredentialTest < ActiveSupport::TestCase
         UserCredential.generate_authorized_keys_file
       end
 
-      assert_equal 0, File.size(auth_keys_file)
+      assert_equal block_of, File.readlines(auth_keys_file, chomp: true)
     end
   end
 
@@ -134,21 +139,114 @@ class UserCredentialTest < ActiveSupport::TestCase
       with_authorized_keys_at(auth_keys_file) do
         credentials = [ valid_credential, valid_credential ].each(&:save!)
 
-        assert_equal credentials.map(&:authorized_keys_line).sort, File.readlines(auth_keys_file, chomp: true).sort
+        assert_equal block_of(*credentials.sort_by(&:id)), File.readlines(auth_keys_file, chomp: true)
       end
     end
   end
 
-  test "rewrites the file instead of appending to it" do
+  test "keeps the keys of others and adds its block after them" do
     Dir.mktmpdir do |tmp_dir|
       auth_keys_file = "#{tmp_dir}/authorized_keys"
-      File.write(auth_keys_file, "stale line\n")
+      File.write(auth_keys_file, "# my own keys\nssh-ed25519 AAAA admin@laptop\n\nssh-rsa BBBB backup")
+
+      with_authorized_keys_at(auth_keys_file) do
+        credential = valid_credential
+        credential.save!
+
+        assert_equal [ "# my own keys", "ssh-ed25519 AAAA admin@laptop", "", "ssh-rsa BBBB backup", *block_of(credential) ],
+          File.readlines(auth_keys_file, chomp: true)
+        assert File.read(auth_keys_file).end_with?("\n")
+      end
+    end
+  end
+
+  test "rewrites its block where it is, keeping the keys around it" do
+    Dir.mktmpdir do |tmp_dir|
+      auth_keys_file = "#{tmp_dir}/authorized_keys"
+      stale = "command=\"#{Rails.root}/script/ssh-command-proxy.sh 999\" ssh-ed25519 AAAA stale"
+      File.write auth_keys_file, [ "ssh-ed25519 AAAA before", *block_of, "ssh-ed25519 AAAA after" ].join("\n")
+      File.write auth_keys_file, File.read(auth_keys_file).sub(UserCredential::BLOCK_END, "#{stale}\nanything else\n#{UserCredential::BLOCK_END}")
+
+      with_authorized_keys_at(auth_keys_file) do
+        credential = valid_credential
+        credential.save!
+
+        assert_equal [ "ssh-ed25519 AAAA before", *block_of(credential), "ssh-ed25519 AAAA after" ],
+          File.readlines(auth_keys_file, chomp: true)
+      end
+    end
+  end
+
+  test "does not grow the file when generated again" do
+    Dir.mktmpdir do |tmp_dir|
+      auth_keys_file = "#{tmp_dir}/authorized_keys"
+      File.write(auth_keys_file, "ssh-ed25519 AAAA admin@laptop\n")
+
+      with_authorized_keys_at(auth_keys_file) do
+        valid_credential.save!
+        content = File.read(auth_keys_file)
+        3.times { UserCredential.generate_authorized_keys_file }
+
+        assert_equal content, File.read(auth_keys_file)
+      end
+    end
+  end
+
+  test "moves the keys of a file written before the block existed into the block" do
+    Dir.mktmpdir do |tmp_dir|
+      auth_keys_file = "#{tmp_dir}/authorized_keys"
+
+      with_authorized_keys_at(auth_keys_file) do
+        credential = valid_credential
+        credential.save!
+        removed = "command=\"/somewhere/else/script/ssh-command-proxy.sh 999\" ssh-ed25519 AAAA removed"
+        File.write auth_keys_file, "#{credential.authorized_keys_line}\nssh-ed25519 AAAA admin@laptop\n#{removed}\n"
+
+        UserCredential.generate_authorized_keys_file
+
+        assert_equal [ "ssh-ed25519 AAAA admin@laptop", *block_of(credential) ], File.readlines(auth_keys_file, chomp: true)
+      end
+    end
+  end
+
+  test "keeps the keys of others when its block was left without an end" do
+    Dir.mktmpdir do |tmp_dir|
+      auth_keys_file = "#{tmp_dir}/authorized_keys"
+      File.write auth_keys_file, "ssh-ed25519 AAAA before\n#{UserCredential::BLOCK_BEGIN}\nssh-ed25519 AAAA after\n"
 
       with_authorized_keys_at(auth_keys_file) do
         UserCredential.generate_authorized_keys_file
       end
 
-      assert_empty File.read(auth_keys_file)
+      assert_equal [ "ssh-ed25519 AAAA before", "ssh-ed25519 AAAA after", *block_of ], File.readlines(auth_keys_file, chomp: true)
+    end
+  end
+
+  test "keeps the permissions the file already had" do
+    Dir.mktmpdir do |tmp_dir|
+      auth_keys_file = "#{tmp_dir}/authorized_keys"
+      File.write auth_keys_file, "ssh-ed25519 AAAA admin@laptop\n", perm: 0o600
+
+      with_authorized_keys_at(auth_keys_file) do
+        UserCredential.generate_authorized_keys_file
+      end
+
+      assert_equal "600", File.stat(auth_keys_file).mode.to_s(8)[-3..]
+      assert_equal [ "authorized_keys" ], Dir.children(tmp_dir)
+    end
+  end
+
+  test "writes through a link to the file" do
+    Dir.mktmpdir do |tmp_dir|
+      File.write "#{tmp_dir}/real_keys", "ssh-ed25519 AAAA admin@laptop\n"
+      File.symlink "#{tmp_dir}/real_keys", "#{tmp_dir}/authorized_keys"
+
+      with_authorized_keys_at("#{tmp_dir}/authorized_keys") do
+        UserCredential.generate_authorized_keys_file
+      end
+
+      assert File.symlink?("#{tmp_dir}/authorized_keys")
+      assert_equal [ "ssh-ed25519 AAAA admin@laptop", *block_of ], File.readlines("#{tmp_dir}/real_keys", chomp: true)
     end
   end
 
@@ -160,7 +258,7 @@ class UserCredentialTest < ActiveSupport::TestCase
         credential = valid_credential
         credential.save!
 
-        assert_equal [ credential.authorized_keys_line ], File.readlines(auth_keys_file, chomp: true)
+        assert_equal block_of(credential), File.readlines(auth_keys_file, chomp: true)
       end
     end
   end
@@ -174,7 +272,8 @@ class UserCredentialTest < ActiveSupport::TestCase
         credential.save!
         credential.update!(key: "ssh-ed25519 AAAA changed")
 
-        assert_equal [ "command=\"#{Rails.root}/script/ssh-command-proxy.sh #{credential.id}\" ssh-ed25519 AAAA changed" ],
+        expected_line = "command=\"#{Rails.root}/script/ssh-command-proxy.sh #{credential.id}\" ssh-ed25519 AAAA changed"
+        assert_equal [ UserCredential::BLOCK_BEGIN, expected_line, UserCredential::BLOCK_END ],
           File.readlines(auth_keys_file, chomp: true)
       end
     end
@@ -191,7 +290,7 @@ class UserCredentialTest < ActiveSupport::TestCase
 
         doomed.destroy!
 
-        assert_equal [ kept.authorized_keys_line ], File.readlines(auth_keys_file, chomp: true)
+        assert_equal block_of(kept), File.readlines(auth_keys_file, chomp: true)
       end
     end
   end

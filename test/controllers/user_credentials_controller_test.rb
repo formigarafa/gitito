@@ -175,6 +175,11 @@ class UserCredentialsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "laptop", credential.reload.title
   end
 
+  # The lines of the authorized_keys file that are not comments.
+  def key_lines(auth_keys_file)
+    File.readlines(auth_keys_file, chomp: true).grep_v(/\A#/)
+  end
+
   test "create, update and destroy keep the authorized_keys file up to date" do
     Dir.mktmpdir do |tmp_dir|
       auth_keys_file = "#{tmp_dir}/authorized_keys"
@@ -182,14 +187,14 @@ class UserCredentialsControllerTest < ActionDispatch::IntegrationTest
       UserCredential.stub(:authorized_keys_absolute_path, auth_keys_file) do
         post user_credentials_path, params: { user_credential: { title: "laptop", key: "ssh-ed25519 AAAA first" } }
         credential = @user.user_credentials.find_by!(key: "ssh-ed25519 AAAA first")
-        assert_equal [ credential.authorized_keys_line ], File.readlines(auth_keys_file, chomp: true)
+        assert_equal [ credential.authorized_keys_line ], key_lines(auth_keys_file)
 
         patch user_credential_path(credential), params: { user_credential: { key: "ssh-ed25519 AAAA second" } }
-        assert_equal [ credential.reload.authorized_keys_line ], File.readlines(auth_keys_file, chomp: true)
+        assert_equal [ credential.reload.authorized_keys_line ], key_lines(auth_keys_file)
         assert_match "ssh-ed25519 AAAA second", File.read(auth_keys_file)
 
         delete user_credential_path(credential)
-        assert_empty File.read(auth_keys_file)
+        assert_empty key_lines(auth_keys_file)
       end
     end
   end

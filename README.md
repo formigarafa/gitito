@@ -67,9 +67,11 @@ the authorized keys file. To rewrite both by hand, as after changing
 `bin/rails gitito:sync_ssh_access`. The Docker image does it on boot.
 
 In production the file defaults to `~/.ssh/authorized_keys` of the user
-running the app, and **its contents are replaced**. Run the app as a dedicated
-user, such as `gitito`. In development and test the file is written under
-`tmp/`.
+running the app. Gitito keeps its keys in a block of that file, between a
+`# BEGIN gitito keys` and a `# END gitito keys` line, and only rewrites that
+block: keys you add outside of it are kept. Those keys get a normal shell as
+that user, so it is still best to run the app as a dedicated user, such as
+`gitito`. In development and test the file is written under `tmp/`.
 
 ## Tests
 
