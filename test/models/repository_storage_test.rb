@@ -12,7 +12,7 @@ class RepositoryStorageTest < ActiveSupport::TestCase
 
   test "keeps the repositories of the app where the configuration says" do
     RepositoryStorage.default = nil
-    configured = Rails.root.join(Rails.configuration.gitito[:repositories_root]).to_s
+    configured = Rails.configuration.gitito[:repositories_root]
 
     assert_equal Rails.root.join("storage/repositories/test").to_s, configured
     assert_equal configured, RepositoryStorage.default.root

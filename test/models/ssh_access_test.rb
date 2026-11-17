@@ -25,6 +25,13 @@ class SshAccessTest < ActiveSupport::TestCase
     assert_granted "git-upload-archive", "formigarafa/rails.git", key, "git-upload-archive 'formigarafa/rails.git'"
   end
 
+  test "lets the keys of the owner run what git sends for the url of the repository" do
+    key = add_key(users(:formigarafa))
+    path = repositories(:tilt).url.split(":", 2).last
+
+    assert_granted "git-upload-pack", "formigarafa/tilt.git", key, "git-upload-pack '#{path}'"
+  end
+
   test "tells a grant from a denial" do
     key = add_key(users(:formigarafa))
 

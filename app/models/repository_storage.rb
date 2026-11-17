@@ -8,10 +8,9 @@ class RepositoryStorage
   class << self
     attr_writer :default
 
-    # The storage the app is configured to use. A relative root is taken from
-    # the root of the app.
+    # The storage the app is configured to use.
     def default
-      @default ||= new(root: Rails.root.join(Rails.configuration.gitito[:repositories_root]).to_s)
+      @default ||= new(root: Rails.configuration.gitito[:repositories_root])
     end
   end
 

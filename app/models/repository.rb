@@ -24,16 +24,11 @@ class Repository < ApplicationRecord
     "#{user.username}/#{name}.git"
   end
 
-  def ssh_user
-    Rails.configuration.gitito[:ssh_user]
-  end
-
-  def ssh_host
-    Rails.configuration.gitito[:ssh_host]
-  end
-
+  # What git is given to clone the repository.
   def url
-    "#{ssh_user}@#{ssh_host}:#{relative_path}"
+    settings = Rails.configuration.gitito
+
+    "#{settings[:ssh_user]}@#{settings[:ssh_host]}:#{relative_path}"
   end
 
   # The git repository is created with the record, so failing to create it
