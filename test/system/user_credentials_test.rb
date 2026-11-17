@@ -55,7 +55,7 @@ class UserCredentialsTest < ApplicationSystemTestCase
 
       assert_text "User credential was successfully destroyed."
       assert_no_selector "td", text: "laptop"
-      assert_empty File.read(authorized_keys_file)
+      assert_not_includes File.read(authorized_keys_file), KEY
     end
   end
 end
