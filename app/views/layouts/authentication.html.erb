@@ -1,39 +1,18 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title><%= content_for(:title) || "gitito" %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="gitito">
-    <meta name="mobile-web-app-capable" content="yes">
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
-
-    <%= yield :head %>
-
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
-
-    <%= stylesheet_link_tag "web-app-theme/base", "web-app-theme/themes/default/style", "web-app-theme/override", "application", "data-turbo-track": "reload" %>
-    <%= javascript_importmap_tags %>
+<html lang="en">
+  <head>
+    <%= render "layouts/head" %>
   </head>
-<body>
-  <div id="container">
-    <div id="box">
-      <h1>gitito</h1>
-      <div class="flash">
-        <% flash.each do |type, message| -%>
-          <div class="message <%= type %>">
-            <p><%= message %></p>
-          </div>
-        <% end -%>
-      </div>
+  <body class="auth">
+    <main class="auth__main" id="main">
+      <%= link_to root_path, class: "auth__brand" do %>
+        <%= render "shared/logo" %>
+        gitito
+        <span class="auth__tagline">Private git repositories over SSH</span>
+      <% end %>
+
+      <%= render "shared/flash" %>
       <%= yield %>
-    </div>
-  </div>
-</body>
+    </main>
+  </body>
 </html>

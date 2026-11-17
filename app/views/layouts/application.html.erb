@@ -1,66 +1,37 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <title><%= content_for(:title) || "gitito" %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="gitito">
-    <meta name="mobile-web-app-capable" content="yes">
-    <%= csrf_meta_tags %>
-    <%= csp_meta_tag %>
-
-    <%= yield :head %>
-
-    <%# Enable PWA manifest for installable apps (make sure to enable in config/routes.rb too!) %>
-    <%#= tag.link rel: "manifest", href: pwa_manifest_path(format: :json) %>
-
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
-
-    <%= stylesheet_link_tag "web-app-theme/base", "web-app-theme/themes/default/style", "web-app-theme/override", "application", "data-turbo-track": "reload" %>
-    <%= javascript_importmap_tags %>
+<html lang="en">
+  <head>
+    <%= render "layouts/head" %>
   </head>
-<body>
-  <div id="container">
-    <div id="header">
-      <h1><a href="/">gitito</a></h1>
-      <div id="user-navigation">
-        <ul class="wat-cf">
-          <%= render 'layouts/user_navigation' %>
-        </ul>
-      </div>
-      <div id="main-navigation">
-        <ul class="wat-cf">
-          <li class="<%= controller.controller_path == 'repositories' ? 'active' : '' %>">
-            <a href="<%= repositories_path %>">Repositories</a>
-          </li>
-          <li class="<%= controller.controller_path == 'user_credentials' ? 'active' : '' %>">
-            <a href="<%= user_credentials_path %>">User Credentials</a>
-          </li>
-        </ul>
-      </div>
-    </div>    
-    <div id="wrapper" class="wat-cf">
-      <div class="flash">
-        <% flash.each do |type, message| -%>
-          <div class="message <%= type %>">
-            <p><%= message %></p>
-          </div>
-        <% end -%>
-      </div>
-      <div id="main">
-        <%= yield %>
-        <div id="footer">
-          <div class="block">
-            <p>Copyright &copy; <%= Time.now.year %> gitito.</p>
-          </div>      
+  <body class="app">
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="topbar">
+      <div class="topbar__inner">
+        <%= link_to root_path, class: "brand" do %>
+          <%= render "shared/logo" %> gitito
+        <% end %>
+
+        <nav class="topnav" aria-label="Main">
+          <%= nav_link "Repositories", repositories_path, icon: "folder-git-2", active: %w[repositories collaborators] %>
+          <%= nav_link "SSH keys", user_credentials_path, icon: "key-round", active: %w[user_credentials] %>
+        </nav>
+
+        <div class="usernav">
+          <%= render "layouts/user_navigation" %>
         </div>
       </div>
-      <div id="sidebar">
-        <%= yield :sidebar %>
-      </div>
-    </div>    
-  </div>
-</body>
+    </header>
+
+    <main class="page" id="main">
+      <%= render "shared/flash" %>
+      <%= yield %>
+    </main>
+
+    <footer class="footer">
+      gitito · private git repositories over SSH
+    </footer>
+
+    <%= render "shared/confirm_dialog" %>
+  </body>
 </html>

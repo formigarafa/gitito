@@ -1,55 +1,81 @@
-<div class="block">
-  <div class="secondary-navigation">
-    <ul class="wat-cf">
-      <li class="first"><%= link_to "#{t("web-app-theme.list", :default => "List")}", repositories_path  %></li>
-      <li><%= link_to "#{t("web-app-theme.new", :default => "New")}", new_repository_path %></li>
-      <li class="active"><%= link_to "#{t("web-app-theme.show", :default => "Show")}", repository_path %></li>
-    </ul>
-  </div>          
-  <div class="content">
-    <h2><%= @repository.name %></h2>
-    <div class="inner">
-        <p>
-          <b><%= t("activerecord.attributes.repository.url", :default => t("activerecord.labels.name", :default => "url")) %>:</b>
-         <%= @repository.url %>
-        </p>
+<%= page_header @repository.name, back: [ "All repositories", repositories_path ] %>
 
-      <div class="wat-cf">
-        <%= delete_button image_tag("web-app-theme/icons/cross.png", :alt => t("web-app-theme.delete", :default => "Delete")) + " " + t("web-app-theme.delete", :default => "Delete"), repository_path(@repository), :class => "button" %>
-      </div>      
-    </div>
-    <h2>Collaborators</h2>
-    <div class ="inner collaborators">
-      <ul class="list">
-        <% @repository.collaborators.each do |collaborator| %>
-          <li>
-            <div class="left">
-              <img class="avatar" src="<%= collaborator.user.gravatar_url %>" alt="avatar">
-            </div>
-            <div class="item collaborator">
-              <%= delete_button "Remove", repository_collaborator_path(collaborator.repository, collaborator), :confirm => "Are you sure you want to remove this collaborator?", :class => "button" %>
-              <p>
-                <%= collaborator.username %> 
-              </p>
-            </div>
-          </li>
-        <% end %>
-      </ul>
-    </div>
-    <div class ="inner">
-      <%= form_for [@repository, @repository.collaborators.new], :html => { :class => :form } do |f| -%>
+<%= render "shared/ssh_key_missing" %>
 
-        <div class="group">
-          <%= f.label :username, t("activerecord.attributes.collaborator.username", :default => "collaborator"), :class => :label %>
-          <%= f.text_field :username, :class => 'text_field', :placeholder => "username"  %>
-        </div>
+<section class="card">
+  <div class="card__header">
+    <h2>Clone URL</h2>
+  </div>
+  <div class="card__body">
+    <%= copy_field @repository.url, label: "Copy the clone URL", class: "copy-field--lg" %>
 
-        <div class="group navform wat-cf">
-          <button class="button" type="submit">
-            <%= image_tag("web-app-theme/icons/tick.png", :alt => "#{t("web-app-theme.add", :default => "Add")}") %> <%= t("web-app-theme.add", :default => "Add") %>
-          </button>
-        </div>
-      <% end -%>
+    <div class="steps">
+      <div>
+        <h3>Clone it to your computer</h3>
+        <%= snippet "git clone #{@repository.url}", label: "Copy the command" %>
+      </div>
+      <div>
+        <h3>Or push a repository you already have</h3>
+        <%= snippet "git remote add origin #{@repository.url}\ngit push -u origin main", label: "Copy the commands" %>
+      </div>
     </div>
   </div>
-</div>
+</section>
+
+<section class="card collaborators">
+  <div class="card__header">
+    <h2>
+      Collaborators
+      <span class="badge badge--neutral"><%= @repository.collaborators.size %></span>
+    </h2>
+    <p>They can fetch from and push to this repository. Only you can delete it or choose who collaborates.</p>
+  </div>
+
+  <% if @repository.collaborators.any? %>
+    <ul class="list">
+      <% @repository.collaborators.includes(:user).each do |collaborator| %>
+        <li class="collaborator">
+          <%= avatar collaborator.user %>
+          <div class="list__main">
+            <div class="list__title collaborator__name"><%= collaborator.username %></div>
+          </div>
+          <%= delete_button "Remove", repository_collaborator_path(@repository, collaborator),
+                title: "Remove #{collaborator.username}?",
+                confirm: "#{collaborator.username} will no longer be able to fetch from or push to #{@repository.name}." %>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <div class="card__body">
+      <p class="muted">Nobody else has access to this repository.</p>
+    </div>
+  <% end %>
+
+  <div class="card__footer">
+    <%= form_with model: [ @repository, Collaborator.new ], class: "inline-form" do |f| %>
+      <div class="field">
+        <%= f.label :username, "Add a collaborator" %>
+        <%= f.text_field :username, class: "input", required: true, autocomplete: "off", autocapitalize: "none",
+              spellcheck: false, placeholder: "Their username on this server" %>
+      </div>
+      <button class="btn btn--primary" type="submit"><%= icon "plus" %> Add</button>
+    <% end %>
+  </div>
+</section>
+
+<section class="card card--danger">
+  <div class="card__header">
+    <h2>Danger zone</h2>
+  </div>
+  <div class="card__body">
+    <div class="action-row">
+      <div class="action-row__text">
+        <h3>Delete this repository</h3>
+        <p>Everything pushed to it is removed from the server, for you and your collaborators. There is no way back.</p>
+      </div>
+      <%= delete_button safe_join([ icon("trash-2"), "Delete repository" ], " "), repository_path(@repository),
+            class: "btn btn--danger-quiet", title: "Delete #{@repository.name}?",
+            confirm: "Everything pushed to #{@repository.url} will be removed from the server. This can't be undone." %>
+    </div>
+  </div>
+</section>

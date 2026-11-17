@@ -1,0 +1,10 @@
+<%# Filled in and opened by app/javascript/confirm_dialog.js for every data-turbo-confirm. %>
+<dialog class="dialog" id="confirm-dialog" aria-labelledby="confirm-dialog-title" aria-describedby="confirm-dialog-message">
+  <div class="dialog__icon"><%= icon "triangle-alert" %></div>
+  <h2 id="confirm-dialog-title" data-confirm-title>Are you sure?</h2>
+  <p class="dialog__message" id="confirm-dialog-message" data-confirm-message></p>
+  <div class="dialog__actions">
+    <button type="button" class="btn" data-confirm-close="cancel" autofocus>Cancel</button>
+    <button type="button" class="btn btn--danger" data-confirm-close="confirm">Confirm</button>
+  </div>
+</dialog>

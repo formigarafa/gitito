@@ -5,7 +5,7 @@ class NavigationTest < ApplicationSystemTestCase
     visit root_path
 
     assert_current_path new_session_path
-    assert_selector "h2", text: "Login Box"
+    assert_selector "h1", text: "Sign in"
     assert_field "email"
     assert_field "password"
   end
@@ -16,12 +16,13 @@ class NavigationTest < ApplicationSystemTestCase
     visit root_path
     click_on "Repositories"
 
-    assert_selector "h2", text: "All Repositories"
-    assert_link repositories(:tilt).url
+    assert_selector "h1", text: "Repositories"
+    assert_link repositories(:tilt).name
+    assert_text repositories(:tilt).url
 
-    click_on "New"
+    click_on "New repository"
 
-    assert_selector "h2", text: "New Repository"
+    assert_selector "h1", text: "New repository"
     assert_field "repository[name]"
   end
 end

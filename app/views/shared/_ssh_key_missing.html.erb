@@ -1,0 +1,10 @@
+<% if Current.user && Current.user.user_credentials.none? %>
+  <div class="callout">
+    <%= icon "key-round" %>
+    <div class="callout__text">
+      <strong>Add an SSH key to clone and push</strong>
+      Repositories are reached over SSH, with a key you register here.
+    </div>
+    <%= link_to "Add an SSH key", new_user_credential_path, class: "btn btn--sm" %>
+  </div>
+<% end %>

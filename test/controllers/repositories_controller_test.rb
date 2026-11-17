@@ -54,7 +54,7 @@ class RepositoriesControllerTest < ActionDispatch::IntegrationTest
     repository = @owner.repositories.find_by!(name: name)
     assert_redirected_to repository_path(repository)
     assert_response :see_other
-    assert_equal "Repository was successfully created.", flash[:notice]
+    assert_equal "Repository #{name} was created.", flash[:notice]
   end
 
   test "create with invalid params renders the form with 422" do
@@ -73,7 +73,7 @@ class RepositoriesControllerTest < ActionDispatch::IntegrationTest
     end
     assert_redirected_to repositories_path
     assert_response :see_other
-    assert_equal "Repository was successfully destroyed.", flash[:notice]
+    assert_equal "Repository #{repository.name} was deleted.", flash[:notice]
   end
 
   test "destroy does not find repositories of other users" do
@@ -103,14 +103,22 @@ class RepositoriesControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "index only offers to delete own repositories" do
+  test "the root path lists the repositories" do
+    get root_path
+
+    assert_response :success
+    assert_select "a[href=?]", repository_path(repositories(:tilt))
+  end
+
+  test "index only links to the pages of own repositories" do
     shared = users(:juca).repositories.create!(name: "shared-#{SecureRandom.hex(4)}")
     shared.collaborators.create!(user: @owner)
 
     get repositories_path
 
-    assert_select "form[action=?]", repository_path(repositories(:tilt))
-    assert_select "form[action=?]", repository_path(shared), count: 0
+    assert_select "a[href=?]", repository_path(repositories(:tilt))
+    assert_select "a[href=?]", repository_path(shared), count: 0
+    assert_select "code", text: shared.url
   end
 
   test "show lists the collaborators and offers to remove them" do
@@ -119,7 +127,7 @@ class RepositoriesControllerTest < ActionDispatch::IntegrationTest
 
     get repository_path(repository)
 
-    assert_select ".collaborators .collaborator p", text: "juca"
+    assert_select ".collaborators .collaborator .collaborator__name", text: "juca"
     assert_select ".collaborators img.avatar[src=?]", users(:juca).gravatar_url
     assert_select ".collaborators form[action=?]", repository_collaborator_path(repository, collaborator)
     assert_select "form[action=?] input[name=?]", repository_collaborators_path(repository), "collaborator[username]"

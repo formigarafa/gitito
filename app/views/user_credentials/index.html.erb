@@ -1,40 +1,54 @@
-<div class="block">
-  <div class="secondary-navigation">
-    <ul class="wat-cf">
-      <li class="first active"><%= link_to "#{t("web-app-theme.list", :default => "List")}", user_credentials_path  %></li>
-      <li><%= link_to "#{t("web-app-theme.new", :default => "New")}", new_user_credential_path %></li>
+<%= page_header "SSH keys", subtitle: "The keys that tell the server it is you fetching and pushing." do %>
+  <%= link_to new_user_credential_path, class: "btn btn--primary" do %>
+    <%= icon "plus" %> Add SSH key
+  <% end %>
+<% end %>
+
+<div class="card">
+  <% if @user_credentials.any? %>
+    <ul class="list">
+      <% @user_credentials.each do |user_credential| %>
+        <% public_key = user_credential.public_key %>
+        <li>
+          <span class="list__icon"><%= icon "key-round" %></span>
+          <div class="list__main">
+            <div class="list__title">
+              <%= user_credential.title.presence || "Untitled key" %>
+              <% if public_key %>
+                <span class="badge"><%= key_type_name public_key %></span>
+              <% end %>
+            </div>
+            <div class="list__meta">
+              <% if public_key %>
+                <span class="mono" title="Fingerprint, as shown by ssh-keygen -l"><%= public_key.fingerprint %></span>
+                <% if public_key.comment %>
+                  <span><%= public_key.comment.truncate 60 %></span>
+                <% end %>
+              <% else %>
+                <span class="mono"><%= user_credential.key.to_s.truncate 50 %></span>
+              <% end %>
+              <% if user_credential.created_at %>
+                <span>Added <%= time_tag user_credential.created_at, user_credential.created_at.to_date.to_fs(:long) %></span>
+              <% end %>
+            </div>
+          </div>
+          <div class="list__actions">
+            <%= link_to "Edit", edit_user_credential_path(user_credential), class: "btn btn--sm" %>
+            <%= delete_button "Delete", user_credential_path(user_credential),
+                  title: "Delete this SSH key?", confirm_label: "Delete key",
+                  confirm: "Whoever has “#{user_credential.title.presence || 'Untitled key'}” will no longer be able to fetch or push as you." %>
+          </div>
+        </li>
+      <% end %>
     </ul>
-  </div>          
-  <div class="content">          
-    <h2 class="title"><%= t("web-app-theme.all", :default => "All")  %> UserCredentials</h2>
-    <div class="inner">
-      <table class="table">
-        <tr>             
-          <th class="first"><%= t("activerecord.attributes.user_credential.title", :default => t("activerecord.labels.title", :default => "Title")) %>
-          </th>
-                    <th><%= t("web-app-theme.key", :default => "Key")  %></th>
-          <th class="last">&nbsp;</th>
-        </tr>
-        <% @user_credentials.each do |user_credential| -%>
-        <tr class="<%= cycle("odd", "even") %>">
-          <td>
-            <%= user_credential.title %>
-          </td>
-                    <td>
-            <%= user_credential.key.truncate 50 %>
-          </td>
-          <td class="last">
-            <%= link_to "#{t("web-app-theme.edit", :default => "Edit")}", edit_user_credential_path(user_credential) %> |
-            <%= delete_button t("web-app-theme.delete", :default => "Delete"), user_credential_path(user_credential) %>
-          </td>
-        </tr>          
-        <% end -%>
-      </table>
-      <div class="actions-bar wat-cf">
-        <div class="actions">
-        </div>
-        
-      </div>
+  <% else %>
+    <div class="empty">
+      <span class="list__icon"><%= icon "key-round" %></span>
+      <h3>No SSH keys yet</h3>
+      <p>Add the public key of each computer you use git from. Without one, the server won't let you fetch or push.</p>
+      <%= link_to new_user_credential_path, class: "btn btn--primary" do %>
+        <%= icon "plus" %> Add your first key
+      <% end %>
     </div>
-  </div>
+  <% end %>
 </div>

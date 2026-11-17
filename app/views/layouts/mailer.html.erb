@@ -1,13 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <%# Mail programs take little more than this: styles in the page, no fonts or images of the app. %>
     <style>
-      /* Email styles need to be inline */
+      body { margin: 0; padding: 24px 12px; background: #f5f7fb; color: #0f1626; font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 16px; line-height: 1.5; }
+      .mail { max-width: 480px; margin: 0 auto; }
+      .mail__brand { margin: 0 0 16px; color: #1a4fef; font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+      .mail__card { padding: 24px; border: 1px solid #dee3ed; border-radius: 10px; background: #ffffff; }
+      .mail__card p { margin: 0 0 16px; }
+      .mail__card p:last-child { margin-bottom: 0; }
+      .mail__button { display: inline-block; padding: 10px 18px; border-radius: 6px; background: #1a4fef; color: #ffffff !important; font-size: 15px; font-weight: 600; text-decoration: none; }
+      .mail__muted { color: #4c576b; font-size: 14px; }
+      .mail__footer { margin: 16px 0 0; color: #6a768c; font-size: 13px; }
     </style>
   </head>
 
   <body>
-    <%= yield %>
+    <div class="mail">
+      <p class="mail__brand">gitito</p>
+      <div class="mail__card">
+        <%= yield %>
+      </div>
+      <p class="mail__footer">Private git repositories over SSH.</p>
+    </div>
   </body>
 </html>

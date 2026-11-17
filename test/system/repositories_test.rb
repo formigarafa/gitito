@@ -8,30 +8,52 @@ class RepositoriesTest < ApplicationSystemTestCase
 
   test "a user creates a repository" do
     visit repositories_path
-    click_on "New"
+    click_on "New repository", match: :first
     fill_in "Name", with: "my-project"
-    click_on "Save"
+    click_on "Create repository"
 
-    assert_text "Repository was successfully created."
+    assert_text "Repository my-project was created."
     repository = @user.repositories.find_by!(name: "my-project")
     assert_current_path repository_path(repository)
-    assert_selector "h2", text: "my-project"
+    assert_selector "h1", text: "my-project"
     assert_text repository.url
     assert_stored repository
 
-    click_on "List"
-    assert_link repository.url
+    click_on "All repositories"
+    assert_link "my-project"
+    assert_text repository.url
+  end
+
+  test "a user copies the clone URL of a repository" do
+    repository = @user.repositories.create!(name: "my-project")
+
+    visit repository_path(repository)
+    click_on "Copy the clone URL"
+
+    assert_selector ".copy-field.is-copied", text: "Copied"
+  end
+
+  test "a user gives up deleting a repository" do
+    repository = @user.repositories.create!(name: "my-project")
+
+    visit repository_path(repository)
+    click_on "Delete repository"
+    within("dialog[open]") { click_on "Cancel" }
+
+    assert_no_selector "dialog[open]"
+    assert_current_path repository_path(repository)
+    assert_stored repository
   end
 
   test "a user deletes a repository" do
     repository = @user.repositories.create!(name: "my-project")
 
     visit repository_path(repository)
-    accept_confirm("Are you sure?") { click_on "Delete" }
+    confirm_dialog("Delete my-project?", with: "Delete repository") { click_on "Delete repository" }
 
-    assert_text "Repository was successfully destroyed."
+    assert_text "Repository my-project was deleted."
     assert_current_path repositories_path
-    assert_no_link repository.url
+    assert_no_text repository.url
     assert_not_stored repository
   end
 end

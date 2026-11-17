@@ -1,49 +1,70 @@
-<div class="block">
-  <div class="secondary-navigation">
-    <ul class="wat-cf">
-      <li class="first active"><%= link_to "#{t("web-app-theme.list", :default => "List")}", repositories_path  %></li>
-      <li><%= link_to "#{t("web-app-theme.new", :default => "New")}", new_repository_path %></li>
-    </ul>
-  </div>          
-  <div class="content">          
-    <h2 class="title"><%= t("web-app-theme.all", :default => "All")  %> Repositories</h2>
-    <div class="inner">
-      <table class="table">
-        <tr>             
-          <th class="first"><%= t("activerecord.attributes.repository.name", :default => t("activerecord.labels.name", :default => "Name")) %>
-          </th>
-          <th class="last">&nbsp;</th>
-        </tr>
-        <% @repositories.each do |repository| -%>
-        <tr class="<%= cycle("odd", "even") %>">
-                    <td>
-            <%= link_to repository.url, repository %>
-          </td>
-          
-          <td class="last">
-            <%= delete_button t("web-app-theme.delete", :default => "Delete"), repository_path(repository) %>
-          </td>
-        </tr>          
-        <% end -%>
-      </table>
-    </div>
+<%= page_header "Repositories", subtitle: "The git repositories you own, and the ones shared with you." do %>
+  <%= link_to new_repository_path, class: "btn btn--primary" do %>
+    <%= icon "plus" %> New repository
+  <% end %>
+<% end %>
 
+<%= render "shared/ssh_key_missing" %>
 
-    <h2 class="title"><%= t("web-app-theme.all", :default => "All")  %> Colaborative Repositories</h2>
-    <div class="inner">
-      <table class="table">
-        <tr>
-          <th class="first"><%= t("activerecord.attributes.repository.name", :default => t("activerecord.labels.name", :default => "Name")) %>
-          </th>
-        </tr>
-        <% @collaborative_repositories.each do |repository| -%>
-          <tr class="<%= cycle("odd", "even") %>">
-            <td>
-              <%= repository.url %>
-            </td>
-          </tr>          
-        <% end -%>
-      </table>
-    </div>
+<section>
+  <h2 class="section-title">
+    Your repositories
+    <span class="badge badge--neutral"><%= @repositories.size %></span>
+  </h2>
+
+  <div class="card">
+    <% if @repositories.any? %>
+      <ul class="list">
+        <% @repositories.each do |repository| %>
+          <li>
+            <div class="list__main">
+              <div class="list__title"><%= link_to repository.name, repository %></div>
+              <div class="list__meta">
+                <% if repository.collaborators.any? %>
+                  <span><%= pluralize repository.collaborators.size, "collaborator" %></span>
+                <% else %>
+                  <span>Only you</span>
+                <% end %>
+              </div>
+            </div>
+            <%= copy_field repository.url, label: "Copy the clone URL of #{repository.name}", compact: true %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <div class="empty">
+        <span class="list__icon"><%= icon "folder-git-2" %></span>
+        <h3>No repositories yet</h3>
+        <p>Create one and push to it over SSH. You can then share it with other people on this server.</p>
+        <%= link_to new_repository_path, class: "btn btn--primary" do %>
+          <%= icon "plus" %> Create a repository
+        <% end %>
+      </div>
+    <% end %>
   </div>
-</div>
+</section>
+
+<% if @collaborative_repositories.any? %>
+  <section>
+    <h2 class="section-title">
+      Shared with you
+      <span class="badge badge--neutral"><%= @collaborative_repositories.size %></span>
+    </h2>
+
+    <div class="card">
+      <ul class="list">
+        <% @collaborative_repositories.each do |repository| %>
+          <li>
+            <div class="list__main">
+              <div class="list__title"><%= repository.name %></div>
+              <div class="list__meta">
+                <span>Owned by <%= repository.user.username %> · you can fetch and push</span>
+              </div>
+            </div>
+            <%= copy_field repository.url, label: "Copy the clone URL of #{repository.name}", compact: true %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  </section>
+<% end %>

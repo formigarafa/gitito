@@ -14,14 +14,14 @@ class UserCredentialsTest < ApplicationSystemTestCase
 
   test "a user adds a credential" do
     visit user_credentials_path
-    click_on "New"
+    click_on "Add SSH key"
     fill_in "Title", with: "laptop"
     fill_in "Key", with: KEY
-    click_on "Save"
+    click_on "Add key"
 
-    assert_text "User credential was successfully created."
+    assert_text "SSH key was added."
     assert_current_path user_credentials_path
-    assert_selector "td", text: "laptop"
+    assert_selector ".list__title", text: "laptop"
     assert_includes authorized_keys, KEY
   end
 
@@ -31,21 +31,21 @@ class UserCredentialsTest < ApplicationSystemTestCase
     visit user_credentials_path
     click_on "Edit"
     fill_in "Title", with: "desktop"
-    click_on "Save"
+    click_on "Save changes"
 
-    assert_text "User credential was successfully updated."
-    assert_selector "td", text: "desktop"
-    assert_no_selector "td", text: "laptop"
+    assert_text "SSH key was updated."
+    assert_selector ".list__title", text: "desktop"
+    assert_no_selector ".list__title", text: "laptop"
   end
 
   test "a user deletes a credential" do
     @user.user_credentials.create!(title: "laptop", key: KEY)
 
     visit user_credentials_path
-    accept_confirm("Are you sure?") { click_on "Delete" }
+    confirm_dialog("Delete this SSH key?", with: "Delete key") { click_on "Delete" }
 
-    assert_text "User credential was successfully destroyed."
-    assert_no_selector "td", text: "laptop"
+    assert_text "SSH key was deleted."
+    assert_no_selector ".list__title", text: "laptop"
     assert_not_includes authorized_keys, KEY
   end
 end

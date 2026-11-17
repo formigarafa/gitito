@@ -2,8 +2,9 @@ class RepositoriesController < ApplicationController
   before_action :set_repository, only: %i[show destroy]
 
   def index
-    @repositories = Current.user.repositories
-    @collaborative_repositories = Current.user.collaborative_relations.map(&:repository)
+    @repositories = Current.user.repositories.includes(:collaborators).order(:name)
+    @collaborative_repositories =
+      Current.user.collaborative_relations.includes(repository: :user).map(&:repository).sort_by(&:relative_path)
   end
 
   def show
@@ -17,7 +18,7 @@ class RepositoriesController < ApplicationController
     @repository = Current.user.repositories.new(repository_params)
 
     if @repository.save
-      redirect_to @repository, notice: "Repository was successfully created.", status: :see_other
+      redirect_to @repository, notice: "Repository #{@repository.name} was created.", status: :see_other
     else
       render :new, status: :unprocessable_content
     end
@@ -25,7 +26,7 @@ class RepositoriesController < ApplicationController
 
   def destroy
     @repository.destroy
-    redirect_to repositories_path, notice: "Repository was successfully destroyed.", status: :see_other
+    redirect_to repositories_path, notice: "Repository #{@repository.name} was deleted.", status: :see_other
   end
 
   private
