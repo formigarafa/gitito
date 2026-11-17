@@ -832,8 +832,7 @@ details.disclosure[open] > summary {
 
 /* In a list, what is to copy takes the right side, or a line of its own. */
 .list > li > .copy-field {
-  flex: 1 1 18rem;
-  max-width: 30rem;
+  flex: 0 1 26rem;
 }
 
 .list__icon {

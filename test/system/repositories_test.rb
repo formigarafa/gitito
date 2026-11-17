@@ -24,6 +24,27 @@ class RepositoriesTest < ApplicationSystemTestCase
     assert_text repository.url
   end
 
+  test "a user copies the clone URL of a repository" do
+    repository = @user.repositories.create!(name: "my-project")
+
+    visit repository_path(repository)
+    click_on "Copy the clone URL"
+
+    assert_selector ".copy-field.is-copied", text: "Copied"
+  end
+
+  test "a user gives up deleting a repository" do
+    repository = @user.repositories.create!(name: "my-project")
+
+    visit repository_path(repository)
+    click_on "Delete repository"
+    within("dialog[open]") { click_on "Cancel" }
+
+    assert_no_selector "dialog[open]"
+    assert_current_path repository_path(repository)
+    assert_stored repository
+  end
+
   test "a user deletes a repository" do
     repository = @user.repositories.create!(name: "my-project")
 
