@@ -10,10 +10,16 @@ class User < ApplicationRecord
 
   normalizes :email, with: ->(email) { email.strip.downcase }
 
-  # The username is the folder of the user's repositories, so two users cannot
-  # share one and it cannot point outside the repositories root.
-  validates :username, presence: true, format: { with: Repository::NAME_FORMAT },
-    uniqueness: true, exclusion: { in: %w[. ..] }
+  # The username is the folder of the user's repositories. It starts with a
+  # letter or a digit: not with a dot, which could point outside the
+  # repositories root, nor with a dash, which git would take for an option.
+  USERNAME_FORMAT = /\A[a-zA-Z0-9]#{Repository::NAME_CHARACTER}*\z/
+
+  # It never changes: the repositories would be left behind in the folder of
+  # the old one.
+  attr_readonly :username
+
+  validates :username, presence: true, format: { with: USERNAME_FORMAT, allow_blank: true }, uniqueness: true
   validates :email, presence: true, uniqueness: true, format: { with: /\A[^@\s]+@[^@\s]+\z/, allow_blank: true }
   validates :password, length: { minimum: 6 }, allow_nil: true
 

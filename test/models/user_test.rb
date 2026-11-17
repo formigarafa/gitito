@@ -109,12 +109,26 @@ class UserTest < ActiveSupport::TestCase
     assert_includes user.errors[:username], "has already been taken"
   end
 
-  test "fails with a username that points to another folder" do
-    %w[. ..].each do |username|
+  test "fails with a username that points to another folder or reads as an option" do
+    %w[. .. .hidden -juca --strict].each do |username|
       user = valid_user
       user.username = username
       assert_not user.valid?, "expected #{username.inspect} to be refused"
     end
+  end
+
+  test "forbids username changes, which would leave its repositories behind" do
+    user = users(:formigarafa)
+
+    assert_raises(ActiveRecord::ReadonlyAttributeError) { user.username = "renamed" }
+    assert_equal "formigarafa", user.reload.username
+    assert_equal repositories(:tilt), Repository.find_by_relative_path("formigarafa/tilt.git")
+  end
+
+  test "validates with dots, dashes and underscores after the first character of the username" do
+    user = valid_user
+    user.username = "9a-b_c.d"
+    assert_predicate user, :valid?
   end
 
   test "fails with a blank username" do
