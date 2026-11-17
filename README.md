@@ -1,36 +1,47 @@
 # Gitito
 
-Private git repository management with minimal server requirements.
+Self-hosted private git repositories, for when GitLab or Gitea is more than
+you need.
 
-Gitito works like GitHub or Gitorious: you register SSH public keys, create
-repositories you can clone, push to and pull from, and add collaborators who
-get access to them.
+Gitito is a small Rails app that sits next to your server's own `sshd` and
+`git`. Through the web UI, users register their SSH public keys, create
+repositories and choose collaborators. Cloning, pushing and pulling happen
+over plain SSH:
+
+```sh
+git clone gitito@example.com:alice/project.git
+```
+
+It only manages keys, repositories and access. There is no code browser,
+issues or pull requests.
 
 ## Known issues
 
-Other users can access everyone's repositories if they know the repository
-addresses. This security check is not done yet.
+SSH access is not yet checked per repository: any user with a registered key
+can reach any repository whose address they know. Only run it for people you
+trust.
 
 ## Requirements
 
-- Ruby 4.0.9 (see `.ruby-version`)
-- SQLite 3, used in every environment, including production
-- `git` on the server, for `git-shell`
+- Ruby (version in `.ruby-version`)
+- `git` and an SSH server on the host
+- A database. It comes configured for SQLite in every environment, production
+  included, so there is nothing else to install. Any database Rails supports
+  works if you prefer another.
 
 ## Setup
 
 ```sh
-bin/setup
+bin/setup   # installs gems, prepares the database and starts the server
 ```
 
-This installs the gems, prepares the database and starts the server. Run
-`bin/setup --skip-server` to skip starting it, and `bin/dev` to start the
-server later.
+Pass `--skip-server` to only set up, and use `bin/dev` to start the server
+later.
 
 ## Configuration
 
-Gitito's own settings live in `config/gitito.yml`. Each one can be set with an
-environment variable:
+Settings live in `config/gitito.yml` and can be overridden with environment
+variables:
 
 | Variable | Purpose |
 | --- | --- |
@@ -40,35 +51,32 @@ environment variable:
 | `GITITO_WEB_HOST` | Host used for links in emails |
 | `GITITO_MAILER_SENDER` | Sender address for emails |
 
-Databases and the bare git repositories (`storage/repositories/<env>`) live in
-`storage/`. In development and test, `authorized_keys` is written under `tmp/`.
-
 ## How SSH access works
 
-Every key saved in the app becomes a line in the authorized keys file that
-forces `script/ssh-command-proxy.sh`, which hands the git command to
-`git-shell` inside `storage/repositories/production`. By default, production
-writes `~/.ssh/authorized_keys` of the user running the app (and replaces its
-contents), so run it as a dedicated SSH user such as `gitito`.
+Each registered key becomes a line in the authorized keys file with a forced
+command, `script/ssh-command-proxy.sh`, which hands the git command to
+`git-shell` inside `storage/repositories/production`. Users can run git
+commands but never get a shell.
 
-## Tests and CI
+In production the file defaults to `~/.ssh/authorized_keys` of the user
+running the app, and **its contents are replaced**. Run the app as a dedicated
+user, such as `gitito`. In development and test the file is written under
+`tmp/`.
+
+## Tests
 
 ```sh
-bin/rails test   # run the test suite
-bin/ci           # setup, RuboCop, security audits, tests and seeds
+bin/rails test   # test suite; COVERAGE=1 writes a report to coverage/
+bin/ci           # what GitHub Actions runs: RuboCop, security audits, tests
 ```
-
-`bin/ci` runs the steps in `config/ci.rb`. GitHub Actions runs the same checks.
-Set `COVERAGE=1` to get a coverage report in `coverage/`.
 
 ## Deployment
 
-The app ships with the default Rails setup: a production `Dockerfile` and
-[Kamal](https://kamal-deploy.org) (`config/deploy.yml`, `bin/kamal`). Set the
-`GITITO_*` variables in `config/deploy.yml`, then run `bin/kamal setup`. The
-`storage/` directory is a persistent volume holding the databases, the
-repositories and the authorized keys file.
+The stock Rails `Dockerfile` and [Kamal](https://kamal-deploy.org) setup are
+included: set the `GITITO_*` variables in `config/deploy.yml` and run
+`bin/kamal setup`.
 
-The container serves the web app only. For git over SSH, the host's sshd must
-read the authorized keys file and reach the repositories on the storage
-volume.
+Everything stateful lives in `storage/` (databases, repositories and the
+authorized keys file), so keep it on a persistent volume. The container only
+serves the web app; the host's `sshd` must be able to read the authorized keys
+file and reach the repositories on that volume.
