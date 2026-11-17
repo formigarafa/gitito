@@ -12,7 +12,8 @@ class RepositoriesViewsTest < ActionView::TestCase
     render template: "repositories/index"
 
     @repositories.each do |repository|
-      assert_select "a[href=?]", repository_path(repository), text: repository.url
+      assert_select "a[href=?]", repository_path(repository), text: repository.name
+      assert_select "code", text: repository.url
     end
   end
 

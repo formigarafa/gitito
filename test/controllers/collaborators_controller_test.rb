@@ -12,7 +12,7 @@ class CollaboratorsControllerTest < ActionDispatch::IntegrationTest
     end
     assert_equal users(:juca), @repository.collaborators.last.user
     assert_redirected_to repository_path(@repository)
-    assert_equal "Collaborator was successfully created.", flash[:notice]
+    assert_equal "juca is now a collaborator.", flash[:notice]
   end
 
   test "create with an unknown username flashes the error and redirects to the repository" do
@@ -30,7 +30,7 @@ class CollaboratorsControllerTest < ActionDispatch::IntegrationTest
     end
     assert_redirected_to repository_path(@repository)
     assert_response :see_other
-    assert_equal "Collaborator was successfully destroyed.", flash[:notice]
+    assert_equal "juca is no longer a collaborator.", flash[:notice]
   end
 
 

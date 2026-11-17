@@ -8,10 +8,10 @@ class CollaboratorsTest < ApplicationSystemTestCase
 
   test "an owner adds a collaborator to a repository" do
     visit repository_path(@repository)
-    fill_in "collaborator", with: "juca"
+    fill_in "Add a collaborator", with: "juca"
     click_on "Add"
 
-    assert_text "Collaborator was successfully created."
+    assert_text "juca is now a collaborator."
     assert_current_path repository_path(@repository)
     assert_selector ".collaborators .collaborator", text: "juca"
     assert_equal [ users(:juca) ], @repository.collaborators.map(&:user)
@@ -22,9 +22,9 @@ class CollaboratorsTest < ApplicationSystemTestCase
 
     visit repository_path(@repository)
     assert_selector ".collaborators .collaborator", text: "juca"
-    confirm_dialog("Are you sure you want to remove this collaborator?") { click_on "Remove" }
+    confirm_dialog("Remove juca?", with: "Remove") { click_on "Remove" }
 
-    assert_text "Collaborator was successfully destroyed."
+    assert_text "juca is no longer a collaborator."
     assert_no_selector ".collaborators .collaborator"
     assert_empty @repository.collaborators.reload
   end

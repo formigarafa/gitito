@@ -47,15 +47,37 @@ module ApplicationHelper
     "#{settings[:ssh_user]}@#{settings[:ssh_host]}:#{username}/project.git"
   end
 
-  # Renders a small form that sends a DELETE request, asking for confirmation
-  # first through Turbo's data-turbo-confirm.
-  def delete_button(name, path, confirm: t("web-app-theme.confirm", default: "Are you sure?"), **options)
+  # One line to copy, such as a clone URL, with its button. Without room for
+  # it, +compact+ leaves the button with its icon only.
+  def copy_field(text, label: "Copy", compact: false, **options)
+    tag.div class: [ "copy-field", { "copy-field--compact": compact }, options.delete(:class) ],
+      data: { controller: "clipboard", clipboard_text_value: text }, **options do
+      # Long ones are better broken after a part of them than in the middle of it.
+      tag.code(safe_join(text.split(%r{(?<=[:/@])}), tag.wbr), class: "copy-field__text") +
+        render("shared/copy_button", label: label)
+    end
+  end
+
+  # Commands to copy and paste in a terminal.
+  def snippet(commands, label: "Copy")
+    tag.div class: "snippet", data: { controller: "clipboard", clipboard_text_value: commands } do
+      tag.pre(tag.code(commands)) + render("shared/copy_button", label: label)
+    end
+  end
+
+  # A button that deletes what is at +path+, after it is confirmed in a
+  # dialog with the +confirm+ message, named by +title+ and answered with a
+  # button of the same name as this one, or +confirm_label+.
+  def delete_button(name, path, confirm: "Are you sure?", title: nil, confirm_label: nil, **options)
     button_to(
       name,
       path,
       method: :delete,
-      class: options.delete(:class) || "link_button",
-      form: { class: "button_to inline", data: { turbo_confirm: confirm } },
+      class: options.delete(:class) || "btn btn--sm btn--danger-quiet",
+      form: {
+        class: "button_to",
+        data: { turbo_confirm: confirm, confirm_title: title, confirm_label: confirm_label || strip_tags(name).strip }
+      },
       **options,
     )
   end

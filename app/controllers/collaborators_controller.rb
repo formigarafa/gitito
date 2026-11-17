@@ -5,7 +5,7 @@ class CollaboratorsController < ApplicationController
     @collaborator = @repository.collaborators.new(user: user_to_become_collaborator)
 
     if @collaborator.save
-      flash[:notice] = "Collaborator was successfully created."
+      flash[:notice] = "#{@collaborator.username} is now a collaborator."
     else
       flash[:error] = @collaborator.errors.map(&:message).join(", ")
     end
@@ -13,8 +13,9 @@ class CollaboratorsController < ApplicationController
   end
 
   def destroy
-    @repository.collaborators.find(params.expect(:id)).destroy
-    redirect_to @repository, notice: "Collaborator was successfully destroyed.", status: :see_other
+    collaborator = @repository.collaborators.find(params.expect(:id))
+    collaborator.destroy
+    redirect_to @repository, notice: "#{collaborator.username} is no longer a collaborator.", status: :see_other
   end
 
   private

@@ -42,7 +42,7 @@ class UserCredentialsTest < ApplicationSystemTestCase
     @user.user_credentials.create!(title: "laptop", key: KEY)
 
     visit user_credentials_path
-    confirm_dialog("Are you sure?") { click_on "Delete" }
+    confirm_dialog("Are you sure?", with: "Delete") { click_on "Delete" }
 
     assert_text "User credential was successfully destroyed."
     assert_no_selector "td", text: "laptop"
