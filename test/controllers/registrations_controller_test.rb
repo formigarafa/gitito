@@ -116,4 +116,86 @@ class RegistrationsControllerTest < ActionDispatch::IntegrationTest
     get edit_registration_path
     assert_response :success
   end
+
+
+  test "create starts a session and tracks the sign in" do
+    post registration_path,
+      params: { user: { username: "newbie", email: "newbie@example.com", password: "1qaz2wsx" } },
+      headers: { "REMOTE_ADDR" => "10.0.0.7" }
+
+    user = User.find_by!(username: "newbie")
+    assert_equal "10.0.0.7", user.sessions.sole.ip_address
+    assert_equal 1, user.sign_in_count
+    assert_equal "Welcome! You have signed up successfully.", flash[:notice]
+
+    get repositories_path
+    assert_response :success
+  end
+
+  test "create with invalid attributes does not sign in" do
+    post registration_path, params: { user: { username: "newbie", email: "newbie@example.com", password: "short" } }
+
+    assert_nil cookies[:session_id]
+    assert_select "input[name=?][value=?]", "user[username]", "newbie"
+  end
+
+  test "create without user params is a bad request" do
+    post registration_path
+    assert_response :bad_request
+  end
+
+  test "update and destroy require authentication" do
+    put registration_path, params: { user: { email: "new@example.com", password_challenge: "password" } }
+    assert_redirected_to new_session_path
+
+    assert_no_difference -> { User.count } do
+      delete registration_path
+    end
+    assert_redirected_to new_session_path
+    assert_equal "drica@example.com", @user.reload.email
+  end
+
+  test "update with non matching passwords" do
+    sign_in_as @user
+
+    put registration_path, params: { user: { email: @user.email, password: "n3wp4ss", password_confirmation: "match", password_challenge: "password" } }
+
+    assert_response :unprocessable_content
+    assert_select "#error_explanation li", text: "Password confirmation doesn't match Password"
+    assert @user.reload.authenticate("password")
+  end
+
+  test "update with an email already taken" do
+    sign_in_as @user
+
+    put registration_path, params: { user: { email: users(:juca).email, password_challenge: "password" } }
+
+    assert_response :unprocessable_content
+    assert_select "#error_explanation li", text: "Email has already been taken"
+    assert_equal "drica@example.com", @user.reload.email
+  end
+
+  test "update of the email only keeps the other sessions" do
+    other_session = @user.sessions.create!
+    sign_in_as @user
+
+    put registration_path, params: { user: { email: "new@example.com", password_challenge: "password" } }
+
+    assert Session.exists?(other_session.id)
+  end
+
+  test "destroy removes the credentials, collaborations and sessions of the account" do
+    UserCredential.stub(:generate_authorized_keys_file, nil) do
+      @user.user_credentials.create!(title: "laptop", key: "ssh-ed25519 AAAA drica")
+      repositories(:tilt).collaborators.create!(user: @user)
+      sign_in_as @user
+
+      assert_difference [ -> { UserCredential.count }, -> { Collaborator.count }, -> { Session.count } ], -1 do
+        delete registration_path
+      end
+    end
+
+    get repositories_path
+    assert_redirected_to new_session_path
+  end
 end

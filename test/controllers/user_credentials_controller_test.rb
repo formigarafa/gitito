@@ -100,4 +100,97 @@ class UserCredentialsControllerTest < ActionDispatch::IntegrationTest
     end
     assert_response :not_found
   end
+
+
+  test "every action requires authentication" do
+    credential = create_credential
+    sign_out
+
+    get user_credentials_path
+    assert_redirected_to new_session_path
+    get new_user_credential_path
+    assert_redirected_to new_session_path
+    get edit_user_credential_path(credential)
+    assert_redirected_to new_session_path
+
+    assert_no_changes -> { UserCredential.order(:id).pluck(:id, :title) } do
+      post user_credentials_path, params: { user_credential: { title: "anonymous", key: "ssh-ed25519 AAAA anonymous" } }
+      assert_redirected_to new_session_path
+      patch user_credential_path(credential), params: { user_credential: { title: "anonymous" } }
+      assert_redirected_to new_session_path
+      delete user_credential_path(credential)
+      assert_redirected_to new_session_path
+    end
+  end
+
+  test "the root path lists the credentials" do
+    own = create_credential
+
+    get root_path
+
+    assert_response :success
+    assert_select "a[href=?]", edit_user_credential_path(own)
+  end
+
+  test "index shows long keys truncated" do
+    credential = create_credential
+    credential.update_column(:key, "ssh-ed25519 #{'A' * 80}")
+
+    get user_credentials_path
+
+    assert_match credential.key.truncate(50), response.body
+    assert_no_match credential.key, response.body
+  end
+
+  test "create ignores an owner given in the params" do
+    without_authorized_keys_file do
+      post user_credentials_path,
+        params: { user_credential: { title: "laptop", key: "ssh-ed25519 AAAA mine", user_id: users(:drica).id } }
+    end
+
+    assert_equal @user, UserCredential.find_by!(key: "ssh-ed25519 AAAA mine").user
+  end
+
+  test "create with a key already in use renders the form with 422" do
+    taken = create_credential(users(:drica))
+
+    assert_no_difference -> { UserCredential.count } do
+      post user_credentials_path, params: { user_credential: { title: "copy", key: taken.key } }
+    end
+    assert_response :unprocessable_content
+    assert_select "#error_explanation li", text: "Key has already been taken"
+  end
+
+  test "create without credential params is a bad request" do
+    post user_credentials_path
+    assert_response :bad_request
+  end
+
+  test "update does not find credentials of other users" do
+    credential = create_credential(users(:drica))
+
+    patch user_credential_path(credential), params: { user_credential: { title: "hacked" } }
+
+    assert_response :not_found
+    assert_equal "laptop", credential.reload.title
+  end
+
+  test "create, update and destroy keep the authorized_keys file up to date" do
+    Dir.mktmpdir do |tmp_dir|
+      auth_keys_file = "#{tmp_dir}/authorized_keys"
+
+      UserCredential.stub(:authorized_keys_absolute_path, auth_keys_file) do
+        post user_credentials_path, params: { user_credential: { title: "laptop", key: "ssh-ed25519 AAAA first" } }
+        credential = @user.user_credentials.find_by!(key: "ssh-ed25519 AAAA first")
+        assert_equal [ credential.authorized_keys_line ], File.readlines(auth_keys_file, chomp: true)
+
+        patch user_credential_path(credential), params: { user_credential: { key: "ssh-ed25519 AAAA second" } }
+        assert_equal [ credential.reload.authorized_keys_line ], File.readlines(auth_keys_file, chomp: true)
+        assert_match "ssh-ed25519 AAAA second", File.read(auth_keys_file)
+
+        delete user_credential_path(credential)
+        assert_empty File.read(auth_keys_file)
+      end
+    end
+  end
 end
