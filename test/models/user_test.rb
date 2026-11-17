@@ -126,12 +126,10 @@ class UserTest < ActiveSupport::TestCase
 
   test "being destroyed destroys its credentials" do
     user = users(:drica)
-    UserCredential.stub(:generate_authorized_keys_file, nil) do
-      user.user_credentials.create!(title: "laptop", key: "ssh-ed25519 AAAA drica")
+    user.user_credentials.create!(title: "laptop", key: "ssh-ed25519 AAAA drica")
 
-      assert_difference -> { UserCredential.count }, -1 do
-        user.destroy!
-      end
+    assert_difference -> { UserCredential.count }, -1 do
+      user.destroy!
     end
   end
 

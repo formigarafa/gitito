@@ -6,14 +6,8 @@ class UserCredentialsControllerTest < ActionDispatch::IntegrationTest
     sign_in_as @user
   end
 
-  def without_authorized_keys_file(&)
-    UserCredential.stub(:generate_authorized_keys_file, nil, &)
-  end
-
   def create_credential(user = @user)
-    without_authorized_keys_file do
-      user.user_credentials.create!(title: "laptop", key: "ssh-ed25519 AAAA #{SecureRandom.hex(4)}")
-    end
+    user.user_credentials.create!(title: "laptop", key: "ssh-ed25519 AAAA #{SecureRandom.hex(4)}")
   end
 
   test "index lists only own credentials" do
@@ -36,9 +30,7 @@ class UserCredentialsControllerTest < ActionDispatch::IntegrationTest
 
   test "create builds the credential for the current user" do
     assert_difference -> { @user.user_credentials.count } do
-      without_authorized_keys_file do
-        post user_credentials_path, params: { user_credential: { title: "laptop", key: "ssh-ed25519 AAAA new" } }
-      end
+      post user_credentials_path, params: { user_credential: { title: "laptop", key: "ssh-ed25519 AAAA new" } }
     end
     assert_redirected_to user_credentials_path
     assert_response :see_other
@@ -68,9 +60,7 @@ class UserCredentialsControllerTest < ActionDispatch::IntegrationTest
 
   test "update changes the credential" do
     credential = create_credential
-    without_authorized_keys_file do
-      patch user_credential_path(credential), params: { user_credential: { title: "desktop" } }
-    end
+    patch user_credential_path(credential), params: { user_credential: { title: "desktop" } }
     assert_redirected_to user_credentials_path
     assert_response :see_other
     assert_equal "desktop", credential.reload.title
@@ -87,7 +77,7 @@ class UserCredentialsControllerTest < ActionDispatch::IntegrationTest
   test "destroy removes the credential and redirects to the list" do
     credential = create_credential
     assert_difference -> { UserCredential.count }, -1 do
-      without_authorized_keys_file { delete user_credential_path(credential) }
+      delete user_credential_path(credential)
     end
     assert_redirected_to user_credentials_path
     assert_response :see_other
@@ -143,10 +133,8 @@ class UserCredentialsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create ignores an owner given in the params" do
-    without_authorized_keys_file do
-      post user_credentials_path,
-        params: { user_credential: { title: "laptop", key: "ssh-ed25519 AAAA mine", user_id: users(:drica).id } }
-    end
+    post user_credentials_path,
+      params: { user_credential: { title: "laptop", key: "ssh-ed25519 AAAA mine", user_id: users(:drica).id } }
 
     assert_equal @user, UserCredential.find_by!(key: "ssh-ed25519 AAAA mine").user
   end
@@ -175,27 +163,20 @@ class UserCredentialsControllerTest < ActionDispatch::IntegrationTest
     assert_equal "laptop", credential.reload.title
   end
 
-  # The lines of the authorized_keys file that are not comments.
-  def key_lines(auth_keys_file)
-    File.readlines(auth_keys_file, chomp: true).grep_v(/\A#/)
+  # The keys in the authorized_keys file, without what sshd is told to run.
+  def keys_in_authorized_keys
+    File.readlines(SshFiles.default.authorized_keys, chomp: true).grep_v(/\A#/).map { |line| line.sub(/\Acommand="[^"]*" /, "") }
   end
 
   test "create, update and destroy keep the authorized_keys file up to date" do
-    Dir.mktmpdir do |tmp_dir|
-      auth_keys_file = "#{tmp_dir}/authorized_keys"
+    post user_credentials_path, params: { user_credential: { title: "laptop", key: "ssh-ed25519 AAAA first" } }
+    credential = @user.user_credentials.find_by!(key: "ssh-ed25519 AAAA first")
+    assert_equal [ "ssh-ed25519 AAAA first" ], keys_in_authorized_keys
 
-      UserCredential.stub(:authorized_keys_absolute_path, auth_keys_file) do
-        post user_credentials_path, params: { user_credential: { title: "laptop", key: "ssh-ed25519 AAAA first" } }
-        credential = @user.user_credentials.find_by!(key: "ssh-ed25519 AAAA first")
-        assert_equal [ credential.authorized_keys_line ], key_lines(auth_keys_file)
+    patch user_credential_path(credential), params: { user_credential: { key: "ssh-ed25519 AAAA second" } }
+    assert_equal [ "ssh-ed25519 AAAA second" ], keys_in_authorized_keys
 
-        patch user_credential_path(credential), params: { user_credential: { key: "ssh-ed25519 AAAA second" } }
-        assert_equal [ credential.reload.authorized_keys_line ], key_lines(auth_keys_file)
-        assert_match "ssh-ed25519 AAAA second", File.read(auth_keys_file)
-
-        delete user_credential_path(credential)
-        assert_empty key_lines(auth_keys_file)
-      end
-    end
+    delete user_credential_path(credential)
+    assert_empty keys_in_authorized_keys
   end
 end

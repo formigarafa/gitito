@@ -16,14 +16,10 @@ class TurboResponsesTest < ActionDispatch::IntegrationTest
 
   test "deleting a user credential redirects with 303" do
     user = users(:juca)
-    credential = UserCredential.stub(:generate_authorized_keys_file, nil) do
-      user.user_credentials.create!(title: "laptop", key: "ssh-ed25519 AAAA laptop")
-    end
+    credential = user.user_credentials.create!(title: "laptop", key: "ssh-ed25519 AAAA laptop")
     sign_in_as user
 
-    UserCredential.stub(:generate_authorized_keys_file, nil) do
-      delete user_credential_path(credential)
-    end
+    delete user_credential_path(credential)
     assert_response :see_other
   end
 end
