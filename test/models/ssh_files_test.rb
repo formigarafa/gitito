@@ -148,11 +148,15 @@ class SshFilesTest < ActiveSupport::TestCase
 
   # The config file of the script
 
-  test "writes where to ask the app and the token to ask with, readable only by its owner" do
+  test "writes where to ask the app, the token to ask with and where the repositories are, readable only by its owner" do
     sync proxy_config: "#{@tmp_dir}/storage/proxy.conf"
 
-    assert_equal [ "url=#{Rails.configuration.gitito[:ssh_access_url]}/internal/ssh_access", "token=#{SshAccess.token}" ],
-      File.readlines("#{@tmp_dir}/storage/proxy.conf", chomp: true)
+    expected = [
+      "url=#{Rails.configuration.gitito[:ssh_access_url]}/internal/ssh_access",
+      "token=#{SshAccess.token}",
+      "repositories=#{RepositoryStorage.default.root}"
+    ]
+    assert_equal expected, File.readlines("#{@tmp_dir}/storage/proxy.conf", chomp: true)
     assert_equal "600", mode_of("#{@tmp_dir}/storage/proxy.conf")
     assert_equal [ "proxy.conf" ], Dir.children("#{@tmp_dir}/storage")
   end

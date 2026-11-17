@@ -27,5 +27,29 @@ module ActiveSupport
 
     SshFiles.default = ssh_files_of(0)
     parallelize_setup { |worker| SshFiles.default = ssh_files_of(worker) }
+
+    # Each test keeps its repositories in a folder of its own, which goes
+    # away with the test.
+    setup do
+      @repositories_root = Dir.mktmpdir("gitito-repositories")
+      RepositoryStorage.default = RepositoryStorage.new(root: @repositories_root)
+    end
+
+    teardown do
+      FileUtils.remove_entry @repositories_root
+    end
+
+    # Where the git data of +repository+ is expected to be.
+    def storage_path_of(repository)
+      File.join(RepositoryStorage.default.root, repository.relative_path)
+    end
+
+    def assert_stored(repository)
+      assert_predicate Rugged::Repository.new(storage_path_of(repository)), :bare?
+    end
+
+    def assert_not_stored(repository)
+      assert_not File.exist?(storage_path_of(repository)), "expected nothing at #{storage_path_of(repository)}"
+    end
   end
 end

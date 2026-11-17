@@ -6,16 +6,17 @@
 #
 # Runs the git command the client asked for ($SSH_ORIGINAL_COMMAND), but only
 # after the app confirms that credential can reach the repository. The app
-# writes where to ask, and the token to ask with, to the config file:
+# writes where to ask, the token to ask with, and where it keeps the
+# repositories, to the config file:
 #
 #   url=https://example.com/internal/ssh_access
 #   token=<secret>
+#   repositories=/path/to/repositories
 
 CREDENTIAL_ID=$1
 SCRIPT_PATH="$( cd "$( dirname "$0" )" && pwd )"
 APP_PATH=$(dirname "$SCRIPT_PATH")
 LOG_FILE=$APP_PATH/log/ssh-command-proxy.log
-REPOSITORIES_PATH=$APP_PATH/storage/repositories/production
 CONFIG_FILE=$APP_PATH/storage/ssh-command-proxy.production.conf
 
 log() {
@@ -65,7 +66,8 @@ esac
 
 ACCESS_URL=$(sed -n 's/^url=//p' "$CONFIG_FILE" 2>/dev/null)
 ACCESS_TOKEN=$(sed -n 's/^token=//p' "$CONFIG_FILE" 2>/dev/null)
-[ -n "$ACCESS_URL" ] && [ -n "$ACCESS_TOKEN" ] || deny "Access check not configured"
+REPOSITORIES_PATH=$(sed -n 's/^repositories=//p' "$CONFIG_FILE" 2>/dev/null)
+[ -n "$ACCESS_URL" ] && [ -n "$ACCESS_TOKEN" ] && [ -n "$REPOSITORIES_PATH" ] || deny "Access check not configured"
 
 # The token goes through stdin to stay out of the process list. The app
 # answers 204 when the credential can reach the repository.

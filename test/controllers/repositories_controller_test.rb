@@ -15,8 +15,6 @@ class RepositoriesControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_match repositories(:tilt).url, response.body
     assert_match shared.url, response.body
-  ensure
-    shared&.destroy
   end
 
   test "index does not list repositories of other users" do
@@ -57,8 +55,6 @@ class RepositoriesControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to repository_path(repository)
     assert_response :see_other
     assert_equal "Repository was successfully created.", flash[:notice]
-  ensure
-    repository&.destroy
   end
 
   test "create with invalid params renders the form with 422" do
@@ -115,8 +111,6 @@ class RepositoriesControllerTest < ActionDispatch::IntegrationTest
 
     assert_select "form[action=?]", repository_path(repositories(:tilt))
     assert_select "form[action=?]", repository_path(shared), count: 0
-  ensure
-    shared&.destroy
   end
 
   test "show lists the collaborators and offers to remove them" do
@@ -144,10 +138,7 @@ class RepositoriesControllerTest < ActionDispatch::IntegrationTest
 
     post repositories_path, params: { repository: { name: name } }
 
-    repository = @owner.repositories.find_by!(name: name)
-    assert repository.structure_ok?
-  ensure
-    repository&.destroy
+    assert_stored @owner.repositories.find_by!(name: name)
   end
 
   test "create ignores an owner given in the params" do
@@ -157,8 +148,6 @@ class RepositoriesControllerTest < ActionDispatch::IntegrationTest
 
     repository = Repository.find_by!(name: name)
     assert_equal @owner, repository.user
-  ensure
-    repository&.destroy
   end
 
   test "create with a name already used by the current user renders the form with 422" do
@@ -176,12 +165,11 @@ class RepositoriesControllerTest < ActionDispatch::IntegrationTest
 
   test "destroy removes the git repository from the file server" do
     repository = @owner.repositories.create!(name: "doomed-#{SecureRandom.hex(4)}")
-    server_path = repository.server_path
-    assert File.directory?(server_path)
+    assert_stored repository
 
     delete repository_path(repository)
 
-    assert_not File.exist?(server_path)
+    assert_not_stored repository
   end
 
   test "destroy removes the collaborators of the repository" do
