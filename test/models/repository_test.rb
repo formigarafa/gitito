@@ -162,6 +162,42 @@ class RepositoryTest < ActiveSupport::TestCase
     assert_not_stored repo
   end
 
+  test "a creation that is rolled back stores nothing" do
+    repo = nil
+
+    Repository.transaction do
+      repo = Repository.create! name: "undone", user: users(:juca)
+      assert_stored repo
+      raise ActiveRecord::Rollback
+    end
+
+    assert_not Repository.exists?(name: "undone")
+    assert_empty Dir.children(RepositoryStorage.default.root)
+  end
+
+  test "a change that is rolled back after the creation keeps what is stored" do
+    repo = Repository.create! name: "settled", user: users(:juca)
+
+    Repository.transaction do
+      repo.touch
+      raise ActiveRecord::Rollback
+    end
+
+    assert_stored repo
+  end
+
+  test "a destruction that is rolled back keeps what is stored" do
+    repo = Repository.create! name: "spared", user: users(:juca)
+
+    Repository.transaction do
+      repo.destroy!
+      raise ActiveRecord::Rollback
+    end
+
+    assert Repository.exists?(name: "spared")
+    assert_stored repo
+  end
+
   test "being destroyed keeps the other repositories of its owner" do
     doomed = Repository.create! name: "doomed", user: users(:juca)
     kept = Repository.create! name: "kept", user: users(:juca)

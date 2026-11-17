@@ -23,11 +23,13 @@ class Repository < ApplicationRecord
     "#{ssh_user}@#{ssh_host}:#{user.username}/#{name}.git"
   end
 
+  # The git repository is created with the record, so failing to create it
+  # fails the save, and goes away if the creation is rolled back. It is only
+  # removed once the destruction is committed: there is no bringing it back.
   after_create :create_storage
-
-  after_destroy do
-    RepositoryStorage.default.remove(relative_path)
-  end
+  after_rollback :remove_storage_just_created
+  after_commit :keep_storage_just_created
+  after_commit :remove_storage, on: :destroy
 
   def owned_by?(supposed_owner)
     user == supposed_owner
@@ -44,8 +46,22 @@ class Repository < ApplicationRecord
   # this one: the repository is not saved.
   def create_storage
     RepositoryStorage.default.create(relative_path)
+    @storage_just_created = true
   rescue RepositoryStorage::PathTaken
     errors.add :name, "is taken by data left on the server"
     raise ActiveRecord::Rollback
+  end
+
+  def remove_storage_just_created
+    remove_storage if @storage_just_created
+    @storage_just_created = false
+  end
+
+  def keep_storage_just_created
+    @storage_just_created = false
+  end
+
+  def remove_storage
+    RepositoryStorage.default.remove(relative_path)
   end
 end
