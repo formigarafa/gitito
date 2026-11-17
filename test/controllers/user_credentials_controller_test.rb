@@ -34,7 +34,7 @@ class UserCredentialsControllerTest < ActionDispatch::IntegrationTest
     end
     assert_redirected_to user_credentials_path
     assert_response :see_other
-    assert_equal "User credential was successfully created.", flash[:notice]
+    assert_equal "SSH key was added.", flash[:notice]
   end
 
   test "create with invalid params renders the form with 422" do
@@ -64,7 +64,7 @@ class UserCredentialsControllerTest < ActionDispatch::IntegrationTest
     assert_redirected_to user_credentials_path
     assert_response :see_other
     assert_equal "desktop", credential.reload.title
-    assert_equal "User credential was successfully updated.", flash[:notice]
+    assert_equal "SSH key was updated.", flash[:notice]
   end
 
   test "update with invalid params renders the form with 422" do
@@ -113,16 +113,17 @@ class UserCredentialsControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
-  test "the root path lists the credentials" do
-    own = create_credential
+  test "index shows the kind and the fingerprint of the keys, not the keys" do
+    credential = create_credential
 
-    get root_path
+    get user_credentials_path
 
-    assert_response :success
-    assert_select "a[href=?]", edit_user_credential_path(own)
+    assert_select ".badge", text: "ED25519"
+    assert_select "li", text: /#{Regexp.escape(credential.fingerprint)}/
+    assert_no_match credential.public_key.body, response.body
   end
 
-  test "index shows long keys truncated" do
+  test "index shows what is kept as a key but is not one truncated" do
     credential = create_credential
     credential.update_column(:key, "ssh-ed25519 #{'A' * 80}")
 

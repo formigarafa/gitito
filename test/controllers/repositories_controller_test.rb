@@ -103,6 +103,13 @@ class RepositoriesControllerTest < ActionDispatch::IntegrationTest
     end
   end
 
+  test "the root path lists the repositories" do
+    get root_path
+
+    assert_response :success
+    assert_select "a[href=?]", repository_path(repositories(:tilt))
+  end
+
   test "index only links to the pages of own repositories" do
     shared = users(:juca).repositories.create!(name: "shared-#{SecureRandom.hex(4)}")
     shared.collaborators.create!(user: @owner)

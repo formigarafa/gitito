@@ -47,6 +47,18 @@ module ApplicationHelper
     "#{settings[:ssh_user]}@#{settings[:ssh_host]}:#{username}/project.git"
   end
 
+  KEY_TYPE_NAMES = {
+    "ssh-ed25519" => "ED25519",
+    "ssh-rsa" => "RSA",
+    "sk-ssh-ed25519@openssh.com" => "ED25519 security key",
+    "sk-ecdsa-sha2-nistp256@openssh.com" => "ECDSA security key"
+  }.freeze
+
+  # The kind of a public key, as people call it.
+  def key_type_name(public_key)
+    KEY_TYPE_NAMES.fetch(public_key.type, "ECDSA")
+  end
+
   # One line to copy, such as a clone URL, with its button. Without room for
   # it, +compact+ leaves the button with its icon only.
   def copy_field(text, label: "Copy", compact: false, **options)

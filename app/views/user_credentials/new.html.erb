@@ -1,16 +1,26 @@
-<div class="block">
-  <div class="secondary-navigation">
-    <ul class="wat-cf">
-      <li class="first"><%= link_to "#{t("web-app-theme.list", :default => "List")}", user_credentials_path  %></li>
-      <li class="active"><%= link_to "#{t("web-app-theme.new", :default => "New")}", new_user_credential_path %></li>
-    </ul>
-  </div>          
-  <div class="content">            
-    <h2 class="title"><%= t("web-app-theme.new", :default => "New")%>  UserCredential</h2>
-    <div class="inner">
-      <%= form_for :user_credential, :url => user_credentials_path, :html => { :class => :form } do |f| -%>
-        <%= render :partial => "form", :locals => {:f => f} %>
-      <% end -%>
-    </div>
+<%= page_header "Add an SSH key", back: [ "All SSH keys", user_credentials_path ] %>
+
+<section class="card">
+  <div class="card__body">
+    <%= form_with model: @user_credential, class: "form" do |f| %>
+      <%= render "form", f: f, submit: "Add key" %>
+    <% end %>
   </div>
-</div>
+</section>
+
+<section class="card">
+  <div class="card__header">
+    <h2>Where is my public key?</h2>
+  </div>
+  <div class="card__body steps">
+    <div>
+      <h3>Print the one you have, and paste it above</h3>
+      <%= snippet "cat ~/.ssh/id_ed25519.pub", label: "Copy the command" %>
+    </div>
+    <div>
+      <h3>No such file? Create a key first</h3>
+      <%= snippet %(ssh-keygen -t ed25519 -C "#{Current.user&.email}"), label: "Copy the command" %>
+    </div>
+    <p class="muted">Only the public key, the file ending in <code>.pub</code>, goes here. The other one never leaves your computer.</p>
+  </div>
+</section>

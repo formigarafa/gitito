@@ -835,3 +835,43 @@ details.disclosure[open] > summary {
   flex: 1 1 18rem;
   max-width: 30rem;
 }
+
+.list__icon {
+  align-self: flex-start;
+}
+
+.list__meta {
+  align-items: baseline;
+}
+
+.field--narrow {
+  max-width: 26rem;
+}
+
+/* Who the account is of, at the top of its page. */
+.identity {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.identity__name {
+  font-size: var(--text-lg);
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+
+.identity p {
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+.form__section > * + * {
+  margin-top: var(--space-4);
+}
+
+.form__section > h3 + p {
+  margin-top: var(--space-1);
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
