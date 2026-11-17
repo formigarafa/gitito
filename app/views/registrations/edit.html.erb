@@ -1,68 +1,78 @@
-<div id="box">
-  <div class="block" id="block-signup">
-    <h2>Edit User</h2>
-    &nbsp;
-    <div class="content">
-      <%= render "shared/error_messages", resource: @user %>
+<%= page_header "Account" %>
 
-      <%= form_with model: @user, url: registration_path, method: :put, class: "form login" do |f| %>
-        <div class="group wat-cf">
-          <div class="left">
-            <%= f.label :email, "email", class: "label" %>
-          </div>
-          <div class="right">
-            <%= f.email_field :email, class: "text_field", required: true, autocomplete: "username" %>
-          </div>
-        </div>
-
-        <div class="group wat-cf">
-          <div class="left">
-            <%= f.label :password, "password", class: "label" %>
-          </div>
-          <div class="right">
-            <%= f.password_field :password, class: "text_field", autocomplete: "new-password", maxlength: 72 %>
-            <span class="description">leave blank if you don't want to change it</span>
-          </div>
-        </div>
-
-        <div class="group wat-cf">
-          <div class="left">
-            <%= f.label :password_confirmation, "password confirmation", class: "label" %>
-          </div>
-          <div class="right">
-            <%= f.password_field :password_confirmation, class: "text_field", autocomplete: "new-password", maxlength: 72 %>
-          </div>
-        </div>
-
-        <div class="group wat-cf">
-          <div class="left">
-            <%= f.label :password_challenge, "current password", class: "label" %>
-          </div>
-          <div class="right">
-            <%= f.password_field :password_challenge, class: "text_field", required: true, autocomplete: "current-password", maxlength: 72 %>
-            <span class="description">we need your current password to confirm your changes</span>
-          </div>
-        </div>
-
-        <div class="group navform wat-cf">
-          <div class="right">
-            <button class="button" type="submit">
-              <%= image_tag "web-app-theme/icons/tick.png", alt: "Save" %> Update
-            </button>
-          </div>
-        </div>
-      <% end %>
+<section class="card">
+  <div class="card__header">
+    <div class="identity">
+      <%= avatar @user, class: "avatar--lg" %>
+      <div>
+        <div class="identity__name"><%= @user.username %></div>
+        <p>Your username names your repositories, so it can't be changed. The picture comes from <a href="https://gravatar.com" rel="noopener">Gravatar</a>, by your email.</p>
+      </div>
     </div>
   </div>
 
-  <div class="block" id="block-signup">
-    <h2>Cancel my account</h2>
-    &nbsp;
+  <div class="card__body">
+    <%= render "shared/error_messages", resource: @user %>
 
-    <div class="content">
-      <p>
-        Unhappy? <%= delete_button "Cancel my account", registration_path %>.
-      </p>
+    <%= form_with model: @user, url: registration_path, method: :put, class: "form" do |f| %>
+      <div class="field field--narrow">
+        <%= f.label :email, "Email" %>
+        <%= f.email_field :email, class: "input", required: true, autocomplete: "username" %>
+      </div>
+
+      <hr class="form__divider">
+
+      <div class="form__section">
+        <h3>Change your password</h3>
+        <p>Leave these blank to keep the password you have.</p>
+
+        <div class="field field--narrow">
+          <%= f.label :password, "New password" %>
+          <%= password_field_with_toggle f, :password, autocomplete: "new-password", minlength: 6, maxlength: 72 %>
+        </div>
+
+        <div class="field field--narrow">
+          <%= f.label :password_confirmation, "Repeat the new password" %>
+          <%= password_field_with_toggle f, :password_confirmation, autocomplete: "new-password", maxlength: 72 %>
+        </div>
+      </div>
+
+      <hr class="form__divider">
+
+      <div class="field field--narrow">
+        <%= f.label :password_challenge, "Current password" %>
+        <%= password_field_with_toggle f, :password_challenge, required: true, autocomplete: "current-password", maxlength: 72,
+              aria: { describedby: "user_password_challenge_hint" } %>
+        <p class="field__hint" id="user_password_challenge_hint">Needed to confirm that the changes are yours.</p>
+      </div>
+
+      <div class="form__actions">
+        <button class="btn btn--primary" type="submit">Save changes</button>
+      </div>
+    <% end %>
+  </div>
+</section>
+
+<section class="card card--danger">
+  <div class="card__header">
+    <h2>Danger zone</h2>
+  </div>
+  <div class="card__body">
+    <div class="action-row">
+      <div class="action-row__text">
+        <h3>Delete your account</h3>
+        <% if @user.repositories.any? %>
+          <p>
+            An account with repositories can't be deleted.
+            <%= link_to "Delete your #{'repository'.pluralize(@user.repositories.size)}", repositories_path %> first.
+          </p>
+        <% else %>
+          <p>Your SSH keys are removed and you leave the repositories shared with you. There is no way back.</p>
+        <% end %>
+      </div>
+      <%= delete_button "Delete account", registration_path, class: "btn btn--danger-quiet",
+            disabled: @user.repositories.any?, title: "Delete your account?",
+            confirm: "Your SSH keys are removed and you leave the repositories shared with you. This can't be undone." %>
     </div>
   </div>
-</div>
+</section>

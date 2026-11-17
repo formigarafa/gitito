@@ -39,7 +39,7 @@ class RegistrationsController < ApplicationController
     if Current.user.destroy
       cookies.delete(:session_id)
       redirect_to new_session_path, status: :see_other,
-        notice: "Bye! Your account has been successfully cancelled. We hope to see you again soon."
+        notice: "Your account was deleted. We hope to see you again."
     else
       redirect_to edit_registration_path, status: :see_other, alert: Current.user.errors.full_messages.to_sentence
     end
