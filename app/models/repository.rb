@@ -11,8 +11,12 @@ class Repository < ApplicationRecord
     Rails.root.join("storage/repositories", Rails.env).to_s
   end
 
+  def relative_path
+    "#{user.username}/#{name}.git"
+  end
+
   def server_path
-    "#{self.class.repos_root}/#{user.username}/#{name}.git"
+    "#{self.class.repos_root}/#{relative_path}"
   end
 
   def ssh_user
@@ -56,5 +60,10 @@ class Repository < ApplicationRecord
 
   def owned_by?(supposed_owner)
     user == supposed_owner
+  end
+
+  # The owner and the collaborators can fetch from and push to the repository.
+  def accessible_by?(supposed_user)
+    owned_by?(supposed_user) || collaborators.exists?(user: supposed_user)
   end
 end

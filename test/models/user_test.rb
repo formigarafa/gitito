@@ -102,6 +102,21 @@ class UserTest < ActiveSupport::TestCase
     assert_not user.valid?
   end
 
+  test "fails with the username of another user" do
+    user = valid_user
+    user.username = users(:juca).username
+    assert_not user.valid?
+    assert_includes user.errors[:username], "has already been taken"
+  end
+
+  test "fails with a username that points to another folder" do
+    %w[. ..].each do |username|
+      user = valid_user
+      user.username = username
+      assert_not user.valid?, "expected #{username.inspect} to be refused"
+    end
+  end
+
   test "fails with a blank username" do
     user = valid_user
     user.username = ""

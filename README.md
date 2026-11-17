@@ -15,16 +15,10 @@ git clone gitito@example.com:alice/project.git
 It only manages keys, repositories and access. There is no code browser,
 issues or pull requests.
 
-## Known issues
-
-SSH access is not yet checked per repository: any user with a registered key
-can reach any repository whose address they know. Only run it for people you
-trust.
-
 ## Requirements
 
 - Ruby (version in `.ruby-version`)
-- `git` and an SSH server on the host
+- `git`, `curl` and an SSH server on the host
 - A database. It comes configured for SQLite in every environment, production
   included, so there is nothing else to install. Any database Rails supports
   works if you prefer another.
@@ -46,6 +40,7 @@ variables:
 | Variable | Purpose |
 | --- | --- |
 | `GITITO_SSH_AUTHORIZED_KEYS_FILE` | File the app writes users' public keys to |
+| `GITITO_SSH_ACCESS_URL` | Where the SSH host reaches the app to check access, `http://localhost:3000` by default |
 | `GITITO_SSH_USER` | SSH user shown in clone URLs |
 | `GITITO_SSH_HOST` | SSH host shown in clone URLs |
 | `GITITO_WEB_HOST` | Host used for links in emails |
@@ -54,14 +49,29 @@ variables:
 ## How SSH access works
 
 Each registered key becomes a line in the authorized keys file with a forced
-command, `script/ssh-command-proxy.sh`, which hands the git command to
-`git-shell` inside `storage/repositories/production`. Users can run git
-commands but never get a shell.
+command, `script/ssh-command-proxy.sh`, which is told which key was used.
+Users can run git commands but never get a shell.
+
+For each connection the script asks the running app, at
+`GITITO_SSH_ACCESS_URL`, whether that key can reach the repository: its user
+has to own it or collaborate on it. Only then is the git command handed to
+`git-shell`, inside `storage/repositories/production`. Anything else is
+refused, the same way whether the repository exists or not, and logged to
+`log/ssh-command-proxy.log`. Git access needs the app to be running: when it
+cannot be reached, every request is refused.
+
+The script needs `curl`, and finds the address and a token for that question
+in `storage/ssh-command-proxy.production.conf`. The app writes it along with
+the authorized keys file. To rewrite both by hand, as after changing
+`GITITO_SSH_ACCESS_URL` or the secret key base, run
+`bin/rails gitito:sync_ssh_access`. The Docker image does it on boot.
 
 In production the file defaults to `~/.ssh/authorized_keys` of the user
-running the app, and **its contents are replaced**. Run the app as a dedicated
-user, such as `gitito`. In development and test the file is written under
-`tmp/`.
+running the app. Gitito keeps its keys in a block of that file, between a
+`# BEGIN gitito keys` and a `# END gitito keys` line, and only rewrites that
+block: keys you add outside of it are kept. Those keys get a normal shell as
+that user, so it is still best to run the app as a dedicated user, such as
+`gitito`. In development and test the file is written under `tmp/`.
 
 ## Tests
 
@@ -79,4 +89,5 @@ included: set the `GITITO_*` variables in `config/deploy.yml` and run
 Everything stateful lives in `storage/` (databases, repositories and the
 authorized keys file), so keep it on a persistent volume. The container only
 serves the web app; the host's `sshd` must be able to read the authorized keys
-file and reach the repositories on that volume.
+file and reach the repositories on that volume, and the host must reach the
+app at `GITITO_SSH_ACCESS_URL`.

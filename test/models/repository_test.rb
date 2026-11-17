@@ -183,6 +183,20 @@ class RepositoryTest < ActiveSupport::TestCase
     assert_not repo.owned_by?(users(:drica))
   end
 
+  test "has the path of a repository inside the repositories root" do
+    assert_equal "formigarafa/tilt.git", repositories(:tilt).relative_path
+  end
+
+  test "is accessible by its owner and its collaborators only" do
+    repo = repositories(:tilt)
+    repo.collaborators.create!(user: users(:juca))
+
+    assert repo.accessible_by?(users(:formigarafa))
+    assert repo.accessible_by?(users(:juca))
+    assert_not repo.accessible_by?(users(:drica))
+    assert_not repo.accessible_by?(nil)
+  end
+
   test "being destroyed destroys its collaborators" do
     repo = repositories(:tilt)
     repo.collaborators.create!(user: users(:juca))
