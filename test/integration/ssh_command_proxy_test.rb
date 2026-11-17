@@ -15,7 +15,7 @@ class SshCommandProxyTest < ActiveSupport::TestCase
 
   setup do
     @app = Dir.mktmpdir
-    FileUtils.mkdir_p [ "#{@app}/script", "#{@app}/log", "#{@app}/bin", repositories_path ]
+    FileUtils.mkdir_p [ "#{@app}/script", "#{@app}/log", "#{@app}/bin", "#{@app}/storage", repositories_path ]
     FileUtils.cp Rails.root.join("script/ssh-command-proxy.sh"), "#{@app}/script/"
     File.write "#{@app}/bin/git-shell", "#!/bin/sh\necho \"$PWD\"\necho \"$2\"\n", perm: 0o755
 
@@ -33,15 +33,15 @@ class SshCommandProxyTest < ActiveSupport::TestCase
   end
 
   def repositories_path
-    "#{@app}/storage/repositories/production"
+    "#{@app}/somewhere/repositories"
   end
 
   def config_path
     "#{@app}/storage/ssh-command-proxy.production.conf"
   end
 
-  def write_config(url: "http://127.0.0.1:#{@server.addr[1]}/internal/ssh_access", token: TOKEN)
-    File.write config_path, "url=#{url}\ntoken=#{token}\n"
+  def write_config(url: "http://127.0.0.1:#{@server.addr[1]}/internal/ssh_access", token: TOKEN, repositories: repositories_path)
+    File.write config_path, { url: url, token: token, repositories: repositories }.compact.map { |name, value| "#{name}=#{value}\n" }.join
   end
 
   # Answers like Internal::SshAccessController, or with @status when set.
@@ -165,6 +165,13 @@ class SshCommandProxyTest < ActiveSupport::TestCase
 
   test "denies while there is no config file" do
     FileUtils.rm config_path
+
+    assert_denied "1", "git-upload-pack 'alice/project.git'", /Access check not configured/
+    assert_empty @requests
+  end
+
+  test "denies while the config file does not say where the repositories are" do
+    write_config repositories: nil
 
     assert_denied "1", "git-upload-pack 'alice/project.git'", /Access check not configured/
     assert_empty @requests

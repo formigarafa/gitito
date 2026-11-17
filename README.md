@@ -41,6 +41,7 @@ variables:
 | --- | --- |
 | `GITITO_SSH_AUTHORIZED_KEYS_FILE` | File the app writes users' public keys to |
 | `GITITO_SSH_ACCESS_URL` | Where the SSH host reaches the app to check access, `http://localhost:3000` by default |
+| `GITITO_REPOSITORIES_ROOT` | Folder the git repositories are kept in, `storage/repositories/<environment>` by default |
 | `GITITO_SSH_USER` | SSH user shown in clone URLs |
 | `GITITO_SSH_HOST` | SSH host shown in clone URLs |
 | `GITITO_WEB_HOST` | Host used for links in emails |
@@ -55,15 +56,16 @@ Users can run git commands but never get a shell.
 For each connection the script asks the running app, at
 `GITITO_SSH_ACCESS_URL`, whether that key can reach the repository: its user
 has to own it or collaborate on it. Only then is the git command handed to
-`git-shell`, inside `storage/repositories/production`. Anything else is
+`git-shell`, inside the folder the repositories are kept in. Anything else is
 refused, the same way whether the repository exists or not, and logged to
 `log/ssh-command-proxy.log`. Git access needs the app to be running: when it
 cannot be reached, every request is refused.
 
-The script needs `curl`, and finds the address and a token for that question
-in `storage/ssh-command-proxy.production.conf`. The app writes it along with
+The script needs `curl`, and finds the address and a token for that question,
+and the folder of the repositories, in
+`storage/ssh-command-proxy.production.conf`. The app writes it along with
 the authorized keys file. To rewrite both by hand, as after changing
-`GITITO_SSH_ACCESS_URL` or the secret key base, run
+`GITITO_SSH_ACCESS_URL`, `GITITO_REPOSITORIES_ROOT` or the secret key base, run
 `bin/rails gitito:sync_ssh_access`. The Docker image does it on boot.
 
 In production the file defaults to `~/.ssh/authorized_keys` of the user

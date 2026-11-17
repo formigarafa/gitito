@@ -1,7 +1,7 @@
 # The two files sshd relies on to let the keys of the users reach their
 # repositories: the authorized keys file, where every key is forced to run
 # script/ssh-command-proxy.sh, and the config file that tells the script where
-# to ask the app and the token to ask with.
+# to ask the app, the token to ask with, and where the repositories are kept.
 class SshFiles
   # The keys of gitito live between these two lines of the authorized keys
   # file. Whatever else is in the file belongs to someone else and is kept.
@@ -48,7 +48,11 @@ class SshFiles
   # Only the user sshd runs the script as needs to read it.
   def write_proxy_config
     FileUtils.mkdir_p File.dirname(proxy_config)
-    replace_file proxy_config, "url=#{access_url}\ntoken=#{SshAccess.token}\n", perm: 0o600
+    replace_file proxy_config, proxy_config_lines.map { |line| "#{line}\n" }.join, perm: 0o600
+  end
+
+  def proxy_config_lines
+    [ "url=#{access_url}", "token=#{SshAccess.token}", "repositories=#{RepositoryStorage.default.root}" ]
   end
 
   def access_url
