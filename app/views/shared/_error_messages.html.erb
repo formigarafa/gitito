@@ -1,11 +1,13 @@
 <% if resource.errors.any? %>
-  <div id="error_explanation">
-    <h2><%= pluralize(resource.errors.count, "error") %> prohibited this <%= resource.model_name.human.downcase %> from being saved:</h2>
-
-    <ul>
-      <% resource.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-    </ul>
+  <div id="error_explanation" role="alert">
+    <%= icon "circle-alert" %>
+    <div>
+      <h2><%= resource.errors.one? ? "There is a problem to fix:" : "There are #{resource.errors.count} problems to fix:" %></h2>
+      <ul>
+        <% resource.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
   </div>
 <% end %>

@@ -323,3 +323,7 @@
     padding-block: var(--space-7);
   }
 }
+
+.auth h1 {
+  font-size: var(--text-xl);
+}

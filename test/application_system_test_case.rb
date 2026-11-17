@@ -8,7 +8,7 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
     visit new_session_path
     fill_in "email", with: user.email
     fill_in "password", with: password
-    click_on "Login"
+    click_on "Sign in"
     assert_text "Signed in successfully."
   end
 end

@@ -30,6 +30,23 @@ module ApplicationHelper
     image_tag user.gravatar_url, alt: "", class: [ "avatar", options.delete(:class) ], **options
   end
 
+  # A password field with a button to see what was typed.
+  def password_field_with_toggle(form, attribute, **options)
+    tag.div class: "input-group", data: { controller: "password-visibility" } do
+      form.password_field(attribute, class: "input", data: { password_visibility_target: "input" }, **options) +
+        tag.button(icon("eye", class: "icon-off") + icon("eye-off", class: "icon-on"), type: "button",
+          class: "input-group__button", aria: { label: "Show password", pressed: false },
+          data: { password_visibility_target: "button", action: "password-visibility#toggle" })
+    end
+  end
+
+  # What the clone URL of a repository of +username+ looks like.
+  def clone_url_example(username = "username")
+    settings = Rails.configuration.gitito
+
+    "#{settings[:ssh_user]}@#{settings[:ssh_host]}:#{username}/project.git"
+  end
+
   # Renders a small form that sends a DELETE request, asking for confirmation
   # first through Turbo's data-turbo-confirm.
   def delete_button(name, path, confirm: t("web-app-theme.confirm", default: "Are you sure?"), **options)

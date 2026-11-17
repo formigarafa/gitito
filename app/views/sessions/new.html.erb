@@ -1,40 +1,31 @@
-<div class="block" id="block-login">
-  <h2>Login Box</h2>
-  <div class="content login">
-    <%= form_with url: session_path, class: "form login" do |f| %>
-      <div class="group wat-cf">
-        <div class="left">
-          <%= f.label :email, "email", class: "label right" %>
-        </div>
-        <div class="right">
-          <%= f.email_field :email, class: :text_field, required: true, autofocus: true, autocomplete: "username", value: params[:email] %>
-        </div>
+<% content_for :title, "Sign in" %>
+
+<section class="card">
+  <div class="card__body">
+    <h1>Sign in</h1>
+
+    <%= form_with url: session_path, class: "form" do |f| %>
+      <div class="field">
+        <%= f.label :email, "Email" %>
+        <%= f.email_field :email, class: "input", required: true, autofocus: true, autocomplete: "username", value: params[:email] %>
       </div>
 
-      <div class="group wat-cf">
-        <div class="left">
-          <%= f.label :password, "password", class: "label right" %>
+      <div class="field">
+        <div class="field__label-row">
+          <%= f.label :password, "Password" %>
+          <%= link_to "Forgot your password?", new_password_path %>
         </div>
-        <div class="right">
-          <%= f.password_field :password, class: :text_field, required: true, autocomplete: "current-password", maxlength: 72 %>
-        </div>
+        <%= password_field_with_toggle f, :password, required: true, autocomplete: "current-password", maxlength: 72 %>
       </div>
 
-      <div class="group wat-cf">
-        <div class="right">
-          <%= f.check_box :remember_me %> <%= f.label :remember_me %>
-        </div>
+      <div class="checkbox">
+        <%= f.check_box :remember_me %>
+        <%= f.label :remember_me, "Keep me signed in on this device" %>
       </div>
 
-      <div class="group navform wat-cf">
-        <div class="right">
-          <button class="button" type="submit">
-            <%= image_tag "web-app-theme/icons/key.png", alt: "Save" %> Login
-          </button>
-        </div>
-      </div>
+      <button class="btn btn--primary btn--block" type="submit">Sign in</button>
     <% end %>
   </div>
-</div>
+</section>
 
 <%= render "shared/authentication_links" %>

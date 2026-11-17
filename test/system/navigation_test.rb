@@ -5,7 +5,7 @@ class NavigationTest < ApplicationSystemTestCase
     visit root_path
 
     assert_current_path new_session_path
-    assert_selector "h2", text: "Login Box"
+    assert_selector "h1", text: "Sign in"
     assert_field "email"
     assert_field "password"
   end
