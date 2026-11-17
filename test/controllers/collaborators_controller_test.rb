@@ -79,8 +79,6 @@ class CollaboratorsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "create does not add collaborators to repositories of other users" do
-    skip "Not yet implemented: the repository is not scoped to the current user"
-
     sign_in_as users(:juca)
 
     assert_no_difference -> { Collaborator.count } do
@@ -109,8 +107,6 @@ class CollaboratorsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "destroy does not remove collaborators from repositories of other users" do
-    skip "Not yet implemented: the repository is not scoped to the current user"
-
     collaborator = @repository.collaborators.create!(user: users(:drica))
     sign_in_as users(:juca)
 
